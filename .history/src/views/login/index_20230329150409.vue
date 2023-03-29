@@ -100,7 +100,7 @@
   const { t } = useI18n();
 
   // 登录框方向, 0 居中, 1 居右, 2 居左
-  const direction = ref(0);
+  const direction = ref(2);
 
   //
   const formRef = ref(null);

@@ -177,7 +177,6 @@ export default defineComponent({
                     datasource.value=res.data
                     total.value=res.paging.total
                 }else{
-                    console.log('没登录')
                     notification.success({
                         message: '请先登录！',
                     });

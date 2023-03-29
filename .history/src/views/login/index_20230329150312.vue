@@ -54,7 +54,7 @@
           type="primary"
           :loading="loading"
           @click="submit"
-          style="margin-top: 10px;"
+          style="margin-top: 40px;"
         >
           {{ loading ? t('login.loading') : t('login.login') }}
         </a-button>
@@ -205,7 +205,7 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     border-radius: 2px;
     position: relative;
-    height: 18.75rem /* 300/16 */;
+    height: 25rem /* 400/16 */;
     z-index: 2;
 
     h4 {

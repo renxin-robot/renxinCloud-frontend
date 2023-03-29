@@ -23,7 +23,7 @@
                 <div>
                     <a-button style="margin-right: 10px;" @click="clearToSearch">重置</a-button>
                     <a-button type="primary" @click="toSearch">查询</a-button>
-                    <!-- <a-button type="primary" @click="toLogin">查询</a-button> -->
+                    <a-button type="primary" @click="toLogin">查询</a-button>
                 </div>
             </div>
         </a-card>
@@ -176,12 +176,6 @@ export default defineComponent({
                 if(res.code==0){
                     datasource.value=res.data
                     total.value=res.paging.total
-                }else{
-                    console.log('没登录')
-                    notification.success({
-                        message: '请先登录！',
-                    });
-                    logout()
                 }
             }).catch((err)=>{
                 console.log(err)
@@ -256,8 +250,16 @@ export default defineComponent({
             getUserEmployees()
         }
 
+        const toLogin=()=>{
+            console.log('hhh')
+            push({
+                path: '/operation/customer',
+                
+            })
+        }
         return {
             pageData,
+            toLogin,
             changePage,
             clearToSearch,
             toSearch,

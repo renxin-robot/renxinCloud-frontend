@@ -54,7 +54,6 @@
           type="primary"
           :loading="loading"
           @click="submit"
-          style="margin-top: 10px;"
         >
           {{ loading ? t('login.loading') : t('login.login') }}
         </a-button>
@@ -182,7 +181,7 @@
     background-image: url('@/assets/bg-login.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    min-height: 100vh;
+    min-height: 200vh;
 
     &:before {
       content: '';
@@ -205,7 +204,6 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     border-radius: 2px;
     position: relative;
-    height: 18.75rem /* 300/16 */;
     z-index: 2;
 
     h4 {

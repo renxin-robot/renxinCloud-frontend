@@ -54,7 +54,7 @@
           type="primary"
           :loading="loading"
           @click="submit"
-          style="margin-top: 10px;"
+          style="margin-top: 30px;"
         >
           {{ loading ? t('login.loading') : t('login.login') }}
         </a-button>
