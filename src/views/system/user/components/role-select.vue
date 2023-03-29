@@ -21,7 +21,7 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { message } from 'ant-design-vue/es';
-  import { listRoles } from '@/api/system/role';
+  // import { listRoles } from '@/api/system/role';
 
   const emit = defineEmits(['update:value', 'blur']);
 
@@ -50,13 +50,13 @@
   };
 
   /* 获取角色数据 */
-  listRoles()
-    .then((list) => {
-      data.value = list;
-    })
-    .catch((e) => {
-      message.error(e.message);
-    });
+  // listRoles()
+  //   .then((list) => {
+  //     data.value = list;
+  //   })
+  //   .catch((e) => {
+  //     message.error(e.message);
+  //   });
 
   /* 失去焦点 */
   const onBlur = () => {
