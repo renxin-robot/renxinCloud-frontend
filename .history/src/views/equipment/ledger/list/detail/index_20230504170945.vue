@@ -1,0 +1,91 @@
+<template>
+    <div class="ele-body detailBody">
+        <a-card class="detailBodyLeft">
+            <div style="text-align: center;">
+                <img style="width: 106px;height: 106px;" src="../../../../../assets/image/BiazfanxmamNRoxxVxka.png" alt="">
+            </div>
+            <div style="display: flex;align-items: center;justify-content: center;margin: 10px 0px;">
+                <div style="width: 8px;height: 8px;border-radius: 50%;background-color:#448EF7;margin-right: 4px;"></div>
+                <div>运行中</div>
+            </div>
+            <div style="text-align: center;font-size: 16px;">AS89978JHJDSH</div>
+            <div style="display: flex;justify-content: space-between;margin: 10px 0px;">
+                <div>
+                    <span style="color: gray;">名称：</span>
+                    112
+                </div>
+                <div>
+                    <span style="color: gray;">类型：</span>
+                    112
+                </div>
+                <div>
+                    <span style="color: gray;">型号：</span>
+                    112
+                </div>
+            </div>
+            <a-divider />
+            <div>
+                <span style="color: gray;">代理商：</span>
+                <span>编号</span>
+                <a-divider type="vertical" style="margin: 0px 4px;"/>
+                <span>名称</span>
+            </div>
+            <div>
+                <span style="color: gray;">代理商区域：</span>
+                <span>省份/城市</span>
+            </div>
+            <a-divider />
+            <div>
+                <span style="color: gray;">商户：</span>
+                <span>编号</span>
+                <a-divider type="vertical" style="margin: 0px 4px;"/>
+                <span>名称</span>
+            </div>
+            <div>
+                <span style="color: gray;">门店：</span>
+                <span>省份/城市</span>
+            </div>
+            <div>
+                <span style="color: gray;">租用开始时间：</span>
+                <span>1029年98月8日</span>
+            </div>
+            <div>
+                <span style="color: gray;">租用结束时间：</span>
+                <span>1029年98月8日</span>
+            </div>
+            <div>
+                <span style="color: gray;">押金方案：</span>
+                <span>xxx元/月</span>
+            </div>
+            <div>
+                <span style="color: gray;">租金方案：</span>
+                <span>xxx元/月</span>
+            </div> <div>
+                <span style="color: gray;">佣金方案：</span>
+                <span>xxx元/月</span>
+            </div>
+        </a-card>
+        <a-card class="detailBodyRight">
+            hh
+        </a-card>
+    </div>
+</template>
+<script>
+import { defineComponent, } from 'vue'
+export default defineComponent({
+    name:'detail',
+})
+</script>
+<style lang="less" scoped>
+    .detailBody{
+        display: flex;
+        // justify-content: space-between;
+        .detailBodyLeft{
+            width: 30%;
+            margin-right: 15px;
+        }
+        .detailBodyRight{
+            width: 70%;
+        }
+    }
+</style>
