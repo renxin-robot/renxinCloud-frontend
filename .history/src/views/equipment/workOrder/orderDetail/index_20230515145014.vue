@@ -57,34 +57,30 @@
                                 审批时间：{{ orderInfo?.operate_at }}
                             </div>
                         </div>
-                        <div v-if="orderInfo?.status!='pending'">
-                            <div class="infoItem" v-if="orderInfo?.status!='pending'">
-                                <div>
-                                    审批意见：<span v-if="orderInfo?.status=='accepted'">同意</span>
-                                    <span v-if="orderInfo?.status=='rejected'">不同意</span>
-                                </div>
-                            </div>
-                            <div class="infoItem" v-if="orderInfo?.status!='pending'">
-                                <div>
-                                    审批备注：{{ orderInfo?.operator_remark }}
-                                </div>
+                        <div class="infoItem" v-if="orderInfo?.status!='pending'">
+                            <div>
+                                审批意见：<span v-if="orderInfo?.status=='accepted'">同意</span>
+                                <span v-if="orderInfo?.status=='rejected'">不同意</span>
                             </div>
                         </div>
-                        <div v-else>
-                            <div class="infoItem" v-if="type=='approve'">
-                                <div>
-                                    审批意见：
-                                    <a-radio-group v-model:value="status">
-                                        <a-radio value="accepted">通过</a-radio>
-                                        <a-radio value="rejected">驳回</a-radio>
-                                    </a-radio-group>
-                                </div>
+                        <div class="infoItem" v-if="orderInfo?.status!='pending'">
+                            <div>
+                                审批备注：{{ orderInfo?.operator_remark }}
                             </div>
-                            <div class="infoItem" v-if="type=='approve'">
-                                <div>
-                                    审批备注：
-                                    <a-textarea style="margin-left: 80px;" v-model:value="operator_remark" placeholder="请输入审批备注" :rows="4" />
-                                </div>
+                        </div>
+                        <div class="infoItem" v-if="type=='approve'">
+                            <div>
+                                审批意见：
+                                <a-radio-group v-model:value="status">
+                                    <a-radio value="accepted">通过</a-radio>
+                                    <a-radio value="rejected">驳回</a-radio>
+                                </a-radio-group>
+                            </div>
+                        </div>
+                        <div class="infoItem" v-if="type=='approve'">
+                            <div>
+                                审批备注：
+                                <a-textarea style="margin-left: 80px;" v-model:value="operator_remark" placeholder="请输入审批备注" :rows="4" />
                             </div>
                         </div>
                     </div>
@@ -160,9 +156,9 @@
                     备注：{{ orderInfo?.remark }}
                 </p>
             </div>
-            <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px" v-if="orderInfo?.status=='pending'&&type=='approve'">
-                <a-button style="margin-right: 20px" @click="cancelApprove">取消</a-button>
-                <a-button type="primary" @click="confirmApprove">提交</a-button>
+            <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px">
+                <a-button style="margin-right: 20px">取消</a-button>
+                <a-button type="primary" @click="confirmAddOrder">提交</a-button>
             </div>
         </a-card>
     </div>
@@ -171,9 +167,8 @@
 import { defineComponent, ref ,reactive} from 'vue';
 import {useRouter} from 'vue-router'
 import {LeftOutlined} from '@ant-design/icons-vue'
-import {approvalDetail,addApprovalOrder} from '@/api/equipment/ledger/workOrder'
+import {approvalDetail} from '@/api/equipment/ledger/workOrder'
 import { toDateString } from 'ele-admin-pro';
-import {  notification } from 'ant-design-vue/es';
 import { finishPageTab } from '@/utils/page-tab-util';
 export default defineComponent({
     name: 'OrderDetail',
@@ -212,29 +207,7 @@ export default defineComponent({
             })
             finishPageTab()
         }
-
-        const cancelApprove=()=>{
-            finishPageTab()
-            push({
-                    path:'/equipment/workOrder'
-                })
-        }
-
-        const confirmApprove=()=>{
-            addApprovalOrder({id:orderId,status:status.value,operator_remark:operator_remark.value}).then((res)=>{
-                if(res.code==1){
-                    notification.success({
-                        message: '审批成功'
-                    });
-                }
-                push({
-                    path:'/equipment/workOrder'
-                })
-                finishPageTab()
-            })
-        }
         return{
-            confirmApprove,
             orderId,
             getDetail,
             orderInfo,
@@ -243,7 +216,6 @@ export default defineComponent({
             type,
             status,
             operator_remark,
-            cancelApprove,
         }
     }
 })

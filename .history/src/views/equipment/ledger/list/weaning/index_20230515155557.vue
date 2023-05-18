@@ -98,7 +98,7 @@ import {
 import { useRouter } from 'vue-router';
 import { toDateString } from 'ele-admin-pro';
 import {  notification } from 'ant-design-vue/es';
-import { finishPageTab } from '@/utils/page-tab-util';
+import {  notification } from 'ant-design-vue/es';
 import {addDeviceOrder,withdrawalOrder,approvalDetail} from '@/api/equipment/ledger/workOrder'
 export default defineComponent({
     name: 'Deployment',
@@ -138,11 +138,7 @@ export default defineComponent({
                         message: res.message
                     });
                 }
-                finishPageTab()
-                push({
-                    path:'/equipment/ledger/list'
-                })
-                // console.log(res)
+                console.log(res)
             })
         }
         return {

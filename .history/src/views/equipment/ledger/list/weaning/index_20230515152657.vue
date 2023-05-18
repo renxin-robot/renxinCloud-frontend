@@ -2,7 +2,9 @@
     <div class="ele-body">
         <a-card class="cardBody">
             <h5 style="text-align: center">
-                <span>撤机申请单</span>
+                <span v-if="actionType=='1'">布机申请单</span>
+                <span v-if="actionType=='2'">移机申请单</span>
+                <span v-if="actionType=='3'">撤机申请单</span>
             </h5>
             <div class="stepBox">
                 <a-steps :current=" 0 ">
@@ -15,8 +17,8 @@
             </div>
             <a-card style="width: 90%;margin:0 auto;margin-top: 50px;">
                 <template #title>
-                    <div style="text-align: center;color:orangered;font-weight: 300;">
-                        请确认，设备布机信息
+                    <div style="text-align: center;">
+                        设备布机信息
                     </div>
                 </template>
                 <div style="color:gray;" id="deviceInfo">
@@ -82,7 +84,7 @@
             </a-card>
             <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px">
                 <a-button style="margin-right: 20px">取消</a-button>
-                <a-button type="primary" @click="confirm">提交</a-button>
+                <a-button type="primary" @click="confirmAddOrder">提交</a-button>
             </div>
         </a-card>
     </div>
@@ -96,10 +98,39 @@ import {
     PlayCircleOutlined
 } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
-import { toDateString } from 'ele-admin-pro';
+import {getUserStore} from '@/api/shop/index'
 import {  notification } from 'ant-design-vue/es';
-import { finishPageTab } from '@/utils/page-tab-util';
-import {addDeviceOrder,withdrawalOrder,approvalDetail} from '@/api/equipment/ledger/workOrder'
+import {addDeviceOrder,changeDeviceOrder} from '@/api/equipment/ledger/workOrder'
+let timeout;
+let currentValue = '';
+let page=1
+let limit=10
+let total=0
+function fetch(value, callback) {
+    if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+    }
+    currentValue = value;
+    function fake() {
+        getUserStore({page:page,limit:10,name:value}).then((res)=>{
+            total=res.paging.total
+            if (currentValue === value) {
+                    const result = res.data;
+                    const data = [];
+                    result.forEach((r) => {
+                        data.push({
+                            value: JSON.stringify(r),
+                            label: r?.name
+                        });
+                    });
+                    callback(data);
+                }
+            console.log(res,Math.ceil(total/10))
+        })
+    }
+    timeout = setTimeout(fake, 300);
+}
 export default defineComponent({
     name: 'Deployment',
     components: {
@@ -110,47 +141,98 @@ export default defineComponent({
     },
     setup() {
         const { currentRoute ,push} = useRouter();
-        let step=ref()
-        let orderInfo=reactive({})
-        let orderId = currentRoute.value.query.orderId;
-        const getDetail=()=>{
-            approvalDetail(orderId).then((res)=>{
-                if(res.code==0){
-                    Object.assign(orderInfo,res.data)
-                    orderInfo.operate_at=toDateString(orderInfo.operate_at)
-                    orderInfo.created_at=toDateString(orderInfo.created_at)
-                    if(orderInfo?.status=='pending'){
-                        step.value=1
-                    }else{
-                        step.value=2
-                    }
-                }
-                console.log(orderInfo)
-                
-            })
-        }
-        getDetail()
+        let remark = ref('');
+        let actionType= currentRoute.value.query.value
+        let code = currentRoute.value.query.code;
+        let status = currentRoute.value.query.status;
+        let type = currentRoute.value.query.type;
+        let category = currentRoute.value.query.category;
+        let name = currentRoute.value.query.name;
+        let device_id = currentRoute.value.query.id;
+        let chooseShopInfo=reactive({})
+        let store_id=ref('')
+        const data = ref([]);
+        const value = ref();
+        const handleSearch = val => {
+            fetch(val, d => (data.value = d));
+        };
+        const handleChange = val => {
+            Object.assign(chooseShopInfo,JSON.parse(val))
+            store_id.value=chooseShopInfo.id
+            console.log(chooseShopInfo);
+            value.value = val;
+            fetch(val, d => (data.value = d));
+        };
 
-        const confirm=()=>{
-            withdrawalOrder(orderInfo.device_id).then((res)=>{
-                if(res.code==0){
-                    notification.success({
-                        message: res.message
-                    });
-                }
-                finishPageTab()
-                push({
-                    path:'/equipment/ledger/list'
+        const confirmAddOrder=()=>{
+            if(!store_id.value){
+                return
+            }
+
+            if(actionType=='1'){
+                addDeviceOrder({store_id:store_id.value,remark:remark.value,device_id:device_id}).then((res)=>{
+                    if(res.code==0){
+                        notification.success({
+                            message: res.message
+                        });
+                    }else{
+                        notification.error({
+                            message: res.message
+                        });
+                    }
+                    push({
+                        path:'/equipment/ledger/list'
+                    })
+                }).catch((err)=>{
+                    notification.error({
+                            message: err.response.data.message
+                        });
+                        push({
+                        path:'/equipment/ledger/list'
+                    })
                 })
-                // console.log(res)
-            })
+            }else{
+                changeDeviceOrder({store_id:store_id.value,remark:remark.value,device_id:device_id}).then((res)=>{
+                    if(res.code==0){
+                        notification.success({
+                            message: res.message
+                        });
+                    }else{
+                        notification.error({
+                            message: err.response.data.message
+                        });
+                    }
+                    push({
+                        path:'/equipment/ledger/list'
+                    })
+                }).catch((err)=>{
+                    notification.error({
+                            message: err.response.data.message
+                        });
+                        push({
+                        path:'/equipment/ledger/list'
+                    })
+                })
+            }
+            
         }
+        
         return {
-            confirm,
-            orderId,
-            getDetail,
-            step,
-            orderInfo,
+            store_id,
+            device_id,
+            confirmAddOrder,
+            remark,
+            chooseShopInfo,
+            name,
+            category,
+            type,
+            status,
+            code,
+            handleSearch,
+            handleChange,
+            data,
+            value,
+            actionType,
         };
     }
 });

@@ -79,9 +79,6 @@
                         <template v-if="column.dataIndex === 'userName'">
                             <span>{{ record?. user?.name}}</span>
                         </template>
-                        <template v-if="column.dataIndex === 'code'">
-                            <span><a @click="toOrderDetail(record)">{{ record?.code}}</a></span>
-                        </template>
                         <template v-if="column.dataIndex === 'storeName'">
                             <span>{{ record?. store?.name}}</span>
                         </template>
@@ -105,7 +102,7 @@
                                     <template #title>
                                         <span><a style="padding: 5px;">审批工单</a></span>
                                     </template>
-                                    <a @click="toOrderDetail(record,'approve')">
+                                    <a @click="(record)">
                                     <span class="iconfont">&#xe62c;</span>
                                     </a>
                                 </a-tooltip>
@@ -307,18 +304,11 @@ export default defineComponent({
             getApprovalList()
         }
 
-        const toOrderDetail=(row,value)=>{
-            if(value){
-                push({
-                    name:'orderDetail',
-                    query:{id:row.id,type:value}
-                })
-            }else{
-                push({
-                    name:'orderDetail',
-                    query:{id:row.id}
-                })
-            }
+        const toOrderDetail=(row)=>{
+            push({
+                name:'orderDetail',
+                query:{id:row.id}
+            })
             console.log(row)
         }
 

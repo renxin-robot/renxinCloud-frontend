@@ -106,7 +106,7 @@
                         <a-select-option value="owed">欠费</a-select-option>
                         <a-select-option value="canceled">注销的</a-select-option>
                     </a-select>
-                </a-form-item> -->   
+                </a-form-item> -->
                 <a-form-item label="地区" name="province_code"
                     :rules="[{ required: true, message: '请选择地区！' }]">
                     <a-cascader

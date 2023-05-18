@@ -27,8 +27,8 @@ export async function addDeviceOrder(data) {
 /**
  * 新增撤机工单
  */
-export async function withdrawalOrder(id) {
-    const res = await request.post(`/admin/device/${id}/approval/withdrawal`);
+export async function withdrawalOrder(data) {
+    const res = await request.post(`/admin/device/${data.device_id}/approval/withdrawal`);
     return res.data
 }
 

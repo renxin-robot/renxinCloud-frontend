@@ -299,18 +299,6 @@ export default defineComponent({
                     align: 'center',
                 },
                 {
-                    title: '运营模式',
-                    dataIndex: 'operation_mode',
-                    key: 'operation_mode',
-                    sorter: true,
-                    showSorterTooltip: false,
-                    ellipsis: true,
-                    width: 160,
-                    minWidth: 100,
-                    resizable: true,
-                    align: 'center',
-                },
-                {
                     title: '公司税号',
                     dataIndex: 'tax_number',
                     key: 'tax_number',
@@ -444,7 +432,6 @@ export default defineComponent({
             channelData.payment_account=''
             channelData.tax_number=''
             channelData.company=''
-            channelData.operation_mode=''
             channelData.name=''
             areaList.value=[]
         }

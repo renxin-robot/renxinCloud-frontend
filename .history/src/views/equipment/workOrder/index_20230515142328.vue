@@ -79,9 +79,6 @@
                         <template v-if="column.dataIndex === 'userName'">
                             <span>{{ record?. user?.name}}</span>
                         </template>
-                        <template v-if="column.dataIndex === 'code'">
-                            <span><a @click="toOrderDetail(record)">{{ record?.code}}</a></span>
-                        </template>
                         <template v-if="column.dataIndex === 'storeName'">
                             <span>{{ record?. store?.name}}</span>
                         </template>
@@ -94,18 +91,20 @@
                         <!-- 操作列 -->
                         <template v-else-if="column.key === 'action'">
                             <a-space>
-                                <a-tooltip placement="bottom"  color="white">
+                                <a-tooltip placement="bottom">
                                     <template #title>
-                                        <span><a style="padding: 5px;">设备详情</a></span>
+                                        <span>工单详情</span>
                                     </template>
-                                    <a @click="toOrderDetail(record)"><InfoCircleOutlined /></a>
+                                    <a @click="toOrderDetail(record)">
+                                        详情
+                                    </a>
                                 </a-tooltip>
                                 <a-divider type="vertical" />
                                 <a-tooltip placement="bottom"  color="white">
                                     <template #title>
                                         <span><a style="padding: 5px;">审批工单</a></span>
                                     </template>
-                                    <a @click="toOrderDetail(record,'approve')">
+                                    <a @click="toDetail(record)">
                                     <span class="iconfont">&#xe62c;</span>
                                     </a>
                                 </a-tooltip>
@@ -123,7 +122,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed ,watch} from 'vue'
-import { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined,InfoCircleOutlined} from '@ant-design/icons-vue'
+import { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined} from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import { logout } from '@/utils/page-tab-util';
@@ -131,7 +130,7 @@ import {getApproval} from '@/api/equipment/ledger/workOrder'
 import {useRouter} from 'vue-router'
 export default defineComponent({
     name: 'Nameplate',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined,InfoCircleOutlined},
+    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined},
     setup() {
         const {push}=useRouter()
         let formState = reactive({
@@ -307,18 +306,11 @@ export default defineComponent({
             getApprovalList()
         }
 
-        const toOrderDetail=(row,value)=>{
-            if(value){
-                push({
-                    name:'orderDetail',
-                    query:{id:row.id,type:value}
-                })
-            }else{
-                push({
-                    name:'orderDetail',
-                    query:{id:row.id}
-                })
-            }
+        const toOrderDetail=(row)=>{
+            push({
+                name:'orderDetail',
+                query:{id:row.id}
+            })
             console.log(row)
         }
 

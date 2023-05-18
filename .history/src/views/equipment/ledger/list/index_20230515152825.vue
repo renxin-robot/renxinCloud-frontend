@@ -51,12 +51,6 @@
                         <template v-if="column.dataIndex === 'channel_id'">
                             {{ record.channel_id}}
                         </template>
-                        <template v-if="column.dataIndex === 'device_created_at'">
-                            {{record?.device_info?.created_at}}
-                        </template>
-                        <template v-if="column.dataIndex === 'version'">
-                            {{ record?.device_info?.version}}
-                        </template>
                         <!-- 操作列 -->
                         <template v-else-if="column.key === 'action'">
                             <a-space>
@@ -71,8 +65,8 @@
                                     <template #title>
                                         <div>
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toDeployment(record,'2')">移机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>
                                         <a><MoreOutlined /></a>
@@ -220,17 +214,16 @@ export default defineComponent({
                 },
                 {
                     title: '设备版本',
-                    dataIndex: 'version',
+                    dataIndex: 'category_code',
                     width: 160,
                     minWidth: 100,
                     align: 'center'
                 },
                 {
                     title: '出厂时间',
-                    dataIndex: 'device_created_at',
+                    dataIndex: 'category_code',
                     width: 160,
                     minWidth: 100,
-                    customRender: ({ text }) => toDateString(text),
                     align: 'center'
                 },
                 {
@@ -332,12 +325,7 @@ export default defineComponent({
             getDeviceJournal({ ...pageData ,...formState}).then((res) => {
                 if (res.code == 0) {
                     listCount.value = res.paging.total
-                    datasource.value = res.data.map((item)=>{
-                        item.device_info.created_at=toDateString(item.device_info.created_at)
-                        return{
-                            ...item,
-                        }
-                    })
+                    datasource.value = res.data
                 }else{
                     notification.success({
                         message: '请先登录！',

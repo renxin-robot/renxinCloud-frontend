@@ -80,7 +80,7 @@
                     <a-input v-model:value="shopStoreData.name" />
                 </a-form-item>
                 <a-form-item label="门店地址" name="province_code" :rules="[{ required: true, message: '请选择地区！' }]">
-                    <a-cascader :options="options" v-model="areaList" @change="handleChange">
+                    <a-cascader :options="options" v-model:value="areaList" @change="handleChange">
                     </a-cascader>
                 </a-form-item>
                 <a-form-item label="详细地址" name="name" :rules="[{ required: true, message: '请输入详细地址！' }]">

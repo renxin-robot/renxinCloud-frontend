@@ -15,8 +15,8 @@
             </div>
             <a-card style="width: 90%;margin:0 auto;margin-top: 50px;">
                 <template #title>
-                    <div style="text-align: center;color:orangered;font-weight: 300;">
-                        请确认，设备布机信息
+                    <div style="text-align: center;">
+                        设备布机信息
                     </div>
                 </template>
                 <div style="color:gray;" id="deviceInfo">
@@ -82,7 +82,7 @@
             </a-card>
             <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px">
                 <a-button style="margin-right: 20px">取消</a-button>
-                <a-button type="primary" @click="confirm">提交</a-button>
+                <a-button type="primary" @click="confirmAddOrder">提交</a-button>
             </div>
         </a-card>
     </div>
@@ -97,9 +97,9 @@ import {
 } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
 import { toDateString } from 'ele-admin-pro';
+import {getUserStore} from '@/api/shop/index'
 import {  notification } from 'ant-design-vue/es';
-import { finishPageTab } from '@/utils/page-tab-util';
-import {addDeviceOrder,withdrawalOrder,approvalDetail} from '@/api/equipment/ledger/workOrder'
+import {addDeviceOrder,changeDeviceOrder,approvalDetail} from '@/api/equipment/ledger/workOrder'
 export default defineComponent({
     name: 'Deployment',
     components: {
@@ -130,23 +130,7 @@ export default defineComponent({
             })
         }
         getDetail()
-
-        const confirm=()=>{
-            withdrawalOrder(orderInfo.device_id).then((res)=>{
-                if(res.code==0){
-                    notification.success({
-                        message: res.message
-                    });
-                }
-                finishPageTab()
-                push({
-                    path:'/equipment/ledger/list'
-                })
-                // console.log(res)
-            })
-        }
         return {
-            confirm,
             orderId,
             getDetail,
             step,

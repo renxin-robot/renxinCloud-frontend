@@ -25,14 +25,6 @@ export async function addDeviceOrder(data) {
 }
 
 /**
- * 新增撤机工单
- */
-export async function withdrawalOrder(id) {
-    const res = await request.post(`/admin/device/${id}/approval/withdrawal`);
-    return res.data
-}
-
-/**
  * 审批工单
  */
 export async function addApprovalOrder(data) {

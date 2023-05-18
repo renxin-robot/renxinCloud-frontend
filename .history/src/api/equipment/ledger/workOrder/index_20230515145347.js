@@ -25,26 +25,18 @@ export async function addDeviceOrder(data) {
 }
 
 /**
- * 新增撤机工单
- */
-export async function withdrawalOrder(id) {
-    const res = await request.post(`/admin/device/${id}/approval/withdrawal`);
-    return res.data
-}
-
-/**
  * 审批工单
  */
-export async function addApprovalOrder(data) {
+export async function addDeviceOrder(data) {
   // console.log(data)
     let newInfo={
-      status:data.status,
-      operator_remark:data.operator_remark
+      store_id:data.store_id,
+      remark:data.remark
     }
-    if(!newInfo.operator_remark){
-      delete newInfo.operator_remark
+    if(!newInfo.remark){
+      delete newInfo.remark
     }
-    const res = await request.put(`/admin/device/approval/${data.id}`, newInfo);
+    const res = await request.put(`/admin/device/approval/${data.device_id}`, newInfo);
     return res.data
 }
 

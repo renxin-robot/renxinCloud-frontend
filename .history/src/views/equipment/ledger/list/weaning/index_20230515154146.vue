@@ -97,8 +97,8 @@ import {
 } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
 import { toDateString } from 'ele-admin-pro';
+import {getUserStore} from '@/api/shop/index'
 import {  notification } from 'ant-design-vue/es';
-import { finishPageTab } from '@/utils/page-tab-util';
 import {addDeviceOrder,withdrawalOrder,approvalDetail} from '@/api/equipment/ledger/workOrder'
 export default defineComponent({
     name: 'Deployment',
@@ -133,16 +133,7 @@ export default defineComponent({
 
         const confirm=()=>{
             withdrawalOrder(orderInfo.device_id).then((res)=>{
-                if(res.code==0){
-                    notification.success({
-                        message: res.message
-                    });
-                }
-                finishPageTab()
-                push({
-                    path:'/equipment/ledger/list'
-                })
-                // console.log(res)
+                console.log(res)
             })
         }
         return {

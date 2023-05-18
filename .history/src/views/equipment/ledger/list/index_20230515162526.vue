@@ -71,7 +71,7 @@
                                     <template #title>
                                         <div>
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
                                             <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>
@@ -230,7 +230,6 @@ export default defineComponent({
                     dataIndex: 'device_created_at',
                     width: 160,
                     minWidth: 100,
-                    customRender: ({ text }) => toDateString(text),
                     align: 'center'
                 },
                 {
@@ -332,12 +331,7 @@ export default defineComponent({
             getDeviceJournal({ ...pageData ,...formState}).then((res) => {
                 if (res.code == 0) {
                     listCount.value = res.paging.total
-                    datasource.value = res.data.map((item)=>{
-                        item.device_info.created_at=toDateString(item.device_info.created_at)
-                        return{
-                            ...item,
-                        }
-                    })
+                    datasource.value = res.data
                 }else{
                     notification.success({
                         message: '请先登录！',

@@ -160,7 +160,7 @@
                     备注：{{ orderInfo?.remark }}
                 </p>
             </div>
-            <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px" v-if="orderInfo?.status=='pending'&&type=='approve'">
+            <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px">
                 <a-button style="margin-right: 20px" @click="cancelApprove">取消</a-button>
                 <a-button type="primary" @click="confirmApprove">提交</a-button>
             </div>

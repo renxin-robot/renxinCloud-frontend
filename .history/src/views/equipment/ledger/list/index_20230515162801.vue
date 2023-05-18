@@ -71,7 +71,7 @@
                                     <template #title>
                                         <div>
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
                                             <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>

@@ -79,9 +79,6 @@
                         <template v-if="column.dataIndex === 'userName'">
                             <span>{{ record?. user?.name}}</span>
                         </template>
-                        <template v-if="column.dataIndex === 'code'">
-                            <span><a @click="toOrderDetail(record)">{{ record?.code}}</a></span>
-                        </template>
                         <template v-if="column.dataIndex === 'storeName'">
                             <span>{{ record?. store?.name}}</span>
                         </template>
