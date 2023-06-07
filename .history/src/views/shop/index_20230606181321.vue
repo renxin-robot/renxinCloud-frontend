@@ -104,7 +104,7 @@
             <div>
                 <div style="display: flex;align-items: start;justify-content: space-between;">
                     <div style="font-size: 16px;font-weight: bold;">店员列表</div>
-                    <div style="margin-bottom: 10px;text-align: right;margin-right: 20px;">
+                    <div style="margin-bottom: 10px;text-align: right;margin-right: 10px;">
                         <a-button type="primary" @click="addAssistant"><PlusOutlined/>新增店员</a-button>
                     </div>
                 </div>

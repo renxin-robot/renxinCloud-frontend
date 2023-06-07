@@ -737,17 +737,8 @@ export default defineComponent({
                     push({
                         path:'/shop'
                     })
-                }else{
-                    notification.error({
-                        message: res.message
-                    });
                 }
-            }).catch((err)=>{
-                console.log(err)
-                notification.error({
-                        message: err.response.data.message
-                    });
-            })
+            });
         };
 
         const cancelAddShop=()=>{

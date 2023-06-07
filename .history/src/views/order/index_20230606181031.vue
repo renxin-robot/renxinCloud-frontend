@@ -187,7 +187,7 @@ export default defineComponent({
                     title: '设备编号',
                     dataIndex: 'device_code',
                     key: 'device_code',
-                    width: 190,
+                    width: 160,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',

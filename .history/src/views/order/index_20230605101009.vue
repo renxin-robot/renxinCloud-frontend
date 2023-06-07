@@ -38,8 +38,6 @@
                     <template v-if="column.key === 'status'">
                         <a-tag v-if="record?.status == 'pending'" color="red">待支付</a-tag>
                         <a-tag v-if="record?.status == 'paid'" color="blue">已支付</a-tag>
-                        <a-tag v-else color="gray">已过期</a-tag>
-
                     </template>
                     <!-- <template v-if="column.key === 'changeStatus'">
                         <div v-if="record?.status == 'pending'">
@@ -88,8 +86,8 @@
                     :rules="[{ required: true, message: '请选择佣金方案！' }]">
                     <a-input v-model:value="orderPrice" placeholder="" :disabled="true"/>
                 </a-form-item>
-                <a-form-item label="设备SN" name="device_journal_id"
-                    :rules="[{ required: true, message: '请选择设备SN！' }]">
+                <a-form-item label="设备台账" name="device_journal_id"
+                    :rules="[{ required: true, message: '请选择设备台账！' }]">
                     <a-select
                     ref="select"
                     v-model:value="orderData.device_journal_id">
@@ -181,15 +179,6 @@ export default defineComponent({
                     dataIndex: 'code',
                     width: 160,
                     minWidth: 100,
-                    align: 'center',
-                },
-                {
-                    title: '设备编号',
-                    dataIndex: 'device_code',
-                    key: 'device_code',
-                    width: 190,
-                    minWidth: 100,
-                    // resizable: true,
                     align: 'center',
                 },
                 {
@@ -301,6 +290,15 @@ export default defineComponent({
                     title: '支付账号',
                     dataIndex: 'payment_account',
                     key: 'payment_account',
+                    width: 160,
+                    minWidth: 100,
+                    // resizable: true,
+                    align: 'center',
+                },
+                {
+                    title: '设备编号',
+                    dataIndex: 'device_code',
+                    key: 'device_code',
                     width: 160,
                     minWidth: 100,
                     // resizable: true,
@@ -437,9 +435,7 @@ export default defineComponent({
         const getDeviceJournalList=()=>{
             getDeviceJournal().then((res)=>{
                 if(res.code==0){
-                    deviceJournalList.value=res.data.filter((item)=>{
-                        return item.status!='在库'&&item.status!='布机中'
-                    })
+                    deviceJournalList.value=res.data
                 }
             })
         }

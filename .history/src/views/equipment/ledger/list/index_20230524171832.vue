@@ -31,7 +31,7 @@
                     <!-- 自定义列 -->
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'device_code'">
-                            <span @click="toDetail(record)"><a>{{ record.device_code}}</a></span>
+                            <span @click="toDetail"><a>{{ record.device_code}}</a></span>
                         </template>
                         <template v-if="column.dataIndex === 'name'">
                             {{ record.device_info.name}}
@@ -238,14 +238,14 @@ export default defineComponent({
                     minWidth: 100,
                     align: 'center'
                 },
-                // {
-                //     title: '出厂时间',
-                //     dataIndex: 'device_created_at',
-                //     width: 160,
-                //     minWidth: 100,
-                //     customRender: ({ text }) => toDateString(text),
-                //     align: 'center'
-                // },
+                {
+                    title: '出厂时间',
+                    dataIndex: 'device_created_at',
+                    width: 160,
+                    minWidth: 100,
+                    customRender: ({ text }) => toDateString(text),
+                    align: 'center'
+                },
                 {
                     title: '设备状态',
                     dataIndex: 'status',

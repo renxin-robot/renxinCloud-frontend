@@ -102,9 +102,9 @@
         </a-modal>
         <a-modal v-model:visible="showAssistantVisible" :closable="true" @ok="handleOk" @cancel="cancelShowModal" width="850px" :footer="null">
             <div>
-                <div style="display: flex;align-items: start;justify-content: space-between;">
+                <div style="display: flex;align-items: start;justify-content: space-between;margin-top: 14px;">
                     <div style="font-size: 16px;font-weight: bold;">店员列表</div>
-                    <div style="margin-bottom: 10px;text-align: right;margin-right: 20px;">
+                    <div style="margin-bottom: 10px;text-align: right;">
                         <a-button type="primary" @click="addAssistant"><PlusOutlined/>新增店员</a-button>
                     </div>
                 </div>

@@ -18,7 +18,7 @@
         </a-card>
         <a-card style="margin-top: 10px;border-radius: 4px;">
             <div id="proTable">
-                <ele-pro-table ref="tableRef" title="渠道列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
+                <ele-pro-table ref="tableRef" title="渠道列表1" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
                 :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :pagination="null"
                 :scroll="{ x: 1000 }" @done="onDone">
                 <!-- 表头工具按钮 -->

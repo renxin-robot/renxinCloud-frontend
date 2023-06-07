@@ -294,7 +294,7 @@ export default defineComponent({
             device_id,
             confirmAddOrder,
             selectLoadMoreSnInfo,
-            getStoreInformation,
+          getStoreInformation,
             remark,
             chooseShopInfo,
             name,

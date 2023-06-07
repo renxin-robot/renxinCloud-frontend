@@ -745,7 +745,7 @@ export default defineComponent({
             }).catch((err)=>{
                 console.log(err)
                 notification.error({
-                        message: err.response.data.message
+                        message: err
                     });
             })
         };

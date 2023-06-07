@@ -275,18 +275,18 @@ export default defineComponent({
 
         // 自定义事件
         const selectLoadMoreSnInfo = async () => {
-            if (storeInformation.value.length >= total.value) return
+          if (storeInformation.value.length >= total.value) return
           // 获取10条数据
-            storeInformation.value = [...storeInformation.value, ...(await getStoreInformation(page.value++, limit.value))]
+          storeInformation.value = [...storeInformation.value, ...(await getStoreInformation(page.value++, limit.value))]
         }
 
         const getStoreInformation = (page, limit) => {
             return new Promise( (resolve) => {
             getUserStore({ page, limit }).then(({ data, paging: { total: TOTAL } }) => {
-                total.value = TOTAL
-                resolve(data)
+              total.value = TOTAL
+              resolve(data)
             })
-            })
+          })
         }
 
         return {
@@ -294,7 +294,7 @@ export default defineComponent({
             device_id,
             confirmAddOrder,
             selectLoadMoreSnInfo,
-            getStoreInformation,
+          getStoreInformation,
             remark,
             chooseShopInfo,
             name,

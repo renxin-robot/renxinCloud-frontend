@@ -31,7 +31,7 @@
                     <!-- 自定义列 -->
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'device_code'">
-                            <span @click="toDetail(record)"><a>{{ record.device_code}}</a></span>
+                            <span @click="toDetail"><a>{{ record.device_code}}</a></span>
                         </template>
                         <template v-if="column.dataIndex === 'name'">
                             {{ record.device_info.name}}

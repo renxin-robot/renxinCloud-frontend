@@ -14,8 +14,7 @@
             </div>
         </a-card>
         <a-card style="margin-top: 10px;border-radius: 4px;">
-            <div id="proTable">
-                <ele-pro-table ref="tableRef" title="渠道列表" :resizable="true" :bordered="true" :columnsFixed="true"
+            <ele-pro-table ref="tableRef" title="渠道列表" :resizable="true" :bordered="true" :columnsFixed="true"
                 :columns="columns" :datasource="datasource"
                 :scroll="{ x: 1000 }">
                 <!-- 表头工具按钮 -->
@@ -48,11 +47,7 @@
                         </a-space>
                     </template>
                 </template>
-                </ele-pro-table>
-            </div>
-            <div style="text-align:right;margin-top: 10px;">
-                <a-pagination size="small" :total="total" @change="changePage" :show-total="total => `共 ${total} 条`" />
-            </div>
+            </ele-pro-table>
         </a-card>
         <a-modal v-model:visible="addVisible" :title="`${editId?'编辑':'新增'}佣金方案`" @ok="handleOk">
             <a-form :model="commissionData" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off">
@@ -105,7 +100,7 @@ import { message, notification } from 'ant-design-vue/es';
 import { ContactsOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 
 export default defineComponent({
-    name: 'Commission',
+    name: 'Order',
     components: { ContactsOutlined, FormOutlined, DeleteOutlined },
     setup() {
         let pageData=reactive({
@@ -118,7 +113,6 @@ export default defineComponent({
         let editId=ref()
         let addVisible=ref(false)
         let datasource=ref([])
-        let total=ref(0)
         let commissionData = reactive({
             agent_amount: 0,
             name: '',
@@ -257,14 +251,7 @@ export default defineComponent({
             getCommissionPlan({...pageData}).then((res)=>{
                 if(res.code==0){
                     datasource.value=res.data
-                    total.value=res.paging.total
-                } else {
-                        // console.log('没登录')
-                        notification.success({
-                            message: '请先登录！'
-                        });
-                        logout();
-                    }
+                }
             })
         }
         getCommission()
@@ -299,6 +286,10 @@ export default defineComponent({
                         addVisible.value=false
                         clearData()
                         getCommission()
+                    }else{
+                        notification.error({
+                            message:res.message,
+                        });
                     }
                 })
             }else{
@@ -315,25 +306,8 @@ export default defineComponent({
                 })
             }
         }
-        const toSearch=()=>{
-            // console.log(formState)
-            getCommission()
-        }
-        const toClear=()=>{
-            formState.name=''
-            // formState.phone=''
-            getCommission()
-        }
-        const changePage=(page)=>{
-            pageData.page=page
-            getCommission()
-        }
         return {
             pageData,
-            changePage,
-            toClear,
-            total,
-            toSearch,
             handleOk,
             editId,
             payableAmount,
@@ -351,10 +325,3 @@ export default defineComponent({
     }
 });
 </script>
-<style lang="less" scoped>
-    #proTable{
-        /deep/.ele-pro-table .ant-table-pagination.ant-pagination{
-            display: none;
-        }
-    }
-</style>

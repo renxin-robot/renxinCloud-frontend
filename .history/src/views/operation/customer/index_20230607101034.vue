@@ -742,12 +742,7 @@ export default defineComponent({
                         message: res.message
                     });
                 }
-            }).catch((err)=>{
-                console.log(err)
-                notification.error({
-                        message: err.response.data.message
-                    });
-            })
+            });
         };
 
         const cancelAddShop=()=>{

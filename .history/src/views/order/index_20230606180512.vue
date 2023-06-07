@@ -184,15 +184,6 @@ export default defineComponent({
                     align: 'center',
                 },
                 {
-                    title: '设备编号',
-                    dataIndex: 'device_code',
-                    key: 'device_code',
-                    width: 190,
-                    minWidth: 100,
-                    // resizable: true,
-                    align: 'center',
-                },
-                {
                     title: '佣金方案名称',
                     key: 'commission_plan_name',
                     dataIndex: 'commission_plan_name',
@@ -301,6 +292,15 @@ export default defineComponent({
                     title: '支付账号',
                     dataIndex: 'payment_account',
                     key: 'payment_account',
+                    width: 160,
+                    minWidth: 100,
+                    // resizable: true,
+                    align: 'center',
+                },
+                {
+                    title: '设备编号',
+                    dataIndex: 'device_code',
+                    key: 'device_code',
                     width: 160,
                     minWidth: 100,
                     // resizable: true,
@@ -437,9 +437,7 @@ export default defineComponent({
         const getDeviceJournalList=()=>{
             getDeviceJournal().then((res)=>{
                 if(res.code==0){
-                    deviceJournalList.value=res.data.filter((item)=>{
-                        return item.status!='在库'&&item.status!='布机中'
-                    })
+                    deviceJournalList.value=res.data
                 }
             })
         }

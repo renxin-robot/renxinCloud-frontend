@@ -180,7 +180,7 @@
                     <a-input v-model:value="shopStoreData.name" />
                 </a-form-item>
                 <a-form-item label="门店地址" name="province_code" :rules="[{ required: true, message: '请选择地区！' }]">
-                    <a-cascader :options="options" v-model:value="shopAreaList" @change="handleShopChange">
+                    <a-cascader :options="options" v-model="shopAreaList" @change="handleShopChange">
                     </a-cascader>
                 </a-form-item>
                 <a-form-item label="详细地址" name="name" :rules="[{ required: true, message: '请输入详细地址！' }]">
@@ -737,23 +737,13 @@ export default defineComponent({
                     push({
                         path:'/shop'
                     })
-                }else{
-                    notification.error({
-                        message: res.message
-                    });
                 }
-            }).catch((err)=>{
-                console.log(err)
-                notification.error({
-                        message: err.response.data.message
-                    });
-            })
+            });
         };
 
         const cancelAddShop=()=>{
             // console.log('hhh')
             clearShopData()
-            shopAreaList.value=[]
         }
 
         return {
