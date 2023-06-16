@@ -154,7 +154,7 @@
                     <a-date-picker v-model:value="orderData.trial_begin" :disabledDate="disabledDate" style="width:100%;" placeholder="请选择试用开始日期" />
                 </a-form-item>
                 <a-form-item label="结束时间" name="trial_end" :rules="[{ required: true, message: '请选择试用结束日期！' }]"  v-if="orderType=='trial'">
-                    <a-date-picker v-model:value="orderData.trial_end"  :disabledDate="disabledEndDate"  style="width:100%;" placeholder="请选择试用结束日期" />
+                    <a-date-picker v-model:value="orderData.trial_end"  style="width:100%;" placeholder="请选择试用结束日期" />
                 </a-form-item>
                 <a-form-item label="试用原因" name="trial_reason" :rules="[{ required: true, message: '请填写试用原因！' }]"  v-if="orderType=='trial'">
                     <a-textarea :rows="4" v-model:value="orderData.trial_reason" />
@@ -623,12 +623,8 @@ export default defineComponent({
         const disabledDate =(current)=>{
             return current && current < moment().subtract(1, 'days').endOf('day')
         }
-        const disabledEndDate =(current)=>{
-            return current && current < moment().endOf('day')
-        }
         return {
             disabledDate,
-            disabledEndDate,
             orderType,
             newData,
             changeType,

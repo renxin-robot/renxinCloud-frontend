@@ -145,6 +145,7 @@ export const USER_MENUS = [
           },
           {
             path:'/equipment/statistics',
+            name:'statistics',
             component:'/equipment/statistics',
             meta: {title: '设备统计', hide: false},
           },

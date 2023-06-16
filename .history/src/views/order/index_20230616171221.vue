@@ -54,12 +54,8 @@
                         <span>{{ record?.user?.name }}</span>
                     </template>
                     <template v-if="column.key === 'type'">
-                        <span v-if="record.type=='trial'">试用订单</span>
-                        <span v-else-if="record.type=='offline'">付费订单</span>
-                        <span v-else>付费订单</span>
-                    </template>
-                    <template v-if="column.key === 'payment_method'">
-                        <span v-if="record.payment_method=='trial'">试用订单</span>
+                        hhh
+                        <!-- <span>{{ record?.user?.name }}</span> -->
                     </template>
                     <template v-if="column.key === 'useCode'">
                         <span>{{ record?.user?.code }}</span>
@@ -151,12 +147,12 @@
                     </a-select>
                 </a-form-item>
                 <a-form-item label="开始时间" name="trial_begin" :rules="[{ required: true, message: '请选择试用开始日期！' }]" v-if="orderType=='trial'">
-                    <a-date-picker v-model:value="orderData.trial_begin" :disabledDate="disabledDate" style="width:100%;" placeholder="请选择试用开始日期" />
+                    <a-date-picker v-model:value="orderData.trial_begin" style="width:100%;" placeholder="请选择试用开始日期" />
                 </a-form-item>
                 <a-form-item label="结束时间" name="trial_end" :rules="[{ required: true, message: '请选择试用结束日期！' }]"  v-if="orderType=='trial'">
-                    <a-date-picker v-model:value="orderData.trial_end"  :disabledDate="disabledEndDate"  style="width:100%;" placeholder="请选择试用结束日期" />
+                    <a-date-picker v-model:value="orderData.trial_end"  style="width:100%;" placeholder="请选择试用结束日期" />
                 </a-form-item>
-                <a-form-item label="试用原因" name="trial_reason" :rules="[{ required: true, message: '请填写试用原因！' }]"  v-if="orderType=='trial'">
+                <a-form-item label="试用原因" name="trial_reason"  v-if="orderType=='trial'">
                     <a-textarea :rows="4" v-model:value="orderData.trial_reason" />
                 </a-form-item>
                 <a-form-item label="备注" name="remark">
@@ -169,7 +165,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed, } from 'vue';
-import moment from 'moment'
+import {addUser} from '@/api/system/customer';
 import { useI18n } from 'vue-i18n';
 import {  notification } from 'ant-design-vue/es';
 import {getToken} from  '@/utils/token-util'
@@ -619,16 +615,7 @@ export default defineComponent({
             orderPrice.value=JSON.parse(value).renxin_amount+JSON.parse(value).agent_amount
             // console.log(value)
         }
-
-        const disabledDate =(current)=>{
-            return current && current < moment().subtract(1, 'days').endOf('day')
-        }
-        const disabledEndDate =(current)=>{
-            return current && current < moment().endOf('day')
-        }
         return {
-            disabledDate,
-            disabledEndDate,
             orderType,
             newData,
             changeType,

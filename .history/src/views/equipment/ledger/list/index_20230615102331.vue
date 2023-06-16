@@ -77,23 +77,15 @@
                                     <template #title>
                                         <span><a style="padding: 5px;">设备详情</a></span>
                                     </template>
-                                    <a @click="toDetail(record)">详情</a>
-                                </a-tooltip>
-                                <a-divider type="vertical" />
-                                <a-tooltip placement="bottom"  color="white">
-                                    <template #title>
-                                        <span><a style="padding: 5px;">设备激活</a></span>
-                                    </template>
-                                    <a>激活</a>
+                                    <a @click="toDetail(record)"><InfoCircleOutlined /></a>
                                 </a-tooltip>
                                 <a-divider type="vertical" />
                                 <a-tooltip placement="bottom" color="white">
                                     <template #title>
                                         <div v-if="record.status=='运营中'">
-                                            <!-- <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div> -->
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
                                             <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
-                                            <div style="padding: 5px;"><a @click="toWeaning(record,'4')">锁机</a></div>
                                         </div>
                                         <div v-else-if="record.status=='在库'">
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
@@ -109,7 +101,7 @@
                                             <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>
-                                        <a>更多<DownOutlined /></a>
+                                        <a><MoreOutlined /></a>
                                 </a-tooltip>
                             </a-space>
                         </template>
@@ -176,7 +168,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed } from 'vue'
-import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined} from '@ant-design/icons-vue'
+import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined} from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import {getDeviceJournal} from '@/api/equipment/ledger/list'
@@ -187,7 +179,7 @@ import { object } from 'vue-types';
 import {ledgerDetailStore} from '@/store/modules/detail'
 export default defineComponent({
     name: 'Nameplate',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined},
+    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined},
     setup() {
         const {push}=useRouter()
         let addVisible = ref(false)
@@ -355,7 +347,7 @@ export default defineComponent({
                 {
                     title: '操作',
                     key: 'action',
-                    width: 160,
+                    width: 110,
                     align: 'center',
                     hideInSetting: true,
                     fixed: 'right'

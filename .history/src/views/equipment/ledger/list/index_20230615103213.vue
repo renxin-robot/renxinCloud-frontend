@@ -109,7 +109,7 @@
                                             <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>
-                                        <a>更多<DownOutlined /></a>
+                                        <a>更多<MoreOutlined /></a>
                                 </a-tooltip>
                             </a-space>
                         </template>
@@ -176,7 +176,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed } from 'vue'
-import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined} from '@ant-design/icons-vue'
+import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined} from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import {getDeviceJournal} from '@/api/equipment/ledger/list'
@@ -187,7 +187,7 @@ import { object } from 'vue-types';
 import {ledgerDetailStore} from '@/store/modules/detail'
 export default defineComponent({
     name: 'Nameplate',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined},
+    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined},
     setup() {
         const {push}=useRouter()
         let addVisible = ref(false)
@@ -355,7 +355,7 @@ export default defineComponent({
                 {
                     title: '操作',
                     key: 'action',
-                    width: 160,
+                    width: 110,
                     align: 'center',
                     hideInSetting: true,
                     fixed: 'right'

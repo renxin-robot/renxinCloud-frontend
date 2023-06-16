@@ -53,14 +53,6 @@
                     <template v-if="column.key === 'useName'">
                         <span>{{ record?.user?.name }}</span>
                     </template>
-                    <template v-if="column.key === 'type'">
-                        <span v-if="record.type=='trial'">试用订单</span>
-                        <span v-else-if="record.type=='offline'">付费订单</span>
-                        <span v-else>付费订单</span>
-                    </template>
-                    <template v-if="column.key === 'payment_method'">
-                        <span v-if="record.payment_method=='trial'">试用订单</span>
-                    </template>
                     <template v-if="column.key === 'useCode'">
                         <span>{{ record?.user?.code }}</span>
                     </template>
@@ -151,12 +143,12 @@
                     </a-select>
                 </a-form-item>
                 <a-form-item label="开始时间" name="trial_begin" :rules="[{ required: true, message: '请选择试用开始日期！' }]" v-if="orderType=='trial'">
-                    <a-date-picker v-model:value="orderData.trial_begin" :disabledDate="disabledDate" style="width:100%;" placeholder="请选择试用开始日期" />
+                    <a-date-picker v-model:value="orderData.trial_begin" style="width:100%;" placeholder="请选择试用开始日期" />
                 </a-form-item>
                 <a-form-item label="结束时间" name="trial_end" :rules="[{ required: true, message: '请选择试用结束日期！' }]"  v-if="orderType=='trial'">
-                    <a-date-picker v-model:value="orderData.trial_end"  :disabledDate="disabledEndDate"  style="width:100%;" placeholder="请选择试用结束日期" />
+                    <a-date-picker v-model:value="orderData.trial_end"  style="width:100%;" placeholder="请选择试用结束日期" />
                 </a-form-item>
-                <a-form-item label="试用原因" name="trial_reason" :rules="[{ required: true, message: '请填写试用原因！' }]"  v-if="orderType=='trial'">
+                <a-form-item label="试用原因" name="trial_reason"  v-if="orderType=='trial'">
                     <a-textarea :rows="4" v-model:value="orderData.trial_reason" />
                 </a-form-item>
                 <a-form-item label="备注" name="remark">
@@ -169,7 +161,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed, } from 'vue';
-import moment from 'moment'
+import {addUser} from '@/api/system/customer';
 import { useI18n } from 'vue-i18n';
 import {  notification } from 'ant-design-vue/es';
 import {getToken} from  '@/utils/token-util'
@@ -547,7 +539,7 @@ export default defineComponent({
 
         const handleOk=()=>{
             if(orderData.type=='trial'){
-                let trialData={
+                newData={
                     type:orderData.type,
                     trial_begin:orderData.trial_begin,
                     trial_end:orderData.trial_end,
@@ -555,33 +547,18 @@ export default defineComponent({
                     remark:orderData.remark,
                     device_journal_id:orderData.device_journal_id
                 }
-                addOrder(trialData).then((res)=>{
-                // console.log(res)
-                    if(res.code==0){
-                        notification.success({
-                            message: '新建成功',
-                        });
-                        addVisible.value=false
-                        clearData()
-                        getOrderList()
-                    }
-                }).catch((err)=>{
-                    notification.error({
-                            message:err.response.data.message,
-                        });
-                })
             }else if(orderData.type=='offline'){
-                let offlineData={
+                newData={
                     type:orderData.type,
                     remark:orderData.remark,
                     device_journal_id:orderData.device_journal_id,
                     commission_plan_id:orderData.commission_plan_id,
                     pay_account:orderData.pay_account,
                     pay_at:orderData.pay_at,
-                    payment_method:orderData.payment_method,
-                    transaction_id:orderData.transaction_id
+                    payment_method:orderData.payment_method
                 }
-                addOrder(offlineData).then((res)=>{
+            }
+            addOrder(newData).then((res)=>{
                 // console.log(res)
                     if(res.code==0){
                         notification.success({
@@ -596,8 +573,6 @@ export default defineComponent({
                             message:err.response.data.message,
                         });
                 })
-            }
-            
         }
 
         const toSearch=()=>{
@@ -619,16 +594,7 @@ export default defineComponent({
             orderPrice.value=JSON.parse(value).renxin_amount+JSON.parse(value).agent_amount
             // console.log(value)
         }
-
-        const disabledDate =(current)=>{
-            return current && current < moment().subtract(1, 'days').endOf('day')
-        }
-        const disabledEndDate =(current)=>{
-            return current && current < moment().endOf('day')
-        }
         return {
-            disabledDate,
-            disabledEndDate,
             orderType,
             newData,
             changeType,

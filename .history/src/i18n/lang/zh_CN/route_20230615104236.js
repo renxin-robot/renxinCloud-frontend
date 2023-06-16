@@ -28,9 +28,9 @@ export default {
       nameplate:{_name: '铭牌管理' },
       category:{_name: '品类管理' },
       plant:{_name: '工厂管理' },
+      statistics:{_name: '设备统计' },
       product:{_name: '产品信息管理' },
     },
-    statistics:{_name: '设备统计' },
     ledger: { 
       _name: '台账管理' ,
       list:{

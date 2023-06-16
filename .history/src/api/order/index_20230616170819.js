@@ -18,13 +18,13 @@ export async function addOrder(data) {
     //     commission_plan_id: data.commission_plan_id,
     //     remark: data.remark,
     // }
-    if(!data.remark){
-        delete data.remark
+    if(!newInfo.remark){
+        delete newInfo.remark
     }
-    if(!data?.pay_account){
-        delete data?.pay_account
+    if(!newInfo?.pay_account){
+        delete newInfo?.pay_account
     }
-    const res = await request.post(`/admin/order`, data);
+    const res = await request.post(`/admin/order`, newInfo);
     return res.data
 }
 

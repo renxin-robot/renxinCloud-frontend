@@ -24,7 +24,7 @@ export async function addOrder(data) {
     if(!data?.pay_account){
         delete data?.pay_account
     }
-    const res = await request.post(`/admin/order`, data);
+    const res = await request.post(`/admin/order`, newInfo);
     return res.data
 }
 
