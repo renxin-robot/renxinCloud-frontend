@@ -79,13 +79,13 @@
                                     </template>
                                     <a @click="toDetail(record)">详情</a>
                                 </a-tooltip>
-                                <a-divider type="vertical" />
-                                <a-tooltip placement="bottom"  color="white">
+                                <!-- <a-divider type="vertical" /> -->
+                                <!-- <a-tooltip placement="bottom"  color="white">
                                     <template #title>
                                         <span><a style="padding: 5px;">设备激活</a></span>
                                     </template>
                                     <a>激活</a>
-                                </a-tooltip>
+                                </a-tooltip> -->
                                 <a-divider type="vertical" />
                                 <a-tooltip placement="bottom" color="white">
                                     <template #title>
@@ -106,6 +106,10 @@
                                             <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                         <div v-else-if="record.status=='撤机中'">
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='未激活'">
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
                                             <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>

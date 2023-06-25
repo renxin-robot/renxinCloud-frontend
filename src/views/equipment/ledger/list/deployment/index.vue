@@ -66,13 +66,13 @@
 <!--                                @change="handleChange"-->
 <!--                            >-->
 <!--                            </a-select>-->
-                            <el-select v-model="value" filterable placeholder="请输入门店名称"
+                            <el-select v-model="store_id" filterable placeholder="请输入门店名称"
                                     lectloadmore="selectLoadMoreSnInfo">
                             <el-option
                                 v-for="item in storeInformation"
                                 :key="item.id"
                                 :label="item.name"
-                                :value="item.name">
+                                :value="item.id">
                             </el-option>
                             </el-select>
                         </div>

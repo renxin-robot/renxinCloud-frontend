@@ -101,14 +101,14 @@
                                     <a @click="toOrderDetail(record)"><InfoCircleOutlined /></a>
                                 </a-tooltip>
                                 <a-divider type="vertical" />
-                                <a-tooltip placement="bottom"  color="white">
+                                <!-- <a-tooltip placement="bottom"  color="white">
                                     <template #title>
                                         <span><a style="padding: 5px;">审批工单</a></span>
                                     </template>
-                                    <a @click="toOrderDetail(record,'approve')">
+                                </a-tooltip> -->
+                                <a @click="toOrderDetail(record,'approve')">
                                     <span class="iconfont">&#xe62c;</span>
-                                    </a>
-                                </a-tooltip>
+                                </a>
                             </a-space>
                         </template>
                     </template>

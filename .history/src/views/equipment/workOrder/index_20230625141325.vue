@@ -18,9 +18,9 @@
                 <div>
                     <a-radio-group v-model:value="formState.status" button-style="solid">
                         <a-radio-button value="" style="border: none;">全部</a-radio-button>
-                        <a-radio-button value="pending" style="border: none;">待审批</a-radio-button>
-                        <a-radio-button value="accepted" style="border: none;">通过</a-radio-button>
-                        <a-radio-button value="rejected" style="border: none;">驳回</a-radio-button>
+                        <a-radio-button value="pending" style="border:0px solid transparent;position: relative;">待审批</a-radio-button>
+                        <a-radio-button value="accepted" style="border:0px solid transparent;position: relative;">通过</a-radio-button>
+                        <a-radio-button value="rejected" style="border:0px solid transparent;position: relative;">驳回</a-radio-button>
                     </a-radio-group>
                 </div>
             </p>
@@ -79,6 +79,9 @@
                         <template v-if="column.dataIndex === 'userName'">
                             <span>{{ record?. user?.name}}</span>
                         </template>
+                        <template v-if="column.dataIndex === 'code'">
+                            <span><a @click="toOrderDetail(record)">{{ record?.code}}</a></span>
+                        </template>
                         <template v-if="column.dataIndex === 'storeName'">
                             <span>{{ record?. store?.name}}</span>
                         </template>
@@ -91,14 +94,21 @@
                         <!-- 操作列 -->
                         <template v-else-if="column.key === 'action'">
                             <a-space>
-                                <a-tooltip placement="bottom">
-                                <template #title>
-                                    <span>工单详情</span>
-                                </template>
-                                        <a @click="toOrderDetail(record)">
-                                            详情
-                                        </a>
-                            </a-tooltip>
+                                <a-tooltip placement="bottom"  color="white">
+                                    <template #title>
+                                        <span><a style="padding: 5px;">设备详情</a></span>
+                                    </template>
+                                    <a @click="toOrderDetail(record)"><InfoCircleOutlined /></a>
+                                </a-tooltip>
+                                <a-divider type="vertical" />
+                                <!-- <a-tooltip placement="bottom"  color="white">
+                                    <template #title>
+                                        <span><a style="padding: 5px;">审批工单</a></span>
+                                    </template>
+                                </a-tooltip> -->
+                                <a @click="toOrderDetail(record,'approve')">
+                                    <span class="iconfont">&#xe62c;</span>
+                                </a>
                             </a-space>
                         </template>
                     </template>
@@ -113,7 +123,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed ,watch} from 'vue'
-import { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined} from '@ant-design/icons-vue'
+import { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined,InfoCircleOutlined} from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import { logout } from '@/utils/page-tab-util';
@@ -121,7 +131,7 @@ import {getApproval} from '@/api/equipment/ledger/workOrder'
 import {useRouter} from 'vue-router'
 export default defineComponent({
     name: 'Nameplate',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined},
+    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined,InfoCircleOutlined},
     setup() {
         const {push}=useRouter()
         let formState = reactive({
@@ -151,6 +161,13 @@ export default defineComponent({
                     dataIndex: 'code',
                     width: 190,
                     minWidth: 100,                    
+                    align: 'center'
+                },
+                {
+                    title: '设备编号',
+                    dataIndex: 'device_code',
+                    width: 170,
+                    minWidth: 100,
                     align: 'center'
                 },
                 {
@@ -297,10 +314,18 @@ export default defineComponent({
             getApprovalList()
         }
 
-        const toOrderDetail=(row)=>{
-            push({
-                name:'orderDetail'
-            })
+        const toOrderDetail=(row,value)=>{
+            if(value){
+                push({
+                    name:'orderDetail',
+                    query:{id:row.id,type:value}
+                })
+            }else{
+                push({
+                    name:'orderDetail',
+                    query:{id:row.id}
+                })
+            }
             console.log(row)
         }
 

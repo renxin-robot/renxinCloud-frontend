@@ -6,9 +6,9 @@
                     <el-form-item label="设备编号">
                         <a-input v-model:value="formState.device_code" placeholder="请输入设备编号"/>
                     </el-form-item>
-                    <el-form-item label="设备类型">
+                    <!-- <el-form-item label="设备类型">
                         <a-input v-model:value="formState.category" placeholder="请输入设备类型"/>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="设备型号">
                         <a-input v-model:value="formState.category_code" placeholder="请输入设备型号"/>
                     </el-form-item>
@@ -31,7 +31,7 @@
                     <!-- 自定义列 -->
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'device_code'">
-                            <span @click="toDetail"><a>{{ record.device_code}}</a></span>
+                            <span @click="toDetail(record)"><a>{{ record.device_code}}</a></span>
                         </template>
                         <template v-if="column.dataIndex === 'name'">
                             {{ record.device_info.name}}
@@ -61,8 +61,8 @@
                             {{record?.device_info?.created_at}}
                         </template>
                         <template v-if="column.dataIndex === 'operation_mode'">
-                            <span v-if="record?.channel?.operation_mod=='agent'">代理</span>
-                            <span v-if="record?.channel?.operation_mod=='direct'">直营</span>
+                            <span v-if="record?.channel?.operation_mode=='agent'">代理</span>
+                            <span v-if="record?.channel?.operation_mode=='direct'">直营</span>
                         </template>
                         <template v-if="column.dataIndex === 'channel_area'">
                             {{record?.channel?.channel_areas?.province}}{{record?.channel?.channel_areas?.city}}{{record?.channel?.channel_areas?.area}}
@@ -77,18 +77,42 @@
                                     <template #title>
                                         <span><a style="padding: 5px;">设备详情</a></span>
                                     </template>
-                                    <a @click="toDetail(record)"><InfoCircleOutlined /></a>
+                                    <a @click="toDetail(record)">详情</a>
                                 </a-tooltip>
+                                <!-- <a-divider type="vertical" /> -->
+                                <!-- <a-tooltip placement="bottom"  color="white">
+                                    <template #title>
+                                        <span><a style="padding: 5px;">设备激活</a></span>
+                                    </template>
+                                    <a>激活</a>
+                                </a-tooltip> -->
                                 <a-divider type="vertical" />
                                 <a-tooltip placement="bottom" color="white">
                                     <template #title>
-                                        <div>
+                                        <div v-if="record.status=='运营中'">
+                                            <!-- <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div> -->
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'4')">锁机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='在库'">
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toDeployment(record,'2')">移机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='布机中'">
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='锁机'">
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='撤机中'">
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='未激活'">
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>
-                                        <a><MoreOutlined /></a>
+                                        <a>更多<DownOutlined /></a>
                                 </a-tooltip>
                             </a-space>
                         </template>
@@ -155,7 +179,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed } from 'vue'
-import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined} from '@ant-design/icons-vue'
+import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined} from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import {getDeviceJournal} from '@/api/equipment/ledger/list'
@@ -166,7 +190,7 @@ import { object } from 'vue-types';
 import {ledgerDetailStore} from '@/store/modules/detail'
 export default defineComponent({
     name: 'Nameplate',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined},
+    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined},
     setup() {
         const {push}=useRouter()
         let addVisible = ref(false)
@@ -238,14 +262,14 @@ export default defineComponent({
                     minWidth: 100,
                     align: 'center'
                 },
-                {
-                    title: '出厂时间',
-                    dataIndex: 'device_created_at',
-                    width: 160,
-                    minWidth: 100,
-                    customRender: ({ text }) => toDateString(text),
-                    align: 'center'
-                },
+                // {
+                //     title: '出厂时间',
+                //     dataIndex: 'device_created_at',
+                //     width: 160,
+                //     minWidth: 100,
+                //     customRender: ({ text }) => toDateString(text),
+                //     align: 'center'
+                // },
                 {
                     title: '设备状态',
                     dataIndex: 'status',
@@ -334,7 +358,7 @@ export default defineComponent({
                 {
                     title: '操作',
                     key: 'action',
-                    width: 110,
+                    width: 160,
                     align: 'center',
                     hideInSetting: true,
                     fixed: 'right'
@@ -447,9 +471,10 @@ export default defineComponent({
         }
 
         const toDetail=(row)=>{
-            ledgerStore.$patch(state=>{
-                state.info = row
-            })
+            // ledgerStore.$patch(state=>{
+            //     state.info = row
+            // })
+            localStorage.setItem('detail',JSON.stringify(row))
             push({
                 name:'listDetail',
             })
