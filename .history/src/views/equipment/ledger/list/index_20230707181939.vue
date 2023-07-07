@@ -20,6 +20,7 @@
                 </div>
             </div>
         </a-card>
+        <!-- <div style="width:100px;height:100px;background-color: #0E12EE;"></div> -->
         <a-card style="margin-top: 10px;border-radius: 4px;">
             <div id="proTable">
                 <ele-pro-table ref="tableRef" title="设备列表" :resizable="true" :bordered="true" :columnsFixed="true"
@@ -36,11 +37,14 @@
                         <template v-if="column.dataIndex === 'name'">
                             {{ record.device_info.name}}
                         </template>
+                        <template v-if="column.dataIndex === 'type_code'">
+                            {{ record.device_info.type_code}}
+                        </template>
                         <template v-if="column.dataIndex === 'category_code'">
                             {{ record.device_info.category_code}}
                         </template>
-                        <template v-if="column.dataIndex === 'category'">
-                            {{ record.device_info.category}}
+                        <template v-if="column.dataIndex === 'version_code'">
+                            {{ record.device_info.version_code}}
                         </template>
                         <template v-if="column.dataIndex === 'status'">
                             {{ record.status}}
@@ -57,6 +61,7 @@
                         <template v-if="column.dataIndex === 'userStatus'">
                             {{  record?.user?.status}}
                         </template>
+                      
                         <template v-if="column.dataIndex === 'device_created_at'">
                             {{record?.device_info?.created_at}}
                         </template>
@@ -73,22 +78,42 @@
                         <!-- 操作列 -->
                         <template v-else-if="column.key === 'action'">
                             <a-space>
-                                <a-tooltip placement="bottom"  color="white">
+                                <a @click="toDetail(record)">详情</a>
+                                <!-- <a-divider type="vertical" /> -->
+                                <!-- <a-tooltip placement="bottom"  color="white">
                                     <template #title>
-                                        <span><a style="padding: 5px;">设备详情</a></span>
+                                        <span><a style="padding: 5px;">设备激活</a></span>
                                     </template>
-                                    <a @click="toDetail(record)"><InfoCircleOutlined /></a>
-                                </a-tooltip>
+                                    <a>激活</a>
+                                </a-tooltip> -->
                                 <a-divider type="vertical" />
                                 <a-tooltip placement="bottom" color="white">
                                     <template #title>
-                                        <div>
+                                        <div v-if="record.status=='运营中'">
+                                            <!-- <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div> -->
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'4')">锁机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='在库'">
                                             <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toDeployment(record,'2')">移机</a></div>
-                                            <div style="padding: 5px;" v-if="record?.approval?.id"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='布机中'">
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'1')">布机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='锁机'">
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='撤机中'">
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
+                                        </div>
+                                        <div v-else-if="record.status=='未激活'">
+                                            <div style="padding: 5px;"><a @click="toDeployment(record,'2')">移机</a></div>
+                                            <div style="padding: 5px;"><a @click="toWeaning(record,'3')">撤机</a></div>
                                         </div>
                                     </template>
-                                        <a><MoreOutlined /></a>
+                                        <a>更多<DownOutlined /></a>
                                 </a-tooltip>
                             </a-space>
                         </template>
@@ -154,19 +179,19 @@
     </div>
 </template>
 <script>
-import { defineComponent, reactive, ref, computed } from 'vue'
-import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined} from '@ant-design/icons-vue'
+import { defineComponent, reactive, ref, computed ,onBeforeUpdate} from 'vue'
+import { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined} from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import {getDeviceJournal} from '@/api/equipment/ledger/list'
-import {getDeviceInfo,addDeviceInfo} from '@/api/equipment/basic/product'
+import {addDeviceInfo} from '@/api/equipment/basic/product'
 import { useRouter } from 'vue-router';
 import { logout } from '@/utils/page-tab-util';
-import { object } from 'vue-types';
+import {approvalDetail} from '@/api/equipment/ledger/workOrder'
 import {ledgerDetailStore} from '@/store/modules/detail'
 export default defineComponent({
     name: 'Nameplate',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined},
+    components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined},
     setup() {
         const {push}=useRouter()
         let addVisible = ref(false)
@@ -219,23 +244,23 @@ export default defineComponent({
                 },
                 {
                     title: '设备品类',
-                    dataIndex: 'category',
-                    width: 160,
-                    minWidth: 100,
+                    dataIndex: 'category_code',
+                    width: 80,
+                    minWidth: 80,
                     align: 'center'
                 },
                 {
                     title: '设备型号',
-                    dataIndex: 'category_code',
-                    width: 160,
-                    minWidth: 100,
+                    dataIndex: 'type_code',
+                    width: 80,
+                    minWidth: 80,
                     align: 'center'
                 },
                 {
                     title: '设备版本',
-                    dataIndex: 'version',
-                    width: 160,
-                    minWidth: 100,
+                    dataIndex: 'version_code',
+                    width: 80,
+                    minWidth: 80,
                     align: 'center'
                 },
                 // {
@@ -249,7 +274,7 @@ export default defineComponent({
                 {
                     title: '设备状态',
                     dataIndex: 'status',
-                    width: 160,
+                    width: 100,
                     minWidth: 100,
                     align: 'center'
                 },
@@ -263,70 +288,65 @@ export default defineComponent({
                 {
                     title: '运营模式',
                     dataIndex: 'operation_mode',
-                    width: 160,
-                    minWidth: 100,
+                    width: 80,
+                    minWidth: 80,
                     align: 'center'
                 },
                 {
                     title: '渠道名称',
                     dataIndex: 'channelName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     align: 'center'
                 },
                 {
                     title: '客户名称',
                     dataIndex: 'userName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     align: 'center'
                 },
                 {
                     title: '客户状态',
                     dataIndex: 'userStatus',
-                    width: 160,
-                    minWidth: 100,
+                    width: 80,
+                    minWidth: 80,
                     align: 'center'
                 },
                 {
                     title: '门店名称',
                     dataIndex: 'shopName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     align: 'center'
                 },
                 {
                     title: '门店地址',
                     dataIndex: 'shopAddress',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     align: 'center'
                 },
                 {
-                    title: '订单开始时间',
-                    dataIndex: 'voltage',
-                    width: 160,
+                    title: '计费开始时间',
+                    dataIndex: 'service_begin',
+                    width: 200,
                     minWidth: 100,
-                    align: 'center'
+                    align: 'center',
+                    customRender: ({ text }) => toDateString(text)
                 },
                 {
-                    title: '订单结束时间',
-                    dataIndex: 'voltage',
-                    width: 160,
+                    title: '计费结束时间',
+                    dataIndex: 'service_end',
+                    width: 200,
                     minWidth: 100,
-                    align: 'center'
-                },
-                {
-                    title: '设备启用时间',
-                    dataIndex: 'voltage',
-                    width: 160,
-                    minWidth: 100,
-                    align: 'center'
+                    align: 'center',
+                    customRender: ({ text }) => toDateString(text)
                 },
                 {
                     title: '创建时间',
                     dataIndex: 'created_at',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     customRender: ({ text }) => toDateString(text),
                     align: 'center'
@@ -334,7 +354,7 @@ export default defineComponent({
                 {
                     title: '操作',
                     key: 'action',
-                    width: 110,
+                    width: 160,
                     align: 'center',
                     hideInSetting: true,
                     fixed: 'right'
@@ -367,7 +387,9 @@ export default defineComponent({
             })
         }
         getDeviceJournalList()
-
+        onBeforeUpdate(()=>{
+            getDeviceJournalList()
+        })
         const changePage = (page) => {
             pageData.page = page
             getDeviceJournalList()
@@ -447,9 +469,10 @@ export default defineComponent({
         }
 
         const toDetail=(row)=>{
-            ledgerStore.$patch(state=>{
-                state.info = row
-            })
+            // ledgerStore.$patch(state=>{
+            //     state.info = row
+            // })
+            localStorage.setItem('detail',JSON.stringify(row))
             push({
                 name:'listDetail',
             })
@@ -457,26 +480,78 @@ export default defineComponent({
 
 
         const toDeployment=(row,value)=>{
-
-            if(row?.approval?.id){
-                push({
-                    name:'orderDetail',
-                    query:{id:row?.approval?.id}
+            console.log(value)
+            if(value=='1'){
+                let deploymentItem=row?.approval?.filter((item)=>{
+                    return item?.type=='deployment'
                 })
-            }else{
-                push({
-                    name:'deployment',
-                    query:{value:value,code:row.device_code,status:row.status,name:row.device_info.name,type:row.device_info.type,category:row.device_info.category,id:row.device_id}
+                console.log(deploymentItem)
+                if(deploymentItem.length){
+                    approvalDetail(deploymentItem[0].id).then((res)=>{
+                        if(res?.data?.status!='pending'){
+                            push({
+                                name:'deployment',
+                                query:{value:value,code:row.device_code,status:row.status,name:row.device_info.name,type:row.device_info.type,category:row.device_info.category,id:row.device_id}
+                            })
+                        }else{
+                            push({
+                                name:'orderDetail',
+                                query:{id:deploymentItem[0].id}
+                            })
+                        }
+                    })
+                }else{
+                    push({
+                        name:'deployment',
+                        query:{value:value,code:row.device_code,status:row.status,name:row.device_info.name,type:row.device_info.type,category:row.device_info.category,id:row.device_id}
+                    })
+                }
+            }else if(value=='2'){
+                let changeItem=row?.approval?.filter((item)=>{
+                    return item?.type=='change'
                 })
+                console.log(changeItem)
+                if(changeItem.length){
+                    approvalDetail(changeItem[0].id).then((res)=>{
+                        if(res?.data?.status!='pending'){
+                            push({
+                                name:'deployment',
+                                query:{value:value,code:row.device_code,status:row.status,name:row.device_info.name,type:row.device_info.type,category:row.device_info.category,id:row.device_id}
+                            })
+                        }else{
+                            push({
+                                name:'orderDetail',
+                                query:{id:changeItem[0].id}
+                            })
+                        }
+                    })
+                }else{
+                    push({
+                        name:'deployment',
+                        query:{value:value,code:row.device_code,status:row.status,name:row.device_info.name,type:row.device_info.type,category:row.device_info.category,id:row.device_id}
+                    })
+                }
             }
             
         }
 
         const toWeaning=(row,value)=>{
-            push({
-                name:'weaning',
-                query:{orderId:row?.approval?.id}
+            let withdrawalItem=row?.approval?.filter((item)=>{
+                return item?.type=='withdrawal'
             })
+            console.log(row)
+            if(withdrawalItem.length){
+                push({
+                    name:'weaning',
+                    query:{orderId:withdrawalItem[0].id}
+                })
+            }else{
+                push({
+                    name:'weaning',
+                    query:{value:value,code:row.device_code,status:row.status,name:row.device_info.name,type:row.device_info.type,category:row.device_info.category,id:row.device_id}
+                })
+            }
+            
         }
         return {
             toDeployment,

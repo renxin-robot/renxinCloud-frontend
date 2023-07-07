@@ -37,13 +37,13 @@
                         <template v-if="column.dataIndex === 'name'">
                             {{ record.device_info.name}}
                         </template>
-                        <template v-if="column.dataIndex === 'type_code'">
+                        <template v-if="column.dataIndex === 'type'">
                             {{ record.device_info.type_code}}
                         </template>
-                        <template v-if="column.dataIndex === 'category_code'">
+                        <template v-if="column.dataIndex === 'category'">
                             {{ record.device_info.category_code}}
                         </template>
-                        <template v-if="column.dataIndex === 'version_code'">
+                        <template v-if="column.dataIndex === 'version'">
                             {{ record.device_info.version_code}}
                         </template>
                         <template v-if="column.dataIndex === 'status'">
@@ -61,7 +61,6 @@
                         <template v-if="column.dataIndex === 'userStatus'">
                             {{  record?.user?.status}}
                         </template>
-                      
                         <template v-if="column.dataIndex === 'device_created_at'">
                             {{record?.device_info?.created_at}}
                         </template>
@@ -244,21 +243,21 @@ export default defineComponent({
                 },
                 {
                     title: '设备品类',
-                    dataIndex: 'category_code',
+                    dataIndex: 'category',
                     width: 80,
                     minWidth: 80,
                     align: 'center'
                 },
                 {
                     title: '设备型号',
-                    dataIndex: 'type_code',
+                    dataIndex: 'type',
                     width: 80,
                     minWidth: 80,
                     align: 'center'
                 },
                 {
                     title: '设备版本',
-                    dataIndex: 'version_code',
+                    dataIndex: 'version',
                     width: 80,
                     minWidth: 80,
                     align: 'center'
@@ -328,20 +327,25 @@ export default defineComponent({
                     align: 'center'
                 },
                 {
-                    title: '计费开始时间',
-                    dataIndex: 'service_begin',
+                    title: '订单开始时间',
+                    dataIndex: 'voltage',
                     width: 200,
                     minWidth: 100,
-                    align: 'center',
-                    customRender: ({ text }) => toDateString(text)
+                    align: 'center'
                 },
                 {
-                    title: '计费结束时间',
-                    dataIndex: 'service_end',
+                    title: '订单结束时间',
+                    dataIndex: 'voltage',
                     width: 200,
                     minWidth: 100,
-                    align: 'center',
-                    customRender: ({ text }) => toDateString(text)
+                    align: 'center'
+                },
+                {
+                    title: '设备启用时间',
+                    dataIndex: 'voltage',
+                    width: 200,
+                    minWidth: 100,
+                    align: 'center'
                 },
                 {
                     title: '创建时间',

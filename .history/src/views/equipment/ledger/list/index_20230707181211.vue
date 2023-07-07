@@ -61,7 +61,6 @@
                         <template v-if="column.dataIndex === 'userStatus'">
                             {{  record?.user?.status}}
                         </template>
-                      
                         <template v-if="column.dataIndex === 'device_created_at'">
                             {{record?.device_info?.created_at}}
                         </template>
@@ -328,20 +327,25 @@ export default defineComponent({
                     align: 'center'
                 },
                 {
-                    title: '计费开始时间',
-                    dataIndex: 'service_begin',
+                    title: '订单开始时间',
+                    dataIndex: 'voltage',
                     width: 200,
                     minWidth: 100,
-                    align: 'center',
-                    customRender: ({ text }) => toDateString(text)
+                    align: 'center'
                 },
                 {
-                    title: '计费结束时间',
-                    dataIndex: 'service_end',
+                    title: '订单结束时间',
+                    dataIndex: 'voltage',
                     width: 200,
                     minWidth: 100,
-                    align: 'center',
-                    customRender: ({ text }) => toDateString(text)
+                    align: 'center'
+                },
+                {
+                    title: '设备启用时间',
+                    dataIndex: 'voltage',
+                    width: 200,
+                    minWidth: 100,
+                    align: 'center'
                 },
                 {
                     title: '创建时间',

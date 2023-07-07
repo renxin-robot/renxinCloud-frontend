@@ -332,16 +332,14 @@ export default defineComponent({
                     dataIndex: 'service_begin',
                     width: 200,
                     minWidth: 100,
-                    align: 'center',
-                    customRender: ({ text }) => toDateString(text)
+                    align: 'center'
                 },
                 {
                     title: '计费结束时间',
                     dataIndex: 'service_end',
                     width: 200,
                     minWidth: 100,
-                    align: 'center',
-                    customRender: ({ text }) => toDateString(text)
+                    align: 'center'
                 },
                 {
                     title: '创建时间',

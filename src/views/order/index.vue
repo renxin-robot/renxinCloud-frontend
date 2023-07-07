@@ -50,7 +50,7 @@
                             <a-button>作废</a-button>
                         </div>
                     </template> -->
-                    <template v-if="column.key === 'useName'">
+                    <template v-if="column.key === 'userName'">
                         <span>{{ record?.user?.name }}</span>
                     </template>
                     <template v-if="column.key === 'type'">
@@ -387,7 +387,7 @@ export default defineComponent({
                     title: '渠道名称',
                     // dataIndex: 'payment_account',
                     key: 'channelName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -396,7 +396,7 @@ export default defineComponent({
                     title: '客户名称',
                     // dataIndex: 'province_code',
                     key: 'userName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
