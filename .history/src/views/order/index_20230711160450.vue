@@ -50,8 +50,19 @@
                             <a-button>作废</a-button>
                         </div>
                     </template> -->
-                    <template v-if="column.key === 'useName'">
+                    <template v-if="column.key === 'payment_account'">
+                        <span>{{ record?.payment?.pay_account }}</span>
+                    </template>
+                    <template v-if="column.key === 'userName'">
                         <span>{{ record?.user?.name }}</span>
+                    </template>
+                    <template v-if="column.key === 'type'">
+                        <span v-if="record.type=='trial'">试用订单</span>
+                        <span v-else-if="record.type=='offline'">付费订单</span>
+                        <span v-else>付费订单</span>
+                    </template>
+                    <template v-if="column.key === 'payment_method'">
+                        <span v-if="record.payment_method=='trial'">试用订单</span>
                     </template>
                     <template v-if="column.key === 'useCode'">
                         <span>{{ record?.user?.code }}</span>
@@ -87,7 +98,17 @@
         </a-card>
         <a-modal v-model:visible="addVisible" title="新增订单" @ok="handleOk" @cancel="closeModal">
             <a-form :model="orderData" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }" autocomplete="off">
-                <a-form-item label="佣金方案" name="commission_plan_id"
+                <a-form-item label="订单类型" name="type"
+                    :rules="[{ required: true, message: '请选择订单类型！' }]">
+                    <a-select
+                    ref="select"
+                    @change="changeType"
+                    v-model:value="orderData.type">
+                        <a-select-option value="offline">付费订单</a-select-option>
+                        <a-select-option value="trial">试用订单</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="佣金方案" name="commission_plan_id" v-if="orderType=='offline'"
                     :rules="[{ required: true, message: '请选择佣金方案！' }]">
                     <a-select
                     ref="select"
@@ -96,19 +117,62 @@
                         <a-select-option :value="JSON.stringify(item)" v-for="item in commissionPlanList" :key="item.id">{{item.name}}</a-select-option>
                     </a-select>
                 </a-form-item>
-                <a-form-item label="订单金额"
+                <a-form-item label="月租费用"  v-if="orderType=='offline'"
                     :rules="[{ required: true, message: '请选择佣金方案！' }]">
                     <a-input v-model:value="orderPrice" placeholder="" :disabled="true"/>
                 </a-form-item>
+                <a-form-item label="支付方式" name="payment_method"  v-if="orderType=='offline'"
+                    :rules="[{ required: true, message: '请选择支付方式！' }]">
+                    <a-select
+                    ref="select"
+                    v-model:value="orderData.payment_method">
+                        <a-select-option value="对公转账">对公转账</a-select-option>
+                        <a-select-option value="现金支付">现金支付</a-select-option>
+                        <!-- <a-select-option value="试用订单">试用订单</a-select-option> -->
+                        <a-select-option value="微信">微信</a-select-option>
+                        <a-select-option value="支付宝">支付宝</a-select-option>
+                        <a-select-option value="其他">其他</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="支付账号"  v-if="orderType=='offline'" name="pay_account"> 
+                    <a-input v-model:value="orderData.pay_account" placeholder="请输入支付账号" :disabled="false"/>
+                </a-form-item>
+                <a-form-item label="支付流水号"  v-if="orderType=='offline'" name="transaction_id"
+                    :rules="[{ required: true, message: '请输入支付流水号！' }]">
+                    <a-input v-model:value="orderData.transaction_id" placeholder="请输入支付流水号" :disabled="false"/>
+                </a-form-item>
+                <a-form-item label="支付时间"  v-if="orderType=='offline'" name="pay_at"
+                    :rules="[{ required: true, message: '请输入支付时间！' }]">
+                    <a-input v-model:value="orderData.pay_at" placeholder="格式：2022-01-01 12:40:15" :disabled="false"/>
+                </a-form-item>
                 <a-form-item label="设备SN" name="device_journal_id"
                     :rules="[{ required: true, message: '请选择设备SN！' }]">
-                    <a-select
+                    <el-select v-model="orderData.device_journal_id" filterable placeholder="请输入设备SN！" style="width: 100%;border-radius: none;"
+                    v-selectloadmore="selectLoadMoreSnInfo">
+                        <el-option
+                            v-for="item in deviceJournalList"
+                            :key="item.id"
+                            :label="item.device_code"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <!-- <a-select
                     ref="select"
                     v-model:value="orderData.device_journal_id">
                         <a-select-option :value="item.id" v-for="item in deviceJournalList" :key="item.id">{{item.device_code}}</a-select-option>
-                    </a-select>
+                    </a-select> -->
+                </a-form-item>
+                <a-form-item label="开始时间" name="trial_begin" :rules="[{ required: true, message: '请选择试用开始日期！' }]" v-if="orderType=='trial'">
+                    <a-date-picker v-model:value="orderData.trial_begin" :disabledDate="disabledDate" style="width:100%;" placeholder="请选择试用开始日期" />
+                </a-form-item>
+                <a-form-item label="结束时间" name="trial_end" :rules="[{ required: true, message: '请选择试用结束日期！' }]"  v-if="orderType=='trial'">
+                    <a-date-picker v-model:value="orderData.trial_end"  :disabledDate="disabledEndDate"  style="width:100%;" placeholder="请选择试用结束日期" />
+                </a-form-item>
+                <a-form-item label="试用原因" name="trial_reason" :rules="[{ required: true, message: '请填写试用原因！' }]"  v-if="orderType=='trial'">
+                    <a-textarea :rows="4" v-model:value="orderData.trial_reason" />
                 </a-form-item>
                 <a-form-item label="备注" name="remark">
+                    <!-- {{orderData.orderType=='offline' }} -->
                     <a-textarea :rows="4" v-model:value="orderData.remark" />
                 </a-form-item>
             </a-form>
@@ -117,7 +181,7 @@
 </template>
 <script>
 import { defineComponent, reactive, ref, computed, } from 'vue';
-import {addUser} from '@/api/system/customer';
+import moment from 'moment'
 import { useI18n } from 'vue-i18n';
 import {  notification } from 'ant-design-vue/es';
 import {getToken} from  '@/utils/token-util'
@@ -140,6 +204,7 @@ export default defineComponent({
         // 表格选中数据
         const selection = ref([]);
         const datasource = ref([])
+        let orderType=ref('')
         let orderPrice=ref()
         const {push}=useRouter()
         let customerName=ref('')
@@ -151,11 +216,22 @@ export default defineComponent({
             page: 1,
             limit: 10
         })
+        let page = ref(2);
+        let limit = ref(10);
+        const newData=reactive({})
         let selectName=ref()
         let orderData = reactive({
             device_journal_id:'',
             commission_plan_id:'',
             remark:'',
+            type:'',
+            trial_begin:'',
+            trial_end:'',
+            trial_reason:'',
+            payment_method:'',
+            transaction_id:'',
+            pay_account:'',
+            pay_at:''
         })
         let orderList = ref([])
         let commissionPlanList=ref([])
@@ -174,6 +250,23 @@ export default defineComponent({
                     : 'calc(100vh - 562px)'
                 : void 0;
         });
+
+        const changeType=()=>{
+            orderData.device_journal_id=''
+            orderData.commission_plan_id=''
+            orderData.remark=''
+            selectName.value=''
+            orderPrice.value=''
+            orderData.trial_begin=''
+            orderData.trial_end=''
+            orderData.trial_reason=''
+            orderData.payment_method=''
+            orderData.transaction_id=''
+            orderData.pay_account=''
+            orderData.pay_at=''
+            orderType.value=''
+            orderType.value=orderData.type
+        }
 
         // 表格列配置
         const columns = computed(() => {
@@ -266,7 +359,7 @@ export default defineComponent({
                     align: 'center',
                 },
                 {
-                    title: '支付账号',
+                    title: '付款账号',
                     dataIndex: 'payment_account',
                     key: 'payment_account',
                     width: 160,
@@ -297,7 +390,7 @@ export default defineComponent({
                     title: '渠道名称',
                     // dataIndex: 'payment_account',
                     key: 'channelName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -306,7 +399,7 @@ export default defineComponent({
                     title: '客户名称',
                     // dataIndex: 'province_code',
                     key: 'userName',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -429,19 +522,19 @@ export default defineComponent({
             })
         }
 
-        const getDeviceJournalList=()=>{
-            getDeviceJournal().then((res)=>{
-                if(res.code==0){
-                    deviceJournalList.value=res.data.filter((item)=>{
-                        return item.status!='在库'&&item.status!='布机中'
-                    })
-                }
-            })
-        }
+        // const getDeviceJournalList=()=>{
+        //     getDeviceJournal().then((res)=>{
+        //         if(res.code==0){
+        //             deviceJournalList.value=res.data.filter((item)=>{
+        //                 return item.status!='在库'&&item.status!='布机中'
+        //             })
+        //         }
+        //     })
+        // }
         
         const toAddCustomer=()=>{
             getCommissionPlanList()
-            getDeviceJournalList()
+            // getDeviceJournalList()
             addVisible.value=true
         }
         
@@ -451,6 +544,15 @@ export default defineComponent({
             orderData.remark=''
             selectName.value=''
             orderPrice.value=''
+            orderData.type=''
+            orderData.trial_begin=''
+            orderData.trial_end=''
+            orderData.trial_reason=''
+            orderData.payment_method=''
+            orderData.transaction_id=''
+            orderData.pay_account=''
+            orderData.pay_at=''
+            orderType.value=''
         }
 
         const closeModal=()=>{
@@ -458,7 +560,16 @@ export default defineComponent({
         }
 
         const handleOk=()=>{
-            addOrder(orderData).then((res)=>{
+            if(orderData.type=='trial'){
+                let trialData={
+                    type:orderData.type,
+                    trial_begin:orderData.trial_begin,
+                    trial_end:orderData.trial_end,
+                    trial_reason:orderData.trial_reason,
+                    remark:orderData.remark,
+                    device_journal_id:orderData.device_journal_id
+                }
+                addOrder(trialData).then((res)=>{
                 // console.log(res)
                     if(res.code==0){
                         notification.success({
@@ -473,6 +584,34 @@ export default defineComponent({
                             message:err.response.data.message,
                         });
                 })
+            }else if(orderData.type=='offline'){
+                let offlineData={
+                    type:orderData.type,
+                    remark:orderData.remark,
+                    device_journal_id:orderData.device_journal_id,
+                    commission_plan_id:orderData.commission_plan_id,
+                    pay_account:orderData.pay_account,
+                    pay_at:orderData.pay_at,
+                    payment_method:orderData.payment_method,
+                    transaction_id:orderData.transaction_id
+                }
+                addOrder(offlineData).then((res)=>{
+                // console.log(res)
+                    if(res.code==0){
+                        notification.success({
+                            message: '新建成功',
+                        });
+                        addVisible.value=false
+                        clearData()
+                        getOrderList()
+                    }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
+                })
+            }
+            
         }
 
         const toSearch=()=>{
@@ -494,7 +633,41 @@ export default defineComponent({
             orderPrice.value=JSON.parse(value).renxin_amount+JSON.parse(value).agent_amount
             // console.log(value)
         }
+
+        const disabledDate =(current)=>{
+            return current && current < moment().subtract(1, 'days').endOf('day')
+        }
+        const disabledEndDate =(current)=>{
+            return current && current < moment().endOf('day')
+        }
+
+
+        // 自定义事件
+        const selectLoadMoreSnInfo = async () => {
+            if (deviceJournalList.value.length >= total.value) return
+          // 获取10条数据
+            deviceJournalList.value = [...deviceJournalList.value, ...(await getStoreInformation(page.value++, limit.value))]
+            // console.log(await getStoreInformation(page.value++, limit.value),'hihuih')
+        }
+
+        const getStoreInformation = (page, limit) => {
+            return new Promise( (resolve) => {
+                getDeviceJournal({ page, limit }).then(({ data, paging: { total: TOTAL } }) => {
+                    total.value = TOTAL
+                    resolve(data)
+                })
+            })
+        }
         return {
+            page,
+            limit,
+            disabledDate,
+            selectLoadMoreSnInfo,
+            getStoreInformation,
+            disabledEndDate,
+            orderType,
+            newData,
+            changeType,
             orderPrice,
             changeSelect,
             selectName,
@@ -527,13 +700,34 @@ export default defineComponent({
             getOrderList,
             options: regionData,
             getCommissionPlanList,
-            getDeviceJournalList,
+            // getDeviceJournalList,
             deviceJournalList,
         };
-    }
+    },
+    created() {
+        (async () => {
+            this.deviceJournalList = await this.getStoreInformation(1, 10)
+        })();
+        },
+    directives: {
+        selectloadmore: {
+            mounted: (el, binding) => {
+                // console.dir(el)
+                const SELECTWRAP_DOM = document.querySelector('.el-select-dropdown__wrap.el-scrollbar__wrap.el-scrollbar__wrap--hidden-default');
+                // console.log('获取的节点信息', SELECTWRAP_DOM)
+                SELECTWRAP_DOM.addEventListener('scroll', () => {
+                if ((SELECTWRAP_DOM.scrollHeight - SELECTWRAP_DOM.scrollTop) <= SELECTWRAP_DOM.clientHeight) {
+                    // console.log('调用事件源', binding)
+                    binding.value()
+                }
+                })
+            }
+        }
+        }
 });
 </script>
 <style lang="less" scoped>
+    // /deep/
     #proTable{
         /deep/.ele-pro-table .ant-table-pagination.ant-pagination{
             display: none;

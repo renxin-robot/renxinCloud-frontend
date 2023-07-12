@@ -50,9 +50,6 @@
                             <a-button>作废</a-button>
                         </div>
                     </template> -->
-                    <template v-if="column.key === 'payment_account'">
-                        <span>{{ record?.payment?.pay_account }}</span>
-                    </template>
                     <template v-if="column.key === 'userName'">
                         <span>{{ record?.user?.name }}</span>
                     </template>

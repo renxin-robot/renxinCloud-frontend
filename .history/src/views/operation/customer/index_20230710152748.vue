@@ -33,8 +33,8 @@
                         <span v-else>个人</span>
                     </template>
                     <template v-if="column.key === 'address'">
-                        <span style="margin-right: 5px;">{{ record.province }} </span>  
-                        <span style="margin-right: 5px;">{{ record.city }} </span> 
+                        <span>{{ record.province }} </span>  
+                        <span>{{ record.city }} </span> 
                         <span>{{ record.area }}</span>
                     </template>
                     <template v-if="column.key === 'payment_account'">
@@ -56,7 +56,7 @@
                                 <template #title>
                                     <span>添加门店</span>
                                 </template>
-                                <a @click="toAddShopStore"><PlusOutlined /></a>
+                                <a @click="toAddShopStore(record)"><PlusOutlined /></a>
                             </a-tooltip>
                             <a-divider type="vertical" />
                             <a-tooltip placement="bottom">
@@ -98,20 +98,20 @@
                 </a-form-item>
                 <!-- <a-form-item label="客户状态" name="status"
                     :rules="[{ required: true, message: '请输入客户状态！' }]">
-                    <a-select
-                    ref="select"
+                re       <a-select
+                 f="select"
                     v-model:value="customerData.status">
                         <a-select-option value="normal">正常</a-select-option>
                         <a-select-option value="suspended">暂停</a-select-option>
                         <a-select-option value="owed">欠费</a-select-option>
                         <a-select-option value="canceled">注销的</a-select-option>
                     </a-select>
-                </a-form-item> -->
+                </a-form-item> -->   
                 <a-form-item label="地区" name="province_code"
                     :rules="[{ required: true, message: '请选择地区！' }]">
                     <a-cascader
                     :options="options"
-                    v-model="areaInfo.chooseAreaList"
+                    v-model:value="areaInfo.chooseAreaList"
                     @change="handleChange">
                     </a-cascader>
                 </a-form-item>
@@ -173,14 +173,14 @@
                 </a-form-item>
             </a-form>
         </a-modal>
-        <a-modal v-model:visible="addShopVisible" :title="`${ editId ? '编辑' : '新增' }门店`" @ok="handleOk" @cancel="cancelAddShop">
+        <a-modal v-model:visible="addShopVisible" :title="`${ editId ? '编辑' : '新增' }门店`" @ok="handleAddShopOk" @cancel="cancelAddShop">
             <a-form :model="shopStoreData" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
                 <a-form-item label="门店名称" name="name" :rules="[{ required: true, message: '请输入门店名称！' }]">
                     <a-input v-model:value="shopStoreData.name" />
                 </a-form-item>
                 <a-form-item label="门店地址" name="province_code" :rules="[{ required: true, message: '请选择地区！' }]">
-                    <a-cascader :options="options" v-model="areaList" @change="handleChange">
+                    <a-cascader :options="options" v-model:value="shopAreaList" @change="handleShopChange">
                     </a-cascader>
                 </a-form-item>
                 <a-form-item label="详细地址" name="name" :rules="[{ required: true, message: '请输入详细地址！' }]">
@@ -194,9 +194,6 @@
                         <a-select-option value="团餐">团餐</a-select-option>
                         <a-select-option value="其他">其他</a-select-option>
                     </a-select>
-                </a-form-item>
-                <a-form-item label="所属客户" name="service" :rules="[{ required: true, message: '请输入所属客户！' }]">
-                    <a-select v-model:value="shopStoreData.user_id" :options="customerList"></a-select>
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -214,7 +211,7 @@ import { ContactsOutlined, FormOutlined, DeleteOutlined, ExclamationCircleOutlin
 import { regionData,CodeToText } from 'element-china-area-data'
 import { toDateString } from 'ele-admin-pro';
 import { pageRoles} from '@/api/system/role'
-
+import {addUserStore,} from '@/api/shop';
 export default defineComponent({
     name: 'Customer',
     components: { ContactsOutlined, FormOutlined, DeleteOutlined, ExclamationCircleOutlined ,PlusOutlined},
@@ -226,6 +223,7 @@ export default defineComponent({
         // 表格选中数据
         const selection = ref([]);
         const datasource = ref([])
+        let shopAreaList=ref([])
         const {push}=useRouter()
         let customerName=ref('')
         let customerId=ref('')
@@ -319,7 +317,7 @@ export default defineComponent({
                     // sorter: true,
                     // showSorterTooltip: false,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -357,7 +355,7 @@ export default defineComponent({
                     // showSorterTooltip: false,
                     // hideInTable: true,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -393,7 +391,7 @@ export default defineComponent({
                     // sorter: true,
                     // showSorterTooltip: false,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -441,7 +439,7 @@ export default defineComponent({
                     // sorter: true,
                     // showSorterTooltip: false,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -520,14 +518,23 @@ export default defineComponent({
 
         const getUserList = () => {
             getUser({ ...pageData,...formState }).then((res) => {
-                userList.value = res.data
-                total.value=res.paging.total
+                if(res.code==0){
+                    userList.value = res.data
+                    total.value=res.paging.total
+                }else {
+                        // console.log('没登录')
+                        notification.success({
+                            message: '请先登录！'
+                        });
+                        logout();
+                    }
                 // console.log(res)
             })
         }
         getUserList()
 
         const editCustomer = (row) => {
+            console.log(row, 'gonglanglang')
             areaInfo.chooseAreaList=[]
             editId.value=row.id
             Object.assign(customerData,row)
@@ -537,10 +544,7 @@ export default defineComponent({
             areaInfo.chooseAreaList=(Object.values(areaInfo.chooseAreaList)).map((item)=>{
                 return item
             })
-            // console.log( areaInfo.chooseAreaList,'hhh')
-            // areaList.value[0]=row.province_code
-            // areaList.value[1]=row.city_code
-            // areaList.value[2]=row.area_code
+            areaList.value = [row.province_code, row.city_code, row.area_code]
             addVisible.value=true
         }
 
@@ -598,6 +602,10 @@ export default defineComponent({
                         getUserList()
                         editId.value=''
                     }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
                 })
             }else{
                 addUser(customerData).then((res)=>{
@@ -609,6 +617,10 @@ export default defineComponent({
                         clearData()
                         getUserList()
                     }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
                 })
             }
         }
@@ -685,12 +697,80 @@ export default defineComponent({
             })
         }
 
-        const toAddShopStore=()=>{
+        const handleShopChange = (value) => {
+            // console.log(value,'lll')
+            shopAreaList.value = value;
+            if (value.length > 2) {
+                shopStoreData.province_code = value[0];
+                shopStoreData.city_code = value[1];
+                shopStoreData.area_code = value[2];
+            } else {
+                shopStoreData.province_code = value[0];
+                shopStoreData.city_code = value[1];
+            }
+        };
+
+        const toAddShopStore=(row)=>{
             addShopVisible.value=true
+            shopStoreData.user_id = row.id;
         }
+
+        const clearShopData=()=>{
+            shopStoreData.name = '';
+            shopStoreData.user_id = '';
+            shopStoreData.province_code = '';
+            shopStoreData.city_code = '';
+            shopStoreData.area_code = '';
+            shopStoreData.province = '';
+            shopStoreData.city = '';
+            shopStoreData.area = '';
+            shopStoreData.town = '';
+            shopStoreData.town_code = '';
+            shopStoreData.address_detail = '';
+            shopAreaList.value=[]
+            shopStoreData.service = '';
+        }
+        const handleAddShopOk = () => {
+            shopStoreData.province = CodeToText[shopStoreData.province_code];
+            shopStoreData.area = CodeToText[shopStoreData.area_code];
+            shopStoreData.city = CodeToText[shopStoreData.city_code];
+            addUserStore(shopStoreData).then((res) => {
+                if (res.code == 0) {
+                    notification.success({
+                        message: '新增成功'
+                    });
+                    addShopVisible.value = false;
+                    shopAreaList.value=[]
+                    clearShopData()
+                    push({
+                        path:'/shop'
+                    })
+                }else{
+                    notification.error({
+                        message: res.message
+                    });
+                }
+            }).catch((err)=>{
+                // console.log(err)
+                notification.error({
+                        message: err.response.data.message
+                    });
+            })
+        };
+
+        const cancelAddShop=()=>{
+            // console.log('hhh')
+            clearShopData()
+            shopAreaList.value=[]
+        }
+
         return {
             clearData,
+            shopAreaList,
+            cancelAddShop,
+            handleAddShopOk,
             addShopVisible,
+            handleShopChange,
             toAddShopStore,
             areaInfo,
             closeModal,

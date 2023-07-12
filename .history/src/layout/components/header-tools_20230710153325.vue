@@ -10,13 +10,13 @@
       <fullscreen-outlined v-else />
     </div>
     <!-- 语言切换 -->
-    <div class="ele-admin-header-tool-item">
+    <!-- <div class="ele-admin-header-tool-item">
       <i18n-icon />
-    </div>
+    </div> -->
     <!-- 消息通知 -->
-    <div class="ele-admin-header-tool-item">
+    <!-- <div class="ele-admin-header-tool-item">
       <header-notice />
-    </div>
+    </div> -->
     <!-- 用户信息 -->
     <div class="ele-admin-header-tool-item">
       <a-dropdown placement="bottom" :overlay-style="{ minWidth: '120px' }">
@@ -31,7 +31,7 @@
         </div>
         <template #overlay>
           <a-menu :selectable="false" @click="onUserDropClick">
-            <a-menu-item key="profile">
+            <!-- <a-menu-item key="profile">
               <div class="ele-cell">
                 <user-outlined />
                 <div class="ele-cell-content">
@@ -46,7 +46,7 @@
                   {{ t('layout.header.password') }}
                 </div>
               </div>
-            </a-menu-item>
+            </a-menu-item> -->
             <a-menu-divider />
             <a-menu-item key="logout">
               <div class="ele-cell">
@@ -61,9 +61,9 @@
       </a-dropdown>
     </div>
     <!-- 主题设置 -->
-    <div class="ele-admin-header-tool-item" @click="openSetting">
+    <!-- <div class="ele-admin-header-tool-item" @click="openSetting">
       <more-outlined />
-    </div>
+    </div> -->
   </div>
   <!-- 修改密码弹窗 -->
   <password-modal v-model:visible="passwordVisible" />

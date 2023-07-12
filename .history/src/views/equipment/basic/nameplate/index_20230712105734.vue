@@ -233,14 +233,6 @@ export default defineComponent({
         }
 
         const handleOk = () => {
-            if(namePlateInfo.code){
-                if(namePlateInfo.code.length<19){
-                    notification.warn({
-                        message: '出厂编号应为19位！',
-                    });
-                    return
-                }
-            }
             addNameplate(namePlateInfo).then((res) => {
                 if (res.code ==0) {
                     notification.success({

@@ -77,8 +77,8 @@
         <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }铭牌`" @ok="handleOk">
             <a-form :model="namePlateInfo" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
-                <a-form-item label="出厂编号" name="code" :rules="[{ required: true, message: '请输入出厂编号！' }]">
-                    <a-input v-model:value="namePlateInfo.code" @blur="toCheck"/>
+                <a-form-item label="出厂编号" name="code" :rules="[{ required: true, message: '请输入出厂编号！' ,trigger: 'blur'},{pattern: phoneReg,message: '手机号格式不正确!'}]">
+                    <a-input v-model:value="namePlateInfo.code" />
                 </a-form-item>
                 <a-form-item label="屏幕编号" name="screen_code" :rules="[{ required: true, message: '请输入屏幕编号！' }]">
                     <a-input v-model:value="namePlateInfo.screen_code" />
@@ -90,7 +90,7 @@
 <script>
 import { defineComponent, reactive, ref, computed } from 'vue'
 import { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined} from '@ant-design/icons-vue'
-import { toDateString } from 'ele-admin-pro';
+import { phoneReg,toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import { logout } from '@/utils/page-tab-util';
 import { getNameplate, deleteNameplate, addNameplate ,useNameplate} from '@/api/equipment/basic/nameplate'
@@ -100,6 +100,7 @@ export default defineComponent({
     setup() {
         let addVisible = ref(false)
         let editId = ref('')
+        let phoneReg=phoneReg
         let formState = reactive({
             code: '',
             screen_code: '',
@@ -233,14 +234,6 @@ export default defineComponent({
         }
 
         const handleOk = () => {
-            if(namePlateInfo.code){
-                if(namePlateInfo.code.length<19){
-                    notification.warn({
-                        message: '出厂编号应为19位！',
-                    });
-                    return
-                }
-            }
             addNameplate(namePlateInfo).then((res) => {
                 if (res.code ==0) {
                     notification.success({
@@ -269,19 +262,8 @@ export default defineComponent({
                 getNameplateList()
             })
         }
-
-        const toCheck=()=>{
-            if(namePlateInfo.code){
-                if(namePlateInfo.code.length<19){
-                    notification.warn({
-                        message: '出厂编号应为19位！',
-                    });
-                }
-            }
-        }
         return {
             formState,
-            toCheck,
             columns,
             toUseNameplate,
             datasource,
@@ -298,6 +280,7 @@ export default defineComponent({
             editId,
             handleOk,
             addVisible,
+            phoneReg,
 
         }
     }

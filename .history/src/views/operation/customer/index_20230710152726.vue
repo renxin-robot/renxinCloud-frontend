@@ -33,8 +33,8 @@
                         <span v-else>个人</span>
                     </template>
                     <template v-if="column.key === 'address'">
-                        <span style="margin-right: 5px;">{{ record.province }} </span>  
-                        <span style="margin-right: 5px;">{{ record.city }} </span> 
+                        <span>{{ record.province }} </span>  
+                        <span>{{ record.city }} </span> 
                         <span>{{ record.area }}</span>
                     </template>
                     <template v-if="column.key === 'payment_account'">
@@ -180,7 +180,7 @@
                     <a-input v-model:value="shopStoreData.name" />
                 </a-form-item>
                 <a-form-item label="门店地址" name="province_code" :rules="[{ required: true, message: '请选择地区！' }]">
-                    <a-cascader :options="options" v-model="shopAreaList" @change="handleShopChange">
+                    <a-cascader :options="options" v-model:value="shopAreaList" @change="handleShopChange">
                     </a-cascader>
                 </a-form-item>
                 <a-form-item label="详细地址" name="name" :rules="[{ required: true, message: '请输入详细地址！' }]">
@@ -317,7 +317,7 @@ export default defineComponent({
                     // sorter: true,
                     // showSorterTooltip: false,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -355,7 +355,7 @@ export default defineComponent({
                     // showSorterTooltip: false,
                     // hideInTable: true,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -439,7 +439,7 @@ export default defineComponent({
                     // sorter: true,
                     // showSorterTooltip: false,
                     // ellipsis: true,
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
@@ -518,8 +518,16 @@ export default defineComponent({
 
         const getUserList = () => {
             getUser({ ...pageData,...formState }).then((res) => {
-                userList.value = res.data
-                total.value=res.paging.total
+                if(res.code==0){
+                    userList.value = res.data
+                    total.value=res.paging.total
+                }else {
+                        // console.log('没登录')
+                        notification.success({
+                            message: '请先登录！'
+                        });
+                        logout();
+                    }
                 // console.log(res)
             })
         }
@@ -594,6 +602,10 @@ export default defineComponent({
                         getUserList()
                         editId.value=''
                     }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
                 })
             }else{
                 addUser(customerData).then((res)=>{
@@ -605,6 +617,10 @@ export default defineComponent({
                         clearData()
                         getUserList()
                     }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
                 })
             }
         }
@@ -729,13 +745,23 @@ export default defineComponent({
                     push({
                         path:'/shop'
                     })
+                }else{
+                    notification.error({
+                        message: res.message
+                    });
                 }
-            });
+            }).catch((err)=>{
+                // console.log(err)
+                notification.error({
+                        message: err.response.data.message
+                    });
+            })
         };
 
         const cancelAddShop=()=>{
             // console.log('hhh')
             clearShopData()
+            shopAreaList.value=[]
         }
 
         return {

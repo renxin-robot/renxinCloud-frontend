@@ -51,10 +51,15 @@
                         </div>
                     </template> -->
                     <template v-if="column.key === 'payment_account'">
-                        <span>{{ record?.payment?.pay_account }}</span>
+                        <span>{{ record?.payment?.payment_account }}</span>
                     </template>
                     <template v-if="column.key === 'userName'">
                         <span>{{ record?.user?.name }}</span>
+                    </template>
+                    <template>
+                        <span>
+                            {{ record?.user?.name }}
+                        </span>
                     </template>
                     <template v-if="column.key === 'type'">
                         <span v-if="record.type=='trial'">试用订单</span>

@@ -31,7 +31,7 @@
         </div>
         <template #overlay>
           <a-menu :selectable="false" @click="onUserDropClick">
-            <a-menu-item key="profile">
+            <!-- <a-menu-item key="profile">
               <div class="ele-cell">
                 <user-outlined />
                 <div class="ele-cell-content">
@@ -46,7 +46,7 @@
                   {{ t('layout.header.password') }}
                 </div>
               </div>
-            </a-menu-item>
+            </a-menu-item> -->
             <a-menu-divider />
             <a-menu-item key="logout">
               <div class="ele-cell">

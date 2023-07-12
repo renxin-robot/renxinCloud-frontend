@@ -77,7 +77,7 @@
         <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }铭牌`" @ok="handleOk">
             <a-form :model="namePlateInfo" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
-                <a-form-item label="出厂编号" name="code" :rules="[{ required: true, message: '请输入出厂编号！' }]">
+                <a-form-item label="出厂编号" name="code" :rules="[{ required: true, message: '请输入出厂编号！' ,trigger: 'blur'},{pattern: [phoneReg],message: '手机号格式不正确!'}]">
                     <a-input v-model:value="namePlateInfo.code" />
                 </a-form-item>
                 <a-form-item label="屏幕编号" name="screen_code" :rules="[{ required: true, message: '请输入屏幕编号！' }]">
@@ -90,7 +90,7 @@
 <script>
 import { defineComponent, reactive, ref, computed } from 'vue'
 import { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined} from '@ant-design/icons-vue'
-import { toDateString } from 'ele-admin-pro';
+import { phoneReg,toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import { logout } from '@/utils/page-tab-util';
 import { getNameplate, deleteNameplate, addNameplate ,useNameplate} from '@/api/equipment/basic/nameplate'
