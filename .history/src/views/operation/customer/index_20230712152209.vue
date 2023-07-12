@@ -403,7 +403,7 @@ export default defineComponent({
                     // sorter: true,
                     // showSorterTooltip: false,
                     // ellipsis: true,
-                    width: 200,
+                    width: 160,
                     minWidth: 100,
                     // resizable: true,
                     align: 'center',
