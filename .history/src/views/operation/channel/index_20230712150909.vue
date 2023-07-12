@@ -226,14 +226,14 @@ export default defineComponent({
                     key: 'name',
                     dataIndex: 'name',
                     align: 'center',
-                    width: 160,
+                    width: 230,
                     minWidth: 100,
                 },
                 {
                     title: '渠道编号',
-                    key: 'tax_number',
-                    dataIndex: 'tax_number',
-                    width: 160,
+                    key: 'id',
+                    dataIndex: 'id',
+                    width: 80,
                     minWidth: 100,
                     align: 'center',
                 },
@@ -249,7 +249,7 @@ export default defineComponent({
                     title: '地区',
                     dataIndex: 'address',
                     key: 'address',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     align: 'center',
                 },
@@ -281,7 +281,7 @@ export default defineComponent({
                     title: '公司税号',
                     dataIndex: 'tax_number',
                     key: 'tax_number',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     align: 'center',
                 },
@@ -431,6 +431,10 @@ export default defineComponent({
                         clearData()
                         getChannelList()
                     }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
                 })
             }else{
                 addChannel(channelData).then((res)=>{
@@ -442,6 +446,10 @@ export default defineComponent({
                         clearData()
                         getChannelList()
                     }
+                }).catch((err)=>{
+                    notification.error({
+                            message:err.response.data.message,
+                        });
                 })
             }
         }

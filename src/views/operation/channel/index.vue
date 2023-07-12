@@ -231,9 +231,9 @@ export default defineComponent({
                 },
                 {
                     title: '渠道编号',
-                    key: 'tax_number',
-                    dataIndex: 'tax_number',
-                    width: 200,
+                    key: 'id',
+                    dataIndex: 'id',
+                    width: 80,
                     minWidth: 100,
                     align: 'center',
                 },
