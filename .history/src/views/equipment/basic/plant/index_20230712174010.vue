@@ -3,8 +3,8 @@
         <a-card style="border-radius: 4px;height: 74px;">
             <div style="display: flex;justify-content: space-between;">
                 <el-form :inline="true" :model="formState" class="demo-form-inline">
-                    <el-form-item label="品类名称">
-                        <a-input v-model:value="formState.name" placeholder="请输入品类名称"/>
+                    <el-form-item label="生产商名称">
+                        <a-input v-model:value="formState.name" placeholder="请输入生产商名称"/>
                     </el-form-item>
                 </el-form>
                 <div>
@@ -16,11 +16,11 @@
         </a-card>
         <a-card style="margin-top: 10px;border-radius: 4px;">
             <div id="proTable">
-                <ele-pro-table ref="tableRef" title="品类列表" :resizable="true" :bordered="true" :columnsFixed="true"
+                <ele-pro-table ref="tableRef" title="生厂商列表" :resizable="true" :bordered="true" :columnsFixed="true"
                     :columns="columns" :datasource="datasource" :scroll="{ x: 1000 }">
                     <!-- 表头工具按钮 -->
                     <template #toolkit>
-                        <a-button type="primary" @click="toAdd">新增品类</a-button>
+                        <a-button type="primary" @click="toAdd">新增生产商</a-button>
                     </template>
                     <!-- 自定义列 -->
                     <template #bodyCell="{ column, record }">
@@ -32,14 +32,14 @@
                             <a-space>
                                 <a-tooltip placement="bottom">
                                 <template #title>
-                                    <span>编辑品类</span>
+                                    <span>编辑生产商</span>
                                 </template>
                                 <a @click="editChannel(record)"><form-outlined /></a>
                             </a-tooltip>
                             <a-divider type="vertical" />
                                 <a-tooltip placement="bottom">
                                     <template #title>
-                                        <span>删除品类</span>
+                                        <span>删除生产商</span>
                                     </template>
                                     <a-popconfirm title="删除会自动解绑关联设备，是否确认删除?" ok-text="确认" cancel-text="取消"
                                         @confirm="confirm(record.id)">
@@ -52,22 +52,25 @@
                 </ele-pro-table>
             </div>
             <div style="text-align:right;margin-top: 10px;">
-                <a-pagination size="small" :total="categoryCount" @change="changePage"
-                    :show-total="categoryCount => `共 ${ categoryCount } 条`" />
+                <a-pagination size="small" :total="nameplateCount" @change="changePage"
+                    :show-total="nameplateCount => `共 ${ nameplateCount } 条`" />
             </div>
         </a-card>
-        <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }品类`" @ok="handleOk">
-            <a-form :model="categoryInfo" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+        <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }生产商`" @ok="handleOk">
+            <a-form :model="plantInfo" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
-                <a-form-item label="品类编号" name="code" :rules="[{ required: true, message: '请输入品类编号！' }]">
-                    <a-input v-model:value="categoryInfo.code"  placeholder="请输入..."/>
+                <a-form-item label="生产商名称" name="name"
+                    :rules="[{ required: true, message: '请输入生产商名称！' }]">
+                    <a-input v-model:value="plantInfo.name" />
                 </a-form-item>
-                <a-form-item label="品类名称" name="name"
-                    :rules="[{ required: true, message: '请输入品类名称！' }]">
-                    <a-input v-model:value="categoryInfo.name"  placeholder="请输入..."/>
+                <a-form-item label="生产商编号" name="code" :rules="[{ required: true, message: '请输入生产商编号！' }]">
+                    <a-input v-model:value="plantInfo.code" />
                 </a-form-item>
-                <a-form-item label="备注" name="remark">
-                    <a-textarea v-model:value="categoryInfo.remark" placeholder="请输入..." :rows="4" />
+                <a-form-item label="生产商地址" name="address" :rules="[{ required: true, message: '请输入生产商地址！' }]">
+                    <a-input v-model:value="plantInfo.address" />
+                </a-form-item>
+                <a-form-item label="生产商电话" name="telphone" :rules="[{ required: true, message: '请输入生产商电话！' }]">
+                    <a-input v-model:value="plantInfo.telphone" />
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -78,8 +81,9 @@ import { defineComponent, reactive, ref, computed } from 'vue'
 import { ContactsOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
+import {getFactory,addFactory,updateFactory,deleteFactory} from '@/api/equipment/basic/ plant'
 import { logout } from '@/utils/page-tab-util';
-import {getCategory,addCategory,deleteCategory,updateCategory} from '@/api/equipment/basic/ category'
+
 export default defineComponent({
     name: 'Nameplate',
     components: { ContactsOutlined, FormOutlined, DeleteOutlined },
@@ -89,16 +93,17 @@ export default defineComponent({
         let formState = reactive({
             name: '',
         })
-        let categoryInfo = reactive({
+        let plantInfo = reactive({
             code: '',
-            remark: '',
-            name:''
+            name: '',
+            address:'',
+            telphone:'',
         })
         let pageData = reactive({
             page: 1,
             limit: 10
         })
-        let categoryCount = ref(0)
+        let nameplateCount = ref(0)
         let datasource = ref([])
         // 表格列配置
         const columns = computed(() => {
@@ -112,18 +117,23 @@ export default defineComponent({
                     customRender: ({ index }) => index + 1
                 },
                 {
-                    title: '编号',
-                    dataIndex: 'code',
-                    align: 'center'
-                },
-                {
-                    title: '品类名称',
+                    title: '生产商名称',
                     dataIndex: 'name',
                     align: 'center'
                 },
                 {
-                    title: '备注',
-                    dataIndex: 'remark',
+                    title: '生产商编号',
+                    dataIndex: 'code',
+                    align: 'center'
+                },
+                {
+                    title: '生产商地址',
+                    dataIndex: 'address',
+                    align: 'center'
+                },
+                {
+                    title: '联系电话',
+                    dataIndex: 'telphone',
                     align: 'center'
                 },
                 {
@@ -143,10 +153,10 @@ export default defineComponent({
             ];
         });
 
-        const getCategoryList = () => {
-            getCategory({ ...pageData, ...formState }).then((res) => {
+        const getFactoryList = () => {
+            getFactory({ ...pageData, ...formState }).then((res) => {
                 if (res.code == 0) {
-                    categoryCount.value = res.paging.total
+                    nameplateCount.value = res.paging.total
                     datasource.value = res.data
                 }else{
                     // console.log('没登录')
@@ -164,55 +174,60 @@ export default defineComponent({
                 }
             })
         }
-        getCategoryList()
+        getFactoryList()
 
         const changePage = (page) => {
             pageData.page = page
-            getCategoryList()
+            getFactoryList()
         }
         const toAdd = () => {
             addVisible.value = true
         }
         const confirm = (id) => {
-            deleteCategory(id).then((res) => {
+            deleteFactory(id).then((res) => {
                 if (res.code == 3) {
                     notification.success({
                         message: '删除成功',
                     });
-                    getCategoryList()
+                    getFactoryList()
                 }
             })
         }
 
         const editChannel = (row) => {
             editId.value = row.id
-            Object.assign(categoryInfo,row)
+            plantInfo.code = row.code
+            plantInfo.name = row.name
+            plantInfo.telphone = row.telphone
+            plantInfo.address = row.address
+            plantInfo.id=row.id
             addVisible.value = true
-            // console.log(row)
         }
 
         const toSearch = () => {
-            getCategoryList()
+            pageData.page=1
+            getFactoryList()
         }
 
         const clearToSearch = () => {
             formState.name = ''
-            getCategoryList()
+            getFactoryList()
         }
 
         const handleOk = () => {
             if(editId.value){
-                updateCategory(categoryInfo).then((res)=>{
-                    if (res.code ==1) {
+                updateFactory(plantInfo).then((res) => {
+                    if (res.code =='1') {
                         notification.success({
                             message: '更新成功',
                         });
-                        categoryInfo.code = ''
-                        categoryInfo.name = ''
-                        categoryInfo.remark = ''
+                        plantInfo.code = ''
+                        plantInfo.name = ''
+                        plantInfo.telphone = ''
+                        plantInfo.address = ''
                         addVisible.value = false
                         editId.value=''
-                        getCategoryList()
+                        getFactoryList()
                     }
                 }).catch((err)=>{
                     notification.error({
@@ -220,32 +235,23 @@ export default defineComponent({
                         });
                 })
             }else{
-                addCategory(categoryInfo).then((res) => {
+                addFactory(plantInfo).then((res) => {
                     if (res.code ==0) {
                         notification.success({
                             message: '新增成功',
                         });
-                        categoryInfo.code = ''
-                        categoryInfo.name = ''
-                        categoryInfo.remark = ''
+                        plantInfo.code = ''
+                        plantInfo.name = ''
+                        plantInfo.telphone = ''
+                        plantInfo.address = ''
+                        plantInfo.id = ''
                         addVisible.value = false
-                        getCategoryList()
-                    }else{
-                        notification.err({
-                            message: res.message,
-                        });
+                        getFactoryList()
                     }
                 }).catch((err)=>{
-                    if(err.response.data.code==500){
-                        notification.error({
-                            message: err.response.data.message,
+                    notification.error({
+                            message:err.response.data.message,
                         });
-                    }else{
-                        notification.error({
-                            message: err.response.data.message,
-                        });
-                    }
-                    // console.log(err)
                 })
             }
         }
@@ -258,11 +264,11 @@ export default defineComponent({
             toAdd,
             toSearch,
             clearToSearch,
-            getCategoryList,
+            getFactoryList,
             pageData,
-            categoryCount,
+            nameplateCount,
             changePage,
-            categoryInfo,
+            plantInfo,
             editId,
             handleOk,
             addVisible,

@@ -424,14 +424,6 @@ export default defineComponent({
             channelData.province=CodeToText[channelData.province_code]
             channelData.area=CodeToText[channelData.area_code]
             channelData.city=CodeToText[channelData.city_code]
-            if(channelData.phone){
-                if(channelData.phone.length<11){
-                    notification.warn({
-                        message: '请输入正确的手机号！',
-                    });
-                }
-                return
-            }
             // addVisible.value = false
             if(editId.value){
                 updateChannel(channelData).then((res)=>{
@@ -487,15 +479,12 @@ export default defineComponent({
             }
         }
         const toSearch=()=>{
-            pageData.page=1
-            formState.name=formState.name.trim()
-            formState.phone=formState.phone.trim()
+            // console.log(formState)
             getChannelList()
         }
         const toClear=()=>{
             formState.name=''
             formState.phone=''
-            pageData.page=1
             getChannelList()
         }
 

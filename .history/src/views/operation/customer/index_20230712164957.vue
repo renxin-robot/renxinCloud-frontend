@@ -137,8 +137,8 @@
                     <a-input v-model:value="customerData.contact" />
                 </a-form-item>
                 <a-form-item label="联系电话" name="phone"
-                    :rules="[{ required: true, message: '请输入联系电话！' }]">
-                    <a-input v-model:value="customerData.phone" @blur="checkPhone"/>
+                    >
+                    <a-input v-model:value="customerData.phone"/>
                 </a-form-item>
                 <a-form-item label="公司名称" name="company"
                     :rules="[{ required: true, message: '请输入公司名称！' }]">
@@ -174,7 +174,7 @@
             </a-form>
         </a-modal>
         <a-modal v-model:visible="addShopVisible" :title="`${ editId ? '编辑' : '新增' }门店`" @ok="handleAddShopOk" @cancel="cancelAddShop">
-            <a-form :model="shopStoreData" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+            <a-form :rules="rules" :model="shopStoreData" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
                 <a-form-item label="门店名称" name="name" :rules="[{ required: true, message: '请输入门店名称！' }]">
                     <a-input v-model:value="shopStoreData.name" />
@@ -298,6 +298,12 @@ export default defineComponent({
                 : void 0;
         });
 
+        const rules = {
+            phone: [
+                { required: true, message: 'Please input Activity name', trigger: 'blur' },
+                { min: 11 , max:11, message: 'Length should be 3 to 5', trigger: 'blur' },
+            ],
+        };
         // 表格列配置
         const columns = computed(() => {
             return [
@@ -657,13 +663,10 @@ export default defineComponent({
         getChannelList()
 
         const toSearch=()=>{
-            pageData.page=1
-            formState.name=formState.name.trim()
-            formState.phone=formState.phone.trim()
+            // console.log(formState)
             getUserList()
         }
         const toClear=()=>{
-            pageData.page=1
             formState.name=''
             formState.phone=''
             getUserList()
@@ -784,6 +787,7 @@ export default defineComponent({
             }
         }
         return {
+            rules,
             clearData,
             checkPhone,
             shopAreaList,

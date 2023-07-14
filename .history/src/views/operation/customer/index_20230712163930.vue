@@ -591,13 +591,6 @@ export default defineComponent({
             customerData.city=CodeToText[customerData.city_code]
             Reflect.deleteProperty(customerData,'status')
             Reflect.deleteProperty(customerData,'created_at')
-            if(customerData.phone){
-                if(customerData.phone.length<11){
-                    notification.warn({
-                        message: '请输入正确的手机号！',
-                    });
-                }
-            }
             if(editId.value){
                 editUser(customerData).then((res)=>{
                     if(res.code==1){
@@ -657,13 +650,10 @@ export default defineComponent({
         getChannelList()
 
         const toSearch=()=>{
-            pageData.page=1
-            formState.name=formState.name.trim()
-            formState.phone=formState.phone.trim()
+            // console.log(formState)
             getUserList()
         }
         const toClear=()=>{
-            pageData.page=1
             formState.name=''
             formState.phone=''
             getUserList()

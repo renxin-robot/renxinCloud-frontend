@@ -615,12 +615,14 @@ export default defineComponent({
         }
 
         const toSearch=()=>{
+            pageData.page=1
             // console.log(formState)
             getOrderList()
         }
         const toClear=()=>{
-            formState.name=''
-            formState.phone=''
+            formState.status=''
+            formState.code=''
+            pageData.page=1
             getOrderList()
         }
         const changePage=(page)=>{

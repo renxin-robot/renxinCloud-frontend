@@ -65,7 +65,7 @@
                             </div>
                         </template>
                         <template v-if="column.dataIndex === 'name'">
-                            <span>{{ record?. device_info?.name}}</span>
+                            <span>{{ record?. device_info?.names??'暂无名称'}}</span>
                         </template>
                         <template v-if="column.dataIndex === 'category'">
                             <span>{{ record?. device_info?.category_code}}</span>

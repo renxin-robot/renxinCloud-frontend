@@ -485,12 +485,17 @@ export default defineComponent({
         };
 
         const toSearch = () => {
+            formState.user_name = formState.user_name.trim()
+            formState.name = formState.name.trim()
+            pageData.page=1
             getUserStores();
         };
 
         const clearToSearch = () => {
             formState.name = '';
-            formState.role = '';
+            // formState.role = '';
+            formState.user_name = '';
+            pageData.page=1
             getUserStores();
         };
         const changePage = (page) => {

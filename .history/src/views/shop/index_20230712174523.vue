@@ -104,7 +104,7 @@
             <div>
                 <div style="display: flex;align-items: start;justify-content: space-between;">
                     <div style="font-size: 16px;font-weight: bold;">店员列表</div>
-                    <div style="margin-bottom: 10px;text-align: right;">
+                    <div style="margin-bottom: 10px;text-align: right;margin-right: 20px;">
                         <a-button type="primary" @click="addAssistant"><PlusOutlined/>新增店员</a-button>
                     </div>
                 </div>
@@ -195,7 +195,7 @@
     </div>
 </template>
 <script>
-import { defineComponent, reactive, ref, computed } from 'vue';
+import { defineComponent, reactive, ref, computed ,onBeforeUpdate} from 'vue';
 import { Empty } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
 import {
@@ -297,7 +297,7 @@ export default defineComponent({
             return [
                 {
                     title: '门店编号',
-                    width: 82,
+                    width: 80,
                     dataIndex: 'id',
                     align: 'center'
                 },
@@ -305,33 +305,33 @@ export default defineComponent({
                     title: '门店名称',
                     dataIndex: 'name',
                     align: 'center',
-                    width: 160,
+                    width: 300,
                     minWidth: 100
                 },
                 {
                     title: '门店地址',
                     dataIndex: 'address',
                     align: 'center',
-                    width: 160,
+                    width: 300,
                     minWidth: 100
                 },
                 {
                     title: '详细地址',
-                    width: 160,
+                    width: 300,
                     minWidth: 100,
                     dataIndex: 'address_detail',
                     align: 'center'
                 },
                 {
                     title: '门店业态',
-                    width: 160,
+                    width: 80,
                     minWidth: 100,
                     dataIndex: 'service',
                     align: 'center'
                 },
                 {
                     title: '所属客户',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     dataIndex: 'user',
                     align: 'center'
@@ -339,7 +339,7 @@ export default defineComponent({
                 {
                     title: '创建时间',
                     dataIndex: 'created_at',
-                    width: 160,
+                    width: 260,
                     minWidth: 100,
                     customRender: ({ text }) => toDateString(text),
                     align: 'center'
@@ -402,6 +402,9 @@ export default defineComponent({
                 });
         };
         getUserStores();
+        onBeforeUpdate(()=>{
+            getUserStores()
+        })
         const toAddShopStore = () => {
             addVisible.value = true;
             getUser().then((res) => {
@@ -482,12 +485,14 @@ export default defineComponent({
         };
 
         const toSearch = () => {
+            pageData.page=1
             getUserStores();
         };
 
         const clearToSearch = () => {
             formState.name = '';
             formState.role = '';
+            pageData.page=1
             getUserStores();
         };
         const changePage = (page) => {

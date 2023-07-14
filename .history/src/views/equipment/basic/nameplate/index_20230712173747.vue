@@ -228,7 +228,6 @@ export default defineComponent({
         }
 
         const clearToSearch = () => {
-            pageData.page=1
             formState.code = ''
             formState.screen_code = ''
             getNameplateList()

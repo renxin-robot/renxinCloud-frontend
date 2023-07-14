@@ -182,15 +182,14 @@ export default defineComponent({
     },
     setup() {
         const {currentRoute,push,replace}=useRouter()
-        let orderId=ref('')
-        orderId.value=currentRoute.value.query.id
+        let orderId=currentRoute.value.query.id
         let type=currentRoute.value.query.type
         let orderInfo=reactive({})
         let step=ref()
         let status=ref('accepted')
         let operator_remark=ref('')
         const getDetail=()=>{
-            approvalDetail(orderId.value).then((res)=>{
+            approvalDetail(orderId).then((res)=>{
                 if(res.code==0){
                     Object.assign(orderInfo,res.data)
                     orderInfo.operate_at=toDateString(orderInfo.operate_at)
@@ -207,7 +206,6 @@ export default defineComponent({
         }
         getDetail()
         onBeforeUpdate(()=>{
-            orderId.value=currentRoute.value.query.id
             getDetail()
             console.log('hhhh')
         })
@@ -226,7 +224,7 @@ export default defineComponent({
         }
 
         const confirmApprove=()=>{
-            addApprovalOrder({id:orderId.value,status:status.value,operator_remark:operator_remark.value}).then((res)=>{
+            addApprovalOrder({id:orderId,status:status.value,operator_remark:operator_remark.value}).then((res)=>{
                 if(res.code==1){
                     notification.success({
                         message: '审批成功'

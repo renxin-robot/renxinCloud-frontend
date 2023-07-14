@@ -488,8 +488,7 @@ export default defineComponent({
         }
         const toSearch=()=>{
             pageData.page=1
-            formState.name=formState.name.trim()
-            formState.phone=formState.phone.trim()
+            // console.log(formState)
             getChannelList()
         }
         const toClear=()=>{

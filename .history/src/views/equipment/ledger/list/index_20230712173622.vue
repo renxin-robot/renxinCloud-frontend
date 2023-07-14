@@ -422,7 +422,6 @@ export default defineComponent({
             formState.category = ''
             formState.device_code = ''
             formState.category_code = ''
-            pageData.page=1
             getDeviceJournalList()
         }
 

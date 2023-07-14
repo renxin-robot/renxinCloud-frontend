@@ -326,11 +326,13 @@ export default defineComponent({
         const toSearch=()=>{
             pageData.page=1
             formState.name=formState.name.trim()
+            console.log(formState)
             getCommission()
         }
         const toClear=()=>{
             pageData.page=1
             formState.name=''
+            // formState.phone=''
             getCommission()
         }
         const changePage=(page)=>{

@@ -4,11 +4,11 @@
             <div style="display: flex;justify-content: space-between;">
                 <el-form :inline="true" :model="formState" class="demo-form-inline">
                     <el-form-item label="方案名称">
-                        <a-input v-model:value="formState.name" placeholder="请输入方案名称" />
+                        <a-input v-model="formState.name" placeholder="请输入方案名称" />
                     </el-form-item>
                 </el-form>
                 <div>
-                    <a-button style="margin-right: 10px;" @click="toClear">重置</a-button>
+                    <a-button style="margin-right: 10px;">重置</a-button>
                     <a-button type="primary" @click="toSearch">查询</a-button>
                 </div>
             </div>
@@ -326,11 +326,13 @@ export default defineComponent({
         const toSearch=()=>{
             pageData.page=1
             formState.name=formState.name.trim()
+            console.log(formState)
             getCommission()
         }
         const toClear=()=>{
             pageData.page=1
             formState.name=''
+            // formState.phone=''
             getCommission()
         }
         const changePage=(page)=>{

@@ -262,7 +262,7 @@ export default defineComponent({
                 {
                     title: '创建时间',
                     dataIndex: 'created_at',
-                    width: 160,
+                    width: 200,
                     minWidth: 100,
                     customRender: ({ text }) => toDateString(text),
                     align: 'center'
@@ -326,6 +326,7 @@ export default defineComponent({
         }
 
         const toSearch = () => {
+            pageData.page=1
             getDeviceInfoList()
         }
 

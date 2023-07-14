@@ -135,7 +135,7 @@ export default defineComponent({
     components: { ContactsOutlined, FormOutlined, DeleteOutlined ,PlayCircleOutlined,InfoCircleOutlined},
    
     setup() {
-        const {push,resolve}=useRouter()
+        const {push}=useRouter()
         let formState = reactive({
             device_code: '',
             status:'',
@@ -316,23 +316,20 @@ export default defineComponent({
             formState.type = ''
             formState.status = ''
             formState.device_code = ''
-            pageData.page=1
             getApprovalList()
         }
 
         const toOrderDetail=(row,value)=>{
             if(value){
-                let resolveData = resolve({
+                push({
                     name:'orderDetail',
                     query:{id:row.id,type:value}
-                });
-                window.open(resolveData.href, '_blank');
+                })
             }else{
-                let resolveData = resolve({
+                push({
                     name:'orderDetail',
-                    query:{id:row.id,type:value}
-                });
-                window.open(resolveData.href, '_blank');
+                    query:{id:row.id}
+                })
             }
             // console.log(row)
         }
