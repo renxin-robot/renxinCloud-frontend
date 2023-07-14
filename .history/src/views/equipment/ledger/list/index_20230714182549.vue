@@ -549,7 +549,7 @@ export default defineComponent({
             let withdrawalItem=row?.approval?.filter((item)=>{
                 return item?.type=='withdrawal'
             })
-            // console.log(row)
+            console.log(row)
             if(withdrawalItem.length){
                 push({
                     name:'weaning',

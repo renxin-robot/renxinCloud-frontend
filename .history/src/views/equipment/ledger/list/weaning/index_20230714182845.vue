@@ -5,7 +5,7 @@
                 <span>撤机申请单</span>
             </h5>
             <div class="stepBox">
-                <a-steps :current=" 0 ">
+                <a-steps :current="step">
                     <a-step sub-title="填写撤机流程单">
                         <template #description> </template>
                     </a-step>
@@ -81,7 +81,7 @@
                 </div>
             </a-card>
             <div style="text-align: right; width: 80%; margin: 0 auto; margin-top: 30px">
-                <a-button style="margin-right: 20px">取消</a-button>
+                <a-button style="margin-right: 20px" @click="cancle">取消</a-button>
                 <a-button type="primary" @click="confirm">提交</a-button>
             </div>
         </a-card>
@@ -129,10 +129,13 @@ export default defineComponent({
                 
             })
         }
-        getDetail()
-
+        if(orderId){
+            getDetail()
+        }
+        
         const confirm=()=>{
-            withdrawalOrder(orderInfo.device_id).then((res)=>{
+            // console.log(orderInfo)
+            withdrawalOrder(currentRoute.value.query.id).then((res)=>{
                 if(res.code==0){
                     notification.success({
                         message: res.message
@@ -143,6 +146,18 @@ export default defineComponent({
                     path:'/equipment/ledger/list'
                 })
                 // console.log(res)
+            }).catch((err)=>{
+                notification.error({
+                    message: err.response.data.message
+                });
+                // console.log(err,'哈哈哈哈哈')
+            })
+        }
+
+        const cancle=()=>{
+            finishPageTab()
+            push({
+                path:'/equipment/ledger/list'
             })
         }
         return {
@@ -151,6 +166,7 @@ export default defineComponent({
             getDetail,
             step,
             orderInfo,
+            cancle,
         };
     }
 });

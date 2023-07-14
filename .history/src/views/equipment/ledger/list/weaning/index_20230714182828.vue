@@ -111,16 +111,7 @@ export default defineComponent({
     setup() {
         const { currentRoute ,push} = useRouter();
         let step=ref()
-        let orderInfo=reactive({
-            code:currentRoute.value.query.code,
-            category_code:currentRoute.value.query.category_code,
-            type_code:currentRoute.value.query.type_code,
-            store:{
-                name:currentRoute.value.query.name,
-                service:currentRoute.value.query.service,
-            }
-
-        })
+        let orderInfo=reactive({})
         let orderId = currentRoute.value.query.orderId;
         const getDetail=()=>{
             approvalDetail(orderId).then((res)=>{
@@ -156,10 +147,10 @@ export default defineComponent({
                 })
                 // console.log(res)
             }).catch((err)=>{
-                notification.error({
+                notification.success({
                     message: err.response.data.message
                 });
-                // console.log(err,'哈哈哈哈哈')
+                console.log(err,'哈哈哈哈哈')
             })
         }
 

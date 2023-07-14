@@ -38,10 +38,10 @@
                             {{ record.device_info.name}}
                         </template>
                         <template v-if="column.dataIndex === 'shopAddress'">
-                            {{ record?.store?.address_detail}}
+                            {{ record?.store.address_detail}}
                         </template>
                         <template v-if="column.dataIndex === 'shopName'">
-                            {{ record?.store?.name}}
+                            {{ record?.store.name}}
                         </template>
                         <template v-if="column.dataIndex === 'type_code'">
                             {{ record.device_info.type_code}}
@@ -549,7 +549,7 @@ export default defineComponent({
             let withdrawalItem=row?.approval?.filter((item)=>{
                 return item?.type=='withdrawal'
             })
-            // console.log(row)
+            console.log(row)
             if(withdrawalItem.length){
                 push({
                     name:'weaning',
