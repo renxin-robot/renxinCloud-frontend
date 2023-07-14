@@ -520,7 +520,7 @@ export default defineComponent({
                 let changeItem=row?.approval?.filter((item)=>{
                     return item?.type=='change'
                 })
-                // console.log(changeItem)
+                console.log(changeItem)
                 if(changeItem.length){
                     approvalDetail(changeItem[0].id).then((res)=>{
                         if(res?.data?.status!='pending'){

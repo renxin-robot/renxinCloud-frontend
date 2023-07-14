@@ -28,14 +28,14 @@
                             名称：{{  orderInfo?.deviceInfos ?.name}}
                         </div>
                         <div>
-                            类型：{{  orderInfo?.deviceInfos ?.category_code}}
+                            类型：{{  orderInfo?.deviceInfos ?.category}}
                         </div>
                         <div>
-                            型号 ：{{  orderInfo?.deviceInfos ?.type_code}}
+                            型号 ：{{  orderInfo?.deviceInfos ?.type}}
                         </div>
-                        <!-- <div>
+                        <div>
                             状态：{{  orderInfo?.deviceInfos ?.name}}
-                        </div> -->
+                        </div>
                         <div>
                             设备激活时间：{{  orderInfo?.deviceInfos ?.name}}
                         </div>
@@ -134,8 +134,7 @@ export default defineComponent({
         if(orderId){
             getDetail()
         }else{
-            Object.assign(orderInfo,JSON.parse(localStorage.getItem('detail')))
-            console.log(orderInfo)
+            Object.assign(JSON.parse(localStorage.getItem('detail')))
         }
         
         const confirm=()=>{

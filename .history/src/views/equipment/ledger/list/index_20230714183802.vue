@@ -198,7 +198,7 @@ export default defineComponent({
     name: 'Nameplate',
     components: { ContactsOutlined, FormOutlined, DeleteOutlined ,InfoCircleOutlined,MoreOutlined,DownOutlined},
     setup() {
-        const {push,resolve}=useRouter()
+        const {push}=useRouter()
         let addVisible = ref(false)
         let editId = ref('')
         const ledgerStore=ledgerDetailStore()
@@ -490,7 +490,7 @@ export default defineComponent({
 
 
         const toDeployment=(row,value)=>{
-            // console.log(value)
+            console.log(value)
             if(value=='1'){
                 let deploymentItem=row?.approval?.filter((item)=>{
                     return item?.type=='deployment'
@@ -520,7 +520,7 @@ export default defineComponent({
                 let changeItem=row?.approval?.filter((item)=>{
                     return item?.type=='change'
                 })
-                // console.log(changeItem)
+                console.log(changeItem)
                 if(changeItem.length){
                     approvalDetail(changeItem[0].id).then((res)=>{
                         if(res?.data?.status!='pending'){
@@ -546,7 +546,6 @@ export default defineComponent({
         }
 
         const toWeaning=(row,value)=>{
-            localStorage.setItem('detail',JSON.stringify(row))
             let withdrawalItem=row?.approval?.filter((item)=>{
                 return item?.type=='withdrawal'
             })
