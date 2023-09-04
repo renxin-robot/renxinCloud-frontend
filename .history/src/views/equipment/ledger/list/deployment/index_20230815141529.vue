@@ -169,36 +169,35 @@ export default defineComponent({
 
         const confirmAddOrder=()=>{
             if(actionType=='1'){
+                console.log(selectItem.id)
                 if(!selectItem.id){
-                    notification.success({
-                            message: "请选择门店！"
-                        });
                     return
                 }
-                addDeviceOrder({store_id:selectItem.id,remark:remark.value,device_id:device_id}).then((res)=>{
-                    if(res.code==0){
-                        // finishPageTab()
-                        notification.success({
-                            message: res.message
-                        });
-                    }else{
-                        // finishPageTab()
-                        notification.error({
-                            message: res.message
-                        });
-                    }
-                    push({
-                        path:'/equipment/ledger/list'
-                    })
-                }).catch((err)=>{
-                    // finishPageTab()
-                    notification.error({
-                            message: err.response.data.message
-                        });
-                        push({
-                        path:'/equipment/ledger/list'
-                    })
-                })
+                
+                // addDeviceOrder({store_id:selectItem.id,remark:remark.value,device_id:device_id}).then((res)=>{
+                //     if(res.code==0){
+                //         // finishPageTab()
+                //         notification.success({
+                //             message: res.message
+                //         });
+                //     }else{
+                //         // finishPageTab()
+                //         notification.error({
+                //             message: res.message
+                //         });
+                //     }
+                //     push({
+                //         path:'/equipment/ledger/list'
+                //     })
+                // }).catch((err)=>{
+                //     // finishPageTab()
+                //     notification.error({
+                //             message: err.response.data.message
+                //         });
+                //         push({
+                //         path:'/equipment/ledger/list'
+                //     })
+                // })
             }else{
                 changeDeviceOrder({store_id:selectItem.id,remark:remark.value,device_id:device_id}).then((res)=>{
                     if(res.code==0){

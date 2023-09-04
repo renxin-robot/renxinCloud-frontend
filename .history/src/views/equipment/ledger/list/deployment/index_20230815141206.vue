@@ -150,11 +150,7 @@ export default defineComponent({
         let limit = ref(10);
         let total = ref(10)
         let selectItem=reactive({})
-        if(actionType!='1'){
-            Object.assign(selectItem,JSON.parse(localStorage.getItem('detail')))
-        }else{
-            Object.assign(selectItem,null)
-        }
+        Object.assign(selectItem,JSON.parse(localStorage.getItem('detail')))
         let storeInformation = ref([]) // 门店信息
         const handleSearch = val => {
             fetch(val, d => (data.value = d));
@@ -168,37 +164,39 @@ export default defineComponent({
         };
 
         const confirmAddOrder=()=>{
+            if(!selectItem.id){
+                return
+            }
+
             if(actionType=='1'){
                 if(!selectItem.id){
-                    notification.success({
-                            message: "请选择门店！"
-                        });
                     return
                 }
-                addDeviceOrder({store_id:selectItem.id,remark:remark.value,device_id:device_id}).then((res)=>{
-                    if(res.code==0){
-                        // finishPageTab()
-                        notification.success({
-                            message: res.message
-                        });
-                    }else{
-                        // finishPageTab()
-                        notification.error({
-                            message: res.message
-                        });
-                    }
-                    push({
-                        path:'/equipment/ledger/list'
-                    })
-                }).catch((err)=>{
-                    // finishPageTab()
-                    notification.error({
-                            message: err.response.data.message
-                        });
-                        push({
-                        path:'/equipment/ledger/list'
-                    })
-                })
+                console.log(selectItem.id)
+                // addDeviceOrder({store_id:selectItem.id,remark:remark.value,device_id:device_id}).then((res)=>{
+                //     if(res.code==0){
+                //         // finishPageTab()
+                //         notification.success({
+                //             message: res.message
+                //         });
+                //     }else{
+                //         // finishPageTab()
+                //         notification.error({
+                //             message: res.message
+                //         });
+                //     }
+                //     push({
+                //         path:'/equipment/ledger/list'
+                //     })
+                // }).catch((err)=>{
+                //     // finishPageTab()
+                //     notification.error({
+                //             message: err.response.data.message
+                //         });
+                //         push({
+                //         path:'/equipment/ledger/list'
+                //     })
+                // })
             }else{
                 changeDeviceOrder({store_id:selectItem.id,remark:remark.value,device_id:device_id}).then((res)=>{
                     if(res.code==0){

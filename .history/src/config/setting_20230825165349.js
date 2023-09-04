@@ -174,7 +174,7 @@ export const USER_MENUS = [
   // },
     {
         path: '/test',
-        component: '/test',
+        redirect: '/test',
         meta: {title: '测试', icon: 'setting-outlined'},
         
     },
