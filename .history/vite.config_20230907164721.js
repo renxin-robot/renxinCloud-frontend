@@ -13,12 +13,12 @@ export default defineConfig(({ command }) => {
     server:{
       host: '0.0.0.0',
       // https:true,
-      port: 80,
+      port: 8000,
       strictPort: true,
       AccessControlAllowOrigin:'*',
       withCredentials: false,
       proxy: {
-        '/api': 'http://172.16.30.166:4001'
+        '/app': 'http://116.204.118.16'
       }
     },
     resolve: {

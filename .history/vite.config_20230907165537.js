@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => {
     server:{
       host: '0.0.0.0',
       // https:true,
-      port: 80,
+      port: 8000,
       strictPort: true,
       AccessControlAllowOrigin:'*',
       withCredentials: false,

@@ -180,7 +180,7 @@ export const USER_MENUS = [
     // },
     {
       path: '/system',
-      component: '/system/resource',
+      redirect: '/system/resource',
       meta: {title: '系统管理', icon: 'setting-outlined'},
      
   }
