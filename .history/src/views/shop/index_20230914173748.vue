@@ -317,13 +317,13 @@ export default defineComponent({
                     width: 300,
                     minWidth: 100
                 },
-                // {
-                //     title: '门店地址',
-                //     dataIndex: 'address',
-                //     align: 'center',
-                //     width: 300,
-                //     minWidth: 100
-                // },
+                {
+                    title: '门店地址',
+                    dataIndex: 'address',
+                    align: 'center',
+                    width: 300,
+                    minWidth: 100
+                },
                 {
                     title: '详细地址',
                     width: 300,
@@ -510,7 +510,7 @@ export default defineComponent({
         const changePage = (page,size) => {
             // console.log(page,size)
             pageData.page = page;
-            pageData.limit=size
+            pageData.list=size
             getUserStores();
         };
 

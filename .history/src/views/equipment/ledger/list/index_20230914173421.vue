@@ -231,15 +231,15 @@ export default defineComponent({
         // 表格列配置
         const columns = computed(() => {
             return [
-                {
-                    title: '序号',
-                    key: 'index',
-                    width: 52,
-                    align: 'center',
-                    fixed: 'left',
-                    hideInSetting: true,
-                    customRender: ({ index }) => index + 1
-                },
+                // {
+                //     title: '序号',
+                //     key: 'index',
+                //     width: 52,
+                //     align: 'center',
+                //     fixed: 'left',
+                //     hideInSetting: true,
+                //     customRender: ({ index }) => index + 1
+                // },
                 {
                     title: '编号',
                     dataIndex: 'device_code',

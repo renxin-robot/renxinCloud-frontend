@@ -250,14 +250,14 @@ export default defineComponent({
                     minWidth: 100,
                     align: 'center',
                 },
-                // {
-                //     title: '地区',
-                //     dataIndex: 'address',
-                //     key: 'address',
-                //     width: 200,
-                //     minWidth: 100,
-                //     align: 'center',
-                // },
+                {
+                    title: '地区',
+                    dataIndex: 'address',
+                    key: 'address',
+                    width: 200,
+                    minWidth: 100,
+                    align: 'center',
+                },
                 {
                     title: '联系人',
                     dataIndex: 'contact',
