@@ -1,7 +1,5 @@
 // 接口地址
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
-// 接口地址
-export const NEW_API_BASE_URL = import.meta.env.NEW_VITE_API_URL;
 
 // 项目名称
 export const PROJECT_NAME = import.meta.env.VITE_APP_NAME;
@@ -103,12 +101,6 @@ export const USER_MENUS = [
               meta: {title: '撤机申请', hide: true},
             },
           ]
-        },
-        {
-          path:'/equipment/SN',
-          name:'SN',
-          component:'/equipment/SN',
-          meta: {title: 'SN管理', hide: false},
         },
           {
             path: '/equipment/basic',

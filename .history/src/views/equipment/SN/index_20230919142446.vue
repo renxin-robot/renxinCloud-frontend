@@ -1,0 +1,96 @@
+<template>
+    <div class="ele-body">
+        <a-card style="border-radius: 4px;">
+            <div style="display: flex;justify-content: space-between;">
+                <el-form :inline="true" :model="formState" class="demo-form-inline" style="display: flex;align-items: center;">
+                    <el-form-item label="设备品类">
+                        <a-input v-model:value="formState.productionCatagory" placeholder="请输入设备品类" />
+                    </el-form-item>
+                    <el-form-item label="设备型号 ">
+                        <a-input v-model:value="formState.productionModel" placeholder="请输入设备型号" />
+                    </el-form-item>
+                    <el-form-item label="生产商 ">
+                        <a-input v-model:value="formState.producer" placeholder="请输入生产商" />
+                    </el-form-item>
+                </el-form>
+                <div>
+                    <a-button style="margin-right: 10px;" @click="toClear">重置</a-button>
+                    <a-button type="primary" @click="toSearch">查询</a-button>
+                </div>
+            </div>
+        </a-card>
+        <a-card style="border-radius: 4px;margin-top: 10px;">
+            <ele-pro-table ref="tableRef" title="SN批次列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
+                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :pagination="null"
+                :scroll="{ x: 1000 }" @done="onDone">
+                <!-- 表头工具按钮 -->
+                <template #toolkit>
+                    <a-button type="primary" @click="toAddSN">SN生成</a-button>
+                </template>
+                <!-- 自定义列 -->
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'address'">
+                        {{ record?.channel_areas?.province }}{{ record?.channel_areas?.city }}{{ record?.channel_areas?.area }}
+                    </template>
+                    <template v-if="column.key === 'operation_mode'">
+                        <span v-if="record.operation_mode=='agent'">代理</span>
+                        <span v-if="record.operation_mode=='direct'">直营</span>
+                    </template>
+                    <!-- 操作列 -->
+                    <template v-else-if="column.key === 'action'">
+                        <a-space>
+                            <a-tooltip placement="bottom">
+                                <template #title>
+                                    <span>关联角色</span>
+                                </template>
+                                <a @click="addRole(record)"><contacts-outlined /></a>
+                            </a-tooltip>
+                            <a-divider type="vertical" />
+                            <a-tooltip placement="bottom">
+                                <template #title>
+                                    <span>编辑渠道</span>
+                                </template>
+                                <a @click="editChannel(record)"><form-outlined /></a>
+                            </a-tooltip>
+                            <a-divider type="vertical" />
+                            <a-tooltip placement="bottom">
+                                <template #title>
+                                    <span>删除渠道</span>
+                                </template>
+                                <a-popconfirm title="是否确认删除?" ok-text="确认" cancel-text="取消" @confirm="confirm(record.id)">
+                                    <a class="ele-text-danger"><delete-outlined /></a>
+                                </a-popconfirm>
+                            </a-tooltip>
+                        </a-space>
+                    </template>
+                </template>
+                </ele-pro-table>
+        </a-card>
+    </div>
+</template>
+<script>
+    import { defineComponent, reactive, ref, computed, } from 'vue';
+    export default defineComponent({
+        name:'SN',
+        setup(){
+            const formState=reactive({
+                productionCatagory:'',
+                productionModel:'',
+                producer:''
+
+            })
+
+            const toClear=()=>{
+                console.log(formState)
+            }
+            const toSearch=()=>{
+                console.log(formState)
+            }
+            return{
+                formState,
+                toClear,
+                toSearch
+            }
+        }
+    })
+</script>
