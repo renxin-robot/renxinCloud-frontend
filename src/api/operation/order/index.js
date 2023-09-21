@@ -4,7 +4,7 @@ import request from '@/utils/request';
  * 根据分页查询佣金方案
  */
 export async function getCommissionPlan(params) {
-    const res = await request.get(`/admin/commission-plan`,{params});
+    const res = await request.get(`/app/admin/commission-plan`,{params});
     return res.data
 }
 
@@ -12,7 +12,7 @@ export async function getCommissionPlan(params) {
  * 新增佣金方案
  */
 export async function addCommissionPlan(data) {
-    const res = await request.post(`/admin/commission-plan`, data);
+    const res = await request.post(`/app/admin/commission-plan`, data);
     return res.data
 }
 
@@ -29,7 +29,7 @@ export async function updateCommissionPlan(data) {
     type: data.type,
     discount: data.discount,
   }
-  const res = await request.put(`/admin/commission-plan/${data.id}`, newInfo);
+  const res = await request.put(`/app/admin/commission-plan/${data.id}`, newInfo);
   return res.data
 }
 
@@ -37,6 +37,6 @@ export async function updateCommissionPlan(data) {
  * 根据id删除佣金方案
  */
 export async function deleteCommissionPlan(id) {
-  const res = await request.delete(`/admin/commission-plan/${id}`);
+  const res = await request.delete(`/app/admin/commission-plan/${id}`);
   return res.data
 }
