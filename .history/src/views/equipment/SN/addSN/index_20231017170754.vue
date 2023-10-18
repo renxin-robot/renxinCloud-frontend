@@ -36,14 +36,14 @@
                         </a-radio-group>
                     </a-form-item>
                     <a-form-item label="首台生产月份" name="gen_date" style="margin-bottom: 0px;">
-                        <a-input v-model:value="formState.gen_date" placeholder="请输入首台生产月份！（例如2023年3月，则2303）"/>
+                        <a-input v-model:value="formState.gen_date" placeholder="请输入生产时间！（例如2023年3月，则2303）"/>
                     </a-form-item>
                     <div style="color: #CDCDCD;margin-left: 198px;height: 40px;line-height: 40px;">填写规则，输入四位数字，例如“2305”</div>
                     <a-form-item label="生成数量" name="number">
                         <a-input v-model:value="formState.number" placeholder="请输入生成数量！"/>
                     </a-form-item>
                     <a-form-item label="生产批次号" name="batch_no">
-                        <a-input disabled v-model:value="batch_no" placeholder="根据版本号和月份自动生成"/>
+                        <a-input disabled v-model:value="formState.batch_no" placeholder="根据版本号和月份自动生成！"/>
                     </a-form-item>
                 </a-form>
                 <div style="text-align: center;">
@@ -56,7 +56,7 @@
     </div>
 </template>
 <script>
-    import { defineComponent, reactive, ref, toRaw, computed} from 'vue';
+    import { defineComponent, reactive, ref, toRaw, } from 'vue';
     import {addSN,getProductionList} from '@/api/equipment/SN'
     import { useRouter } from 'vue-router';
     import { notification } from 'ant-design-vue/es';
@@ -68,14 +68,13 @@
                 production_model:'',
                 producer:'',
                 bom_edition:'',
-                // batch_no:'',
+                batch_no:'',
                 gen_date:'',
                 production_scale:'S',
                 production_type:'W',
                 number:1,
 
             })
-            let batch_no=computed(()=>formState.bom_edition+formState.gen_date)
             const {push}=useRouter()
             const formRef = ref();
             let productionData=ref([])
@@ -102,21 +101,21 @@
                     },
                     { min: 2, max: 2, message: '请输入两位数BOM版本号！', trigger: 'blur' },
                 ],
-                // batch_no: [
-                // {
-                //     required: true,
-                //     message: '请输入生产批次号！',
-                //     trigger: 'blur',
-                //     },
-                //     { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
-                // ],
+                batch_no: [
+                {
+                    required: true,
+                    message: '请输入生产批次号！',
+                    trigger: 'blur',
+                    },
+                    { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
+                ],
                 gen_date: [
                     {
                         required: true,
-                        message: '请输入首台生产月份！',
+                        message: '请输入生产时间！',
                         trigger: 'blur',
                     },
-                    { min: 4, max: 4, message: '请输入首台生产月份！', trigger: 'blur' },
+                    { min: 4, max: 4, message: '请输入四位数生产时间！', trigger: 'blur' },
                 ],
                 production_scale: [
                     {
@@ -135,6 +134,7 @@
                 number: [
                 {
                     required: true,
+                    // type:'number',
                     message: '请输入本次生成数量！',
                     trigger: 'blur',
                     },
@@ -215,7 +215,6 @@
                 resetForm,
                 clearData,
                 productionData,
-                batch_no
             }
         }
     })

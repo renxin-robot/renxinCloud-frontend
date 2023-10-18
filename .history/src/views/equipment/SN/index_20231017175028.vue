@@ -20,7 +20,7 @@
             </div>
         </a-card>
         <a-card style="border-radius: 4px;margin-top: 10px;">
-            <div style="text-align: right;margin-bottom: 10px;">
+            <div>
                 <a-button type="primary" @click="toAddSN">SN生成</a-button>
             </div>
             <ele-pro-table ref="tableRef" title="SN批次列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
@@ -39,9 +39,9 @@
                         <span>{{ record.production_model_cn }}</span>
                         <span v-if="record.production_model">（{{record.production_model}}）</span>
                     </template>
-                    <!-- <template v-if="column.key === 'newbatch_no'">
+                    <template v-if="column.key === 'newbatch_no'">
                         <span>{{ record.bom_edition }}{{ record.gen_date }}</span>
-                    </template> -->
+                    </template>
                     <!-- <template v-if="column.key === 'production_scale'">
                         <span v-if="record.production_type=='W'">外采</span>
                         <span v-else>自研</span>
@@ -104,8 +104,8 @@
                 return [
                     {
                         title: '申请批次编号',
-                        key: 'apply_code',
-                        dataIndex: 'apply_code',
+                        key: 'newbatch_no',
+                        dataIndex: 'newbatch_no',
                         align: 'center',
                         width: 110,
                         minWidth: 100,
@@ -152,8 +152,8 @@
                     },
                     {
                         title: '申请人',
-                        dataIndex: 'operator_account',
-                        key: 'operator_account',
+                        dataIndex: 'operation_mode',
+                        key: 'operation_mode',
                         width: 100,
                         minWidth: 100,
                         align: 'center',

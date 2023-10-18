@@ -3,16 +3,14 @@
         <a-card style="border-radius: 4px;height: 74px;">
             <div style="display: flex;justify-content: space-between;">
                 <el-form :inline="true" :model="formState" class="demo-form-inline">
-                    <el-form-item label="型号名称">
-                        <a-input v-model:value="formState.name_like" placeholder="请输入型号名称"/>
-                    </el-form-item>
-                    <el-form-item label="品类名称">
-                        <a-input v-model:value="formState.category_like" placeholder="请输入品类名称"/>
+                    <el-form-item label="产品型号">
+                        <a-input v-model:value="formState.category" placeholder="请输入产品型号"/>
                     </el-form-item>
                 </el-form>
                 <div>
                     <a-button style="margin-right: 10px;" @click="clearToSearch">重置</a-button>
                     <a-button type="primary" @click="toSearch">查询</a-button>
+                    <!-- <a-button type="primary" @click="toLogin">查询</a-button> -->
                 </div>
             </div>
         </a-card>
@@ -61,15 +59,48 @@
         <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }产品信息`" @ok="handleOk">
             <a-form :model="productInfo" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
-                <a-form-item label="产品型号" name="name"
-                    :rules="[{ required: true, message: '请输入产品型号！' }]">
+                <a-form-item label="产品名称" name="name"
+                    :rules="[{ required: true, message: '请输入产品名称！' }]">
                     <a-input v-model:value="productInfo.name" />
                 </a-form-item>
-                <a-form-item label="所属品类" name="category" :rules="[{ required: true, message: '请输入所属品类！' }]">
+                <a-form-item label="产品型号" name="category" :rules="[{ required: true, message: '请输入产品型号！' }]">
                     <a-input v-model:value="productInfo.category" />
                 </a-form-item>
-                <a-form-item label="型号编码" name="category_code" :rules="[{ required: true, message: '请输入型号编码！' }]">
+                <a-form-item label="型号编号" name="category_code" :rules="[{ required: true, message: '请输入型号编号！' }]">
                     <a-input v-model:value="productInfo.category_code" />
+                </a-form-item>
+                <a-form-item label="产品类型" name="type" :rules="[{ required: true, message: '请输入产品类型！' }]">
+                    <a-input v-model:value="productInfo.type" />
+                </a-form-item>
+                <a-form-item label="类型编号" name="type_code"
+                    :rules="[{ required: true, message: '请输入类型编号！' }]">
+                    <a-input v-model:value="productInfo.type_code" />
+                </a-form-item>
+                <a-form-item label="产品版本" name="version" :rules="[{ required: true, message: '请输入产品版本！' }]">
+                    <a-input v-model:value="productInfo.version" />
+                </a-form-item>
+                <a-form-item label="版本编号" name="version_code" :rules="[{ required: true, message: '请输入版本编号！' }]">
+                    <a-input v-model:value="productInfo.version_code" />
+                </a-form-item>
+                <a-form-item label="产品执行标准" name="standard" :rules="[{ required: true, message: '请输入产品执行标准！' }]">
+                    <a-input v-model:value="productInfo.standard" />
+                </a-form-item>
+                <a-form-item label="额定电压" name="voltage"
+                    :rules="[{ required: true, message: '请输入额定电压！' }]">
+                    <a-input v-model:value="productInfo.voltage" />
+                </a-form-item>
+                <a-form-item label="额定电流" name="electric_current" :rules="[{ required: true, message: '请输入额定电流！' }]">
+                    <a-input v-model:value="productInfo.electric_current" />
+                </a-form-item>
+                <a-form-item label="额定频率" name="rate" :rules="[{ required: true, message: '请输入额定频率！' }]">
+                    <a-input v-model:value="productInfo.rate" />
+                </a-form-item>
+                <a-form-item label="额定功率" name="power" :rules="[{ required: true, message: '请输入额定功率！' }]">
+                    <a-input v-model:value="productInfo.power" />
+                </a-form-item>
+                <a-form-item label="产品净重" name="net_weight"
+                    :rules="[{ required: true, message: '请输入产品净重！' }]">
+                    <a-input v-model:value="productInfo.net_weight" />
                 </a-form-item>
                 <a-form-item label="备注" name="remark">
                     <a-textarea v-model:value="productInfo.remark" placeholder="请输入备注" :rows="4" />
@@ -95,8 +126,7 @@ export default defineComponent({
         let addVisible = ref(false)
         let editId = ref('')
         let formState = reactive({
-            name_like: '',
-            category_like:''
+            category: '',
         })
         let productInfo = reactive({
             name: '',
@@ -147,7 +177,7 @@ export default defineComponent({
                 {
                     title: '备注',
                     dataIndex: 'remark',
-                    width: 200,
+                    width: 160,
                     minWidth: 100,
                     align: 'center'
                 },  
@@ -231,8 +261,7 @@ export default defineComponent({
 
         const clearToSearch = () => {
             pageData.page=1
-            formState.name_like = ''
-            formState.category_like = ''
+            formState.category = ''
             getDeviceInfoList()
         }
 

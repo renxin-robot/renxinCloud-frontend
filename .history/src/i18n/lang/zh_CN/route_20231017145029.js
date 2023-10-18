@@ -28,7 +28,7 @@ export default {
       nameplate:{_name: '铭牌管理' },
       category:{_name: '品类管理' },
       plant:{_name: '工厂管理' },
-      product:{_name: '型号管理' },
+      product:{_name: '产品信息管理' },
     },
     SN:{_name: 'SN管理' ,addSN:{_name:'SN生成'},SNDetail:{_name:'SN批次详情'}},
     statistics:{_name: '设备统计' },

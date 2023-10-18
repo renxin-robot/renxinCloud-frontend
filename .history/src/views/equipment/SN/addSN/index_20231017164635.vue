@@ -9,19 +9,26 @@
                     :label-col="labelCol"
                     :wrapper-col="wrapperCol"
                 >
-                    <a-form-item ref="combinative_code" label="产品品类/型号" name="combinative_code">
-                        <a-select v-model:value="formState.combinative_code" placeholder="请选择产品品类！">
+                    <a-form-item ref="production_category" label="产品品类/型号" name="production_category">
+                        <a-select v-model:value="formState.production_category" placeholder="请选择产品品类！">
                             <a-select-option v-for="item in productionData" :key="item" :value="item">{{ item }}</a-select-option>
                         </a-select>
                     </a-form-item>
-                    <a-form-item label="BOM版本号" name="bom_edition" style="margin-bottom: 0px;">
+                    <a-form-item label="BOM版本号" name="bom_edition">
                         <a-input v-model:value="formState.bom_edition" placeholder="请输入BOM版本号！"/>
                     </a-form-item>
-                    <div style="color: #CDCDCD;margin-left: 198px;height: 40px;line-height: 40px;">填写规则，输入两位数字，例如“51”</div>
+                    <div style="color: gray;margin-left: 100px;">填写规则，输入两位数字，例如“51”</div>
                     <a-form-item label="选择生产商" name="producer">
                         <a-select v-model:value="formState.producer" placeholder="请选择生产商！">
                             <a-select-option value="A">亘舒工厂（佛山南海）</a-select-option>
                         </a-select>
+                    </a-form-item>
+                   
+                    <a-form-item label="生产批次号" name="batch_no">
+                        <a-input v-model:value="formState.batch_no" placeholder="请输入生产批次号！"/>
+                    </a-form-item>
+                    <a-form-item label="生产时间" name="gen_date">
+                        <a-input v-model:value="formState.gen_date" placeholder="请输入生产时间！（例如2023年3月，则2303）"/>
                     </a-form-item>
                     <a-form-item label="生产类型" name="production_scale">
                         <a-radio-group v-model:value="formState.production_scale">
@@ -35,15 +42,8 @@
                             <a-radio value="W">外采</a-radio>
                         </a-radio-group>
                     </a-form-item>
-                    <a-form-item label="首台生产月份" name="gen_date" style="margin-bottom: 0px;">
-                        <a-input v-model:value="formState.gen_date" placeholder="请输入首台生产月份！（例如2023年3月，则2303）"/>
-                    </a-form-item>
-                    <div style="color: #CDCDCD;margin-left: 198px;height: 40px;line-height: 40px;">填写规则，输入四位数字，例如“2305”</div>
                     <a-form-item label="生成数量" name="number">
                         <a-input v-model:value="formState.number" placeholder="请输入生成数量！"/>
-                    </a-form-item>
-                    <a-form-item label="生产批次号" name="batch_no">
-                        <a-input disabled v-model:value="batch_no" placeholder="根据版本号和月份自动生成"/>
                     </a-form-item>
                 </a-form>
                 <div style="text-align: center;">
@@ -56,7 +56,7 @@
     </div>
 </template>
 <script>
-    import { defineComponent, reactive, ref, toRaw, computed} from 'vue';
+    import { defineComponent, reactive, ref, toRaw, } from 'vue';
     import {addSN,getProductionList} from '@/api/equipment/SN'
     import { useRouter } from 'vue-router';
     import { notification } from 'ant-design-vue/es';
@@ -64,26 +64,32 @@
         name:'SN',
         setup(){
             const formState=reactive({
-                combinative_code:'',
+                production_category:'',
                 production_model:'',
                 producer:'',
                 bom_edition:'',
-                // batch_no:'',
+                batch_no:'',
                 gen_date:'',
                 production_scale:'S',
                 production_type:'W',
                 number:1,
 
             })
-            let batch_no=computed(()=>formState.bom_edition+formState.gen_date)
             const {push}=useRouter()
             const formRef = ref();
             let productionData=ref([])
             const rules = {
-                combinative_code: [
+                production_category: [
                     {
                     required: true,
-                    message: '请选择产品品类/型号！',
+                    message: '请选择产品品类！',
+                    trigger: 'change',
+                    },
+                ],
+                production_model: [
+                    {
+                    required: true,
+                    message: '请选择产品型号！',
                     trigger: 'change',
                     },
                 ],
@@ -102,21 +108,21 @@
                     },
                     { min: 2, max: 2, message: '请输入两位数BOM版本号！', trigger: 'blur' },
                 ],
-                // batch_no: [
-                // {
-                //     required: true,
-                //     message: '请输入生产批次号！',
-                //     trigger: 'blur',
-                //     },
-                //     { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
-                // ],
+                batch_no: [
+                {
+                    required: true,
+                    message: '请输入生产批次号！',
+                    trigger: 'blur',
+                    },
+                    { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
+                ],
                 gen_date: [
                     {
                         required: true,
-                        message: '请输入首台生产月份！',
+                        message: '请输入生产时间！',
                         trigger: 'blur',
                     },
-                    { min: 4, max: 4, message: '请输入首台生产月份！', trigger: 'blur' },
+                    { min: 4, max: 4, message: '请输入四位数生产时间！', trigger: 'blur' },
                 ],
                 production_scale: [
                     {
@@ -135,6 +141,7 @@
                 number: [
                 {
                     required: true,
+                    // type:'number',
                     message: '请输入本次生成数量！',
                     trigger: 'blur',
                     },
@@ -145,6 +152,7 @@
                     if(res.code==0){
                         productionData.value=res.data.map((item)=>item.combinative_code)
                     }
+                    console.log(res,productionData.value)
                 })
             }
             getProductionData()
@@ -215,7 +223,6 @@
                 resetForm,
                 clearData,
                 productionData,
-                batch_no
             }
         }
     })

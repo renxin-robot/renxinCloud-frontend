@@ -45,7 +45,7 @@
                 </div>
             </div> -->
             <ele-pro-table ref="tableRef" title="SN批次列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
-                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null" :toolbar="false"
+                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null"  :toolbar="false"
                 :scroll="{ x: 1000 }">
                 <!-- 表头工具按钮 -->
                 <template #toolkit>

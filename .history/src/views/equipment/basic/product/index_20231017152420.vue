@@ -231,8 +231,7 @@ export default defineComponent({
 
         const clearToSearch = () => {
             pageData.page=1
-            formState.name_like = ''
-            formState.category_like = ''
+            formState.category = ''
             getDeviceInfoList()
         }
 

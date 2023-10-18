@@ -102,14 +102,14 @@
                     },
                     { min: 2, max: 2, message: '请输入两位数BOM版本号！', trigger: 'blur' },
                 ],
-                // batch_no: [
-                // {
-                //     required: true,
-                //     message: '请输入生产批次号！',
-                //     trigger: 'blur',
-                //     },
-                //     { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
-                // ],
+                batch_no: [
+                {
+                    required: true,
+                    message: '请输入生产批次号！',
+                    trigger: 'blur',
+                    },
+                    { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
+                ],
                 gen_date: [
                     {
                         required: true,
@@ -135,6 +135,7 @@
                 number: [
                 {
                     required: true,
+                    // type:'number',
                     message: '请输入本次生成数量！',
                     trigger: 'blur',
                     },

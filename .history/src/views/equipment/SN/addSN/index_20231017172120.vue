@@ -43,7 +43,7 @@
                         <a-input v-model:value="formState.number" placeholder="请输入生成数量！"/>
                     </a-form-item>
                     <a-form-item label="生产批次号" name="batch_no">
-                        <a-input disabled v-model:value="batch_no" placeholder="根据版本号和月份自动生成"/>
+                        <a-input disabled v-model:value="batch_no" :placeholder="batch_no"/>
                     </a-form-item>
                 </a-form>
                 <div style="text-align: center;">
@@ -56,7 +56,7 @@
     </div>
 </template>
 <script>
-    import { defineComponent, reactive, ref, toRaw, computed} from 'vue';
+    import { defineComponent, reactive, ref, toRaw, } from 'vue';
     import {addSN,getProductionList} from '@/api/equipment/SN'
     import { useRouter } from 'vue-router';
     import { notification } from 'ant-design-vue/es';
@@ -75,7 +75,7 @@
                 number:1,
 
             })
-            let batch_no=computed(()=>formState.bom_edition+formState.gen_date)
+            let batch_no='hhhhh'
             const {push}=useRouter()
             const formRef = ref();
             let productionData=ref([])
@@ -102,14 +102,14 @@
                     },
                     { min: 2, max: 2, message: '请输入两位数BOM版本号！', trigger: 'blur' },
                 ],
-                // batch_no: [
-                // {
-                //     required: true,
-                //     message: '请输入生产批次号！',
-                //     trigger: 'blur',
-                //     },
-                //     { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
-                // ],
+                batch_no: [
+                {
+                    required: true,
+                    message: '请输入生产批次号！',
+                    trigger: 'blur',
+                    },
+                    { min: 4, max: 4, message: '请输入四位数生产批次号！', trigger: 'blur' },
+                ],
                 gen_date: [
                     {
                         required: true,
@@ -135,6 +135,7 @@
                 number: [
                 {
                     required: true,
+                    // type:'number',
                     message: '请输入本次生成数量！',
                     trigger: 'blur',
                     },

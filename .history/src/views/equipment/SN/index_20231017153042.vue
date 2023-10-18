@@ -20,32 +20,27 @@
             </div>
         </a-card>
         <a-card style="border-radius: 4px;margin-top: 10px;">
-            <div style="text-align: right;margin-bottom: 10px;">
-                <a-button type="primary" @click="toAddSN">SN生成</a-button>
-            </div>
             <ele-pro-table ref="tableRef" title="SN批次列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
-                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null" :toolbar="false"
+                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null"
                 :scroll="{ x: 1000 }" >
                 <!-- 表头工具按钮 -->
                 <template #toolkit>
+                    <a-button type="primary" @click="toAddSN">SN生成</a-button>
                 </template>
                 <!-- 自定义列 -->
                 <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === 'production_category'">
-                        <span>{{ record.production_category_cn }}</span>
-                        <span v-if="record.production_category"> （{{record.production_category}}）</span>
+                    <template v-if="column.key === 'production_type'">
+                        <span v-if="record.production_scale=='S'">试制</span>
+                        <span v-else>量产</span>
                     </template>
-                    <template v-if="column.key === 'production_model'">
-                        <span>{{ record.production_model_cn }}</span>
-                        <span v-if="record.production_model">（{{record.production_model}}）</span>
+                    <template v-if="column.key === 'producer'">
+                        <span v-if="record.producer=='A'">亘舒工厂（佛山南海）</span>
+                        <span v-else>顺德工厂</span>
                     </template>
-                    <!-- <template v-if="column.key === 'newbatch_no'">
-                        <span>{{ record.bom_edition }}{{ record.gen_date }}</span>
-                    </template> -->
-                    <!-- <template v-if="column.key === 'production_scale'">
+                    <template v-if="column.key === 'production_scale'">
                         <span v-if="record.production_type=='W'">外采</span>
                         <span v-else>自研</span>
-                    </template> -->
+                    </template>
                     <!-- 操作列 -->
                     <template v-else-if="column.key === 'action'">
                         <a-space>
@@ -104,24 +99,24 @@
                 return [
                     {
                         title: '申请批次编号',
-                        key: 'apply_code',
-                        dataIndex: 'apply_code',
+                        key: 'batch_no',
+                        dataIndex: 'batch_no',
                         align: 'center',
                         width: 110,
                         minWidth: 100,
                     },
                     {
                         title: '设备品类（编号）',
-                        key: 'production_category',
-                        dataIndex: 'production_category',
-                        width: 140,
+                        key: 'production_category_cn',
+                        dataIndex: 'production_category_cn',
+                        width: 120,
                         minWidth: 100,
                         align: 'center',
                     },
                     {
                         title: '设备型号（编号）',
-                        key: 'production_model',
-                        dataIndex: 'production_model',
+                        key: 'production_model_cn',
+                        dataIndex: 'production_model_cn',
                         width: 140,
                         minWidth: 100,
                         align: 'center',
@@ -136,9 +131,9 @@
                     },
                     {
                         title: '首台生产月份',
-                        dataIndex: 'gen_date',
-                        key: 'gen_date',
-                        width: 100,
+                        dataIndex: 'production_scale',
+                        key: 'production_scale',
+                        width: 90,
                         minWidth: 100,
                         align: 'center',
                     },
@@ -152,8 +147,8 @@
                     },
                     {
                         title: '申请人',
-                        dataIndex: 'operator_account',
-                        key: 'operator_account',
+                        dataIndex: 'operation_mode',
+                        key: 'operation_mode',
                         width: 100,
                         minWidth: 100,
                         align: 'center',

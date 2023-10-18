@@ -4,10 +4,10 @@
             <div style="display: flex;justify-content: space-between;">
                 <el-form :inline="true" :model="formState" class="demo-form-inline">
                     <el-form-item label="型号名称">
-                        <a-input v-model:value="formState.name_like" placeholder="请输入型号名称"/>
+                        <a-input v-model:value="formState.name_like" placeholder="请输入产品型号"/>
                     </el-form-item>
                     <el-form-item label="品类名称">
-                        <a-input v-model:value="formState.category_like" placeholder="请输入品类名称"/>
+                        <a-input v-model:value="formState.category_like" placeholder="请输入产品型号"/>
                     </el-form-item>
                 </el-form>
                 <div>
@@ -61,14 +61,14 @@
         <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }产品信息`" @ok="handleOk">
             <a-form :model="productInfo" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 autocomplete="off">
-                <a-form-item label="产品型号" name="name"
-                    :rules="[{ required: true, message: '请输入产品型号！' }]">
+                <a-form-item label="产品名称" name="name"
+                    :rules="[{ required: true, message: '请输入产品名称！' }]">
                     <a-input v-model:value="productInfo.name" />
                 </a-form-item>
-                <a-form-item label="所属品类" name="category" :rules="[{ required: true, message: '请输入所属品类！' }]">
+                <a-form-item label="产品型号" name="category" :rules="[{ required: true, message: '请输入产品型号！' }]">
                     <a-input v-model:value="productInfo.category" />
                 </a-form-item>
-                <a-form-item label="型号编码" name="category_code" :rules="[{ required: true, message: '请输入型号编码！' }]">
+                <a-form-item label="型号编号" name="category_code" :rules="[{ required: true, message: '请输入型号编号！' }]">
                     <a-input v-model:value="productInfo.category_code" />
                 </a-form-item>
                 <a-form-item label="备注" name="remark">
@@ -95,8 +95,7 @@ export default defineComponent({
         let addVisible = ref(false)
         let editId = ref('')
         let formState = reactive({
-            name_like: '',
-            category_like:''
+            category: '',
         })
         let productInfo = reactive({
             name: '',
@@ -231,8 +230,7 @@ export default defineComponent({
 
         const clearToSearch = () => {
             pageData.page=1
-            formState.name_like = ''
-            formState.category_like = ''
+            formState.category = ''
             getDeviceInfoList()
         }
 

@@ -20,14 +20,12 @@
             </div>
         </a-card>
         <a-card style="border-radius: 4px;margin-top: 10px;">
-            <div style="text-align: right;margin-bottom: 10px;">
-                <a-button type="primary" @click="toAddSN">SN生成</a-button>
-            </div>
             <ele-pro-table ref="tableRef" title="SN批次列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
-                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null" :toolbar="false"
+                :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null"
                 :scroll="{ x: 1000 }" >
                 <!-- 表头工具按钮 -->
                 <template #toolkit>
+                    <a-button type="primary" @click="toAddSN">SN生成</a-button>
                 </template>
                 <!-- 自定义列 -->
                 <template #bodyCell="{ column, record }">
@@ -39,10 +37,11 @@
                         <span>{{ record.production_model_cn }}</span>
                         <span v-if="record.production_model">（{{record.production_model}}）</span>
                     </template>
-                    <!-- <template v-if="column.key === 'newbatch_no'">
-                        <span>{{ record.bom_edition }}{{ record.gen_date }}</span>
-                    </template> -->
-                    <!-- <template v-if="column.key === 'production_scale'">
+                    <!-- <template v-if="column.key === 'producer'">
+                        <span v-if="record.producer=='A'">亘舒工厂（佛山南海）</span>
+                        <span v-else>顺德工厂</span>
+                    </template>
+                    <template v-if="column.key === 'production_scale'">
                         <span v-if="record.production_type=='W'">外采</span>
                         <span v-else>自研</span>
                     </template> -->
@@ -104,8 +103,8 @@
                 return [
                     {
                         title: '申请批次编号',
-                        key: 'apply_code',
-                        dataIndex: 'apply_code',
+                        key: 'batch_no',
+                        dataIndex: 'batch_no',
                         align: 'center',
                         width: 110,
                         minWidth: 100,
@@ -152,8 +151,8 @@
                     },
                     {
                         title: '申请人',
-                        dataIndex: 'operator_account',
-                        key: 'operator_account',
+                        dataIndex: 'operation_mode',
+                        key: 'operation_mode',
                         width: 100,
                         minWidth: 100,
                         align: 'center',
