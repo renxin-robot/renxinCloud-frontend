@@ -82,10 +82,10 @@
   import { messageLoading, toTreeData, eachTreeData } from 'ele-admin-pro/es';
   import OrgUserList from './components/org-user-list.vue';
   import OrgEdit from './components/org-edit.vue';
-  // import {
-  //   listOrganizations,
-  //   removeOrganization
-  // } from '@/api/system/organization';
+  import {
+    listOrganizations,
+    removeOrganization
+  } from '@/api/system/organization';
 
   // 加载状态
   const loading = ref(true);
@@ -111,38 +111,38 @@
   /* 查询 */
   const query = () => {
     loading.value = true;
-    // listOrganizations()
-    //   .then((list) => {
-    //     loading.value = false;
-    //     const eks = [];
-    //     list.forEach((d) => {
-    //       d.key = d.organizationId;
-    //       d.value = d.organizationId;
-    //       d.title = d.organizationName;
-    //       if (typeof d.key === 'number') {
-    //         eks.push(d.key);
-    //       }
-    //     });
-    //     expandedRowKeys.value = eks;
-    //     data.value = toTreeData({
-    //       data: list,
-    //       idField: 'organizationId',
-    //       parentIdField: 'parentId'
-    //     });
-    //     if (list.length) {
-    //       if (typeof list[0].key === 'number') {
-    //         selectedRowKeys.value = [list[0].key];
-    //       }
-    //       current.value = list[0];
-    //     } else {
-    //       selectedRowKeys.value = [];
-    //       current.value = null;
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     loading.value = false;
-    //     message.error(e.message);
-    //   });
+    listOrganizations()
+      .then((list) => {
+        loading.value = false;
+        const eks = [];
+        list.forEach((d) => {
+          d.key = d.organizationId;
+          d.value = d.organizationId;
+          d.title = d.organizationName;
+          if (typeof d.key === 'number') {
+            eks.push(d.key);
+          }
+        });
+        expandedRowKeys.value = eks;
+        data.value = toTreeData({
+          data: list,
+          idField: 'organizationId',
+          parentIdField: 'parentId'
+        });
+        if (list.length) {
+          if (typeof list[0].key === 'number') {
+            selectedRowKeys.value = [list[0].key];
+          }
+          current.value = list[0];
+        } else {
+          selectedRowKeys.value = [];
+          current.value = null;
+        }
+      })
+      .catch((e) => {
+        loading.value = false;
+        message.error(e.message);
+      });
   };
 
   /* 选择数据 */
@@ -169,17 +169,17 @@
       icon: createVNode(ExclamationCircleOutlined),
       maskClosable: true,
       onOk: () => {
-        // const hide = messageLoading('请求中..', 0);
-        // removeOrganization(current.value?.organizationId)
-        //   .then((msg) => {
-        //     hide();
-        //     message.success(msg);
-        //     query();
-        //   })
-        //   .catch((e) => {
-        //     hide();
-        //     message.error(e.message);
-        //   });
+        const hide = messageLoading('请求中..', 0);
+        removeOrganization(current.value?.organizationId)
+          .then((msg) => {
+            hide();
+            message.success(msg);
+            query();
+          })
+          .catch((e) => {
+            hide();
+            message.error(e.message);
+          });
       }
     });
   };

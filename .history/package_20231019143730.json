@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite build && vite preview",
-    "build": "vite build",
+    "build": "npm run build",
     "lint:eslint": "eslint --cache --max-warnings 0  \"src/**/*.{vue,js}\" --fix",
     "clean:cache": "rimraf node_modules/.cache/ && rimraf node_modules/.vite/",
     "clean:lib": "rimraf node_modules"

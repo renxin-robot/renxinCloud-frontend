@@ -46,10 +46,10 @@
   import { messageLoading, toDateString } from 'ele-admin-pro/es';
   import OperationRecordSearch from './components/operation-record-search.vue';
   import OperationRecordDetail from './components/operation-record-detail.vue';
-  // import {
-  //   pageOperationRecords,
-  //   listOperationRecords
-  // } from '@/api/system/operation-record';
+  import {
+    pageOperationRecords,
+    listOperationRecords
+  } from '@/api/system/operation-record';
 
   // 表格实例
   const tableRef = ref(null);
@@ -178,7 +178,15 @@
   const showInfo = ref(false);
 
   // 表格数据源
-  const datasource = []
+  const datasource = ({ page, limit, where, orders, filters }) => {
+    return pageOperationRecords({
+      ...where,
+      ...orders,
+      ...filters,
+      page,
+      limit
+    });
+  };
 
   /* 刷新表格 */
   const reload = (where) => {
@@ -208,7 +216,38 @@
     ];
     // 请求查询全部(不分页)的接口
     const hide = messageLoading('请求中..', 0);
-    tableRef.value=[]
+    tableRef.value?.doRequest(({ where, orders, filters }) => {
+      listOperationRecords({ ...where, ...orders, ...filters })
+        .then((data) => {
+          hide();
+          data.forEach((d) => {
+            array.push([
+              d.username,
+              d.nickname,
+              d.module,
+              d.description,
+              d.url,
+              d.requestMethod,
+              ['正常', '异常'][d.status],
+              d.spendTime / 1000 + 's',
+              toDateString(d.createTime)
+            ]);
+          });
+          writeFile(
+            {
+              SheetNames: ['Sheet1'],
+              Sheets: {
+                Sheet1: utils.aoa_to_sheet(array)
+              }
+            },
+            '操作日志.xlsx'
+          );
+        })
+        .catch((e) => {
+          hide();
+          message.error(e.message);
+        });
+    });
   };
 </script>
 
