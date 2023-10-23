@@ -200,33 +200,33 @@ export const USER_MENUS = [
       meta: {title: '系统管理', icon: 'setting-outlined'},
       children:[
         {
-          path:'/system/user',
-          name:'systemUser',
-          component:'/system/user',
-          meta: {title: 'user', hide: false},
-        },
-        {
-          path:'/system/organization',
-          name:'systemOrganization',
-          component:'/system/organization',
-          meta: {title: 'organization', hide: false},
-        },
-
-        {
-          path:'/system/role',
-          name:'systemRole',
-          component:'/system/role',
-          meta: {title: 'role', hide: false},
-        },
-        {
           path:'/system/menu',
           name:'systemMenu',
           component:'/system/menu',
           meta: {title: 'menu', hide: false},
         },
         {
+          path:'/system/user',
+          name:'systemuser',
+          component:'/system/user',
+          meta: {title: 'user', hide: false},
+        },
+
+        {
+          path:'/system/role',
+          name:'systemrole',
+          component:'/system/role',
+          meta: {title: 'role', hide: false},
+        },
+        {
+          path:'/system/organization',
+          name:'systemorganization',
+          component:'/system/organization',
+          meta: {title: 'organization', hide: false},
+        },
+        {
           path:'/system/operation-record',
-          name:'systemOperationRecord',
+          name:'systemoperation-record',
           component:'/system/operation-record',
           meta: {title: 'operation-record', hide: false},
         },

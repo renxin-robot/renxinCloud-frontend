@@ -70,15 +70,6 @@ export async function deleteChannel(id) {
  * 查询渠道列表
  */
 export async function getSystemChannel(params) {
-  if(!params.type){
-    delete params.type
-  }
-  if(!params.name_like){
-    delete params.name_like
-  }
-  if(!params.area_like){
-    delete params.area_like
-  }
   const res = await request.get(`/mam/channel/list`,{params});
   return res.data
 }

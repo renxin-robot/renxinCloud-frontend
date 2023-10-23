@@ -33,26 +33,24 @@
                   <a-row :gutter="8">
                     <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
                       <a-form-item label="选择模式">
-                        <a-select v-model:value="form.type" placeholder="请选择" @change="changeType" allow-clear>
-                          <a-select-option value="直营">直营</a-select-option>
-                          <a-select-option value="代理">代理</a-select-option>
-                          <a-select-option value="海外">海外</a-select-option>
-                          <a-select-option value="直销">直销</a-select-option>
+                        <a-select v-model:value="form.sexs" placeholder="请选择" allow-clear>
+                          <a-select-option value="1">男</a-select-option>
+                          <a-select-option value="2">女</a-select-option>
                         </a-select>
                       </a-form-item>
                     </a-col>
                     <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
                       <a-form-item label="选择区域">
-                        <a-select v-model:value="form.area_like" placeholder="请选择" allow-clear @change="changeType" >
-                          <a-select-option v-for="item,index in queryAreaList" :key="index" :value="item">{{ item }}</a-select-option>
+                        <a-select v-model:value="form.sex" placeholder="请选择" allow-clear>
+                          <a-select-option value="1">男</a-select-option>
+                          <a-select-option value="2">女</a-select-option>
                         </a-select>
                       </a-form-item>
                     </a-col>
                     <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
                       <a-form-item label="搜索名称">
                         <a-input
-                          @change="changeType" 
-                          v-model:value.trim="form.name_like"
+                          v-model:value.trim="form.username"
                           :placeholder="placeholderText"
                           allow-clear
                         />
@@ -73,7 +71,7 @@
             <div style="display: flex;justify-content: space-between;align-items: center;">
               <div style="display: flex;align-items: center;">
                 <div style="font-size: 16px;font-weight: 700;">饪芯机器人</div>
-                <div style="margin-left: 8px;color: rgba(166, 166, 166, 1);font-size: 12px;">总数{{ channelTotal }}</div>
+                <div style="margin-left: 8px;color: rgba(166, 166, 166, 1);font-size: 12px;">总数34</div>
               </div>
               <div>
                 <Button type="primary" @click="showChannelModal"><PlusOutlined/>添加渠道</Button>
@@ -93,7 +91,7 @@
                   </template>
                   <template v-else-if="column.key === 'action'">
                     <span>
-                      <a @click="editChannel(record)">编辑</a>
+                      <a>编辑</a>
                     </span>
                   </template>
                 </template>
@@ -219,9 +217,9 @@
   ]);
   // 查询
   const form =reactive({
-    type: '',
-    name_like: '',
-    area_like: '',
+    username: '',
+    sexs: '',
+    sex: '',
   })
   // 树展开的key
   const expandedRowKeys = ref([]);
@@ -273,9 +271,7 @@
     },
   ];
   let areaList=ref([])
-  let queryAreaList=ref([])
   const channelData = ref([])
-  const channelTotal=ref(0)
   const formRef = ref();
 
   let channelForm = reactive({
@@ -390,31 +386,20 @@
   }
   // 获取渠道列表数据
   const getChannelData=()=>{
-    getSystemChannel({...form}).then((res)=>{
+    getSystemChannel().then((res)=>{
       if(res.code==0){
         channelData.value=res.data
-        channelTotal.value=res.paging.total_records
-        queryAreaList.value=channelData.value.map((item)=>item.area)
       }
+      console.log(res)
     })
   }
   getChannelData()
-  // 条件查询
-  const changeType=()=>{
-    getChannelData()
-  }
   const search=()=>{
-    getChannelData()
+    console.log(form,'search')
   }
+
   const reset=()=>{
-    form.area_like=''
-    form.name_like=''
-    form.type=''
-    getChannelData()
-  }
-  // 编辑渠道
-  const editChannel=(row)=>{
-    console.log(row)
+    console.log(form,'search')
   }
   const showChannelModal=()=>{
     addChannelVisible.value=true
@@ -447,6 +432,7 @@
         }
         console.log(res)
       })
+      console.log(channelForm)
     })
   }
   const closeModal=()=>{

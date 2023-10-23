@@ -57,6 +57,7 @@ export default {
     _name: '系统管理',
     user: { _name: '账号管理' },
     role: { _name: '角色管理' },
+    // customer: { _name: '客户管理' },
     // resource: { _name: '资源管理' },
     menu: { _name: '菜单管理' },
     // dictionary: { _name: '字典管理' },

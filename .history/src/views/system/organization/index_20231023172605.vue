@@ -51,8 +51,7 @@
                     <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
                       <a-form-item label="搜索名称">
                         <a-input
-                          @change="changeType" 
-                          v-model:value.trim="form.name_like"
+                          v-model:value.trim="form.username"
                           :placeholder="placeholderText"
                           allow-clear
                         />
@@ -93,7 +92,7 @@
                   </template>
                   <template v-else-if="column.key === 'action'">
                     <span>
-                      <a @click="editChannel(record)">编辑</a>
+                      <a>编辑</a>
                     </span>
                   </template>
                 </template>
@@ -389,8 +388,8 @@
     console.log(data)
   }
   // 获取渠道列表数据
-  const getChannelData=()=>{
-    getSystemChannel({...form}).then((res)=>{
+  const getChannelData=(data)=>{
+    getSystemChannel(data).then((res)=>{
       if(res.code==0){
         channelData.value=res.data
         channelTotal.value=res.paging.total_records
@@ -398,23 +397,16 @@
       }
     })
   }
-  getChannelData()
-  // 条件查询
+  getChannelData(null)
   const changeType=()=>{
-    getChannelData()
+    getChannelData({...form})
   }
   const search=()=>{
-    getChannelData()
+    console.log(form,'search')
   }
+
   const reset=()=>{
-    form.area_like=''
-    form.name_like=''
-    form.type=''
-    getChannelData()
-  }
-  // 编辑渠道
-  const editChannel=(row)=>{
-    console.log(row)
+    console.log(form,'search')
   }
   const showChannelModal=()=>{
     addChannelVisible.value=true
@@ -443,7 +435,7 @@
           })
           addChannelVisible.value=!addChannelVisible
           clearForm()
-          getChannelData()
+          getChannelData(null)
         }
         console.log(res)
       })

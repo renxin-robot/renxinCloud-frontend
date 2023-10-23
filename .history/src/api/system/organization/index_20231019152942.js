@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import axios from 'axios'
+
 /**
  * 分页查询机构
  */
@@ -15,7 +15,7 @@ export async function pageOrganizations(params) {
  * 查询机构列表
  */
 export async function listOrganizations(params) {
-  const res = await axios.get('/system/organization', { params });
+  const res = await request.get('/system/organization', { params });
   if (res.data.code === 0 && res.data.data) {
     return res.data.data;
   }

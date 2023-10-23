@@ -207,16 +207,9 @@ export const USER_MENUS = [
         },
         {
           path:'/system/organization',
-          name:'systemOrganization',
+          name:'systemorganization',
           component:'/system/organization',
           meta: {title: 'organization', hide: false},
-        },
-
-        {
-          path:'/system/role',
-          name:'systemRole',
-          component:'/system/role',
-          meta: {title: 'role', hide: false},
         },
         {
           path:'/system/menu',
@@ -224,6 +217,15 @@ export const USER_MENUS = [
           component:'/system/menu',
           meta: {title: 'menu', hide: false},
         },
+        
+
+        {
+          path:'/system/role',
+          name:'systemrole',
+          component:'/system/role',
+          meta: {title: 'role', hide: false},
+        },
+        
         {
           path:'/system/operation-record',
           name:'systemOperationRecord',
