@@ -151,7 +151,7 @@
       loading.value = true;
       login(form)
         .then((msg) => {
-          // .log(msg)
+          console.log(msg)
           message.success('登录成功！');
           cleanPageTabs();
           push({
