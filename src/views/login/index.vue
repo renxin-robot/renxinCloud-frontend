@@ -110,8 +110,8 @@
 
   // 表单数据
   const form = reactive({
-    name: 'renxin',
-    password: 'robot',
+    name: '',
+    password: '',
   });
 
   // 表单验证规则
@@ -155,7 +155,7 @@
           message.success('登录成功！');
           cleanPageTabs();
           push({
-            path:'/shop'
+            path:'/system/organization'
           })
           // goHome();
         })

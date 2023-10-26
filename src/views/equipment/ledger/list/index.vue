@@ -1,23 +1,45 @@
 <template>
     <div class="ele-body">
-        <a-card style="border-radius: 4px;height: 74px;">
-            <div style="display: flex;justify-content: space-between;">
-                <el-form :inline="true" :model="formState" class="demo-form-inline">
-                    <el-form-item label="设备编号">
-                        <a-input v-model:value="formState.device_code" placeholder="请输入设备编号"/>
-                    </el-form-item>
-                    <el-form-item label="设备型号">
-                        <a-input v-model:value="formState.category_code" placeholder="请输入设备型号"/>
-                    </el-form-item>
-                </el-form>
-                <div>
-                    <a-button style="margin-right: 10px;" @click="clearToSearch">重置</a-button>
-                    <a-button type="primary" @click="toSearch">查询</a-button>
-                </div>
-            </div>
+        <a-card :body-style="{ padding: '10px 10px 4px 10px'}">
+            <a-form
+          :label-col="{ xl: 9, lg: 8, md: 9, sm: 8 }"
+          :wrapper-col="{ xl: 15, lg: 16, md: 15, sm: 16 }"
+        >
+          <a-row :gutter="8">
+            <a-col :xl="8" :lg="8" :md="12" :sm="24" :xs="24">
+              <a-form-item label="设备编号">
+                <a-input v-model:value="formState.device_code" placeholder="请输入设备编号"/>
+            </a-form-item>
+            </a-col>
+            <a-col :xl="8" :lg="8" :md="12" :sm="24" :xs="24">
+              <a-form-item label="设备型号">
+                <a-input v-model:value="formState.category_code" placeholder="请输入设备型号"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="8" :lg="8" :md="24" :sm="24" :xs="24">
+              <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
+                <a-space>
+                  <a-button
+                    size="small"
+                    style="font-size: 12px; font-weight: normal"
+                    @click="clearToSearch"
+                    >重置</a-button
+                  >
+                  <a-button
+                    size="small"
+                    style="font-size: 12px; font-weight: normal"
+                    type="primary"
+                    @click="toSearch"
+                    >查询</a-button
+                  >
+                </a-space>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
         </a-card>
         <!-- <div style="width:100px;height:100px;background-color: #0E12EE;"></div> -->
-        <a-card style="margin-top: 10px;border-radius: 4px;">
+        <a-card style="margin-top: 10px;">
             <div id="proTable">
                 <ele-pro-table ref="tableRef" title="设备列表" :resizable="true" :bordered="true" :columnsFixed="true"
                     :columns="columns" :datasource="datasource" :scroll="{ x: 1000 }">
@@ -572,5 +594,16 @@ export default defineComponent({
     /deep/.ele-pro-table .ant-table-pagination.ant-pagination {
         display: none;
     }
+}
+/deep/.ant-input{
+  height: 26px !important;
+  font-size: 12px !important;
+}
+/deep/.ant-form-item-label > label{
+  font-size: 12px !important;
+  color: gray;
+}
+/deep/.ant-col{
+  height: 34px;
 }
 </style>

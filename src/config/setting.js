@@ -27,32 +27,38 @@ export const KEEP_ALIVE_EXCLUDES = [];
 
 // 直接指定菜单数据
 export const USER_MENUS = [
-  {
-    path: '/shop',
-    component: '/shop',
-    meta: {title: '门店管理', icon: 'shop-outlined'},
-    // children: [
-    //     {
-    //         path: '/shop/assistant',
-    //         component: '/shop/assistant',
-    //         meta: {title: '门店管理', icon: 'team-outlined', hide: false}
-    //     },
-    // ]
-},
+//   {
+//     path: '/shop',
+//     component: '/shop',
+//     meta: {title: '门店管理', icon: 'shop-outlined'},
+//     // children: [
+//     //     {
+//     //         path: '/shop/assistant',
+//     //         component: '/shop/assistant',
+//     //         meta: {title: '门店管理', icon: 'team-outlined', hide: false}
+//     //     },
+//     // ]
+// },
   {
         path: '/operation',
         redirect: '/operation/customer',
         meta: {title: '运营管理', icon: 'calculator-outlined'},
         children: [
-            {
-              path: '/operation/channel',
-              component: '/operation/channel',
-              meta: {title: '渠道管理', hide: false}
-            },
-            {
-                path: '/operation/customer',
-                component: '/operation/customer',
-                meta: {title: '客户管理', hide: false}
+            // {
+            //   path: '/operation/channel',
+            //   component: '/operation/channel',
+            //   meta: {title: '渠道管理', hide: false}
+            // },
+            // {
+            //     path: '/operation/customer',
+            //     component: '/operation/customer',
+            //     meta: {title: '客户管理', hide: false}
+            // },
+            //  icon: 'shoppingCart-outlined'
+             {
+              path: '/order',
+              component: '/order',
+              meta: {title: '订单管理',},
             },
             {
               path: '/operation/commission',
@@ -61,18 +67,18 @@ export const USER_MENUS = [
             }
         ]
     },
-    {
-      path: '/order',
-      component: '/order',
-      meta: {title: '订单管理', icon: 'shoppingCart-outlined'},
-      // children: [
-      //     {
-      //         path: '/operation/customer',
-      //         component: '/operation/customer',
-      //         meta: {title: '客户管理', hide: false}
-      //     }
-      // ]
-  },
+  //   {
+  //     path: '/order',
+  //     component: '/order',
+  //     meta: {title: '订单管理', icon: 'shoppingCart-outlined'},
+  //     // children: [
+  //     //     {
+  //     //         path: '/operation/customer',
+  //     //         component: '/operation/customer',
+  //     //         meta: {title: '客户管理', hide: false}
+  //     //     }
+  //     // ]
+  // },
     {
       path: '/equipment',
       redirect: '/equipment/basic',
@@ -199,12 +205,12 @@ export const USER_MENUS = [
       component: '/system/resource',
       meta: {title: '系统管理', icon: 'setting-outlined'},
       children:[
-        {
-          path:'/system/user',
-          name:'systemUser',
-          component:'/system/user',
-          meta: {title: 'user', hide: false},
-        },
+        // {
+        //   path:'/system/user',
+        //   name:'systemUser',
+        //   component:'/system/user',
+        //   meta: {title: 'user', hide: false},
+        // },
         {
           path:'/system/organization',
           name:'systemOrganization',
@@ -212,34 +218,34 @@ export const USER_MENUS = [
           meta: {title: 'organization', hide: false},
         },
 
-        {
-          path:'/system/role',
-          name:'systemRole',
-          component:'/system/role',
-          meta: {title: 'role', hide: false},
-        },
-        {
-          path:'/system/menu',
-          name:'systemMenu',
-          component:'/system/menu',
-          meta: {title: 'menu', hide: false},
-        },
-        {
-          path:'/system/operation-record',
-          name:'systemOperationRecord',
-          component:'/system/operation-record',
-          meta: {title: 'operation-record', hide: false},
-        },
+        // {
+        //   path:'/system/role',
+        //   name:'systemRole',
+        //   component:'/system/role',
+        //   meta: {title: 'role', hide: false},
+        // },
+        // {
+        //   path:'/system/menu',
+        //   name:'systemMenu',
+        //   component:'/system/menu',
+        //   meta: {title: 'menu', hide: false},
+        // },
+        // {
+        //   path:'/system/operation-record',
+        //   name:'systemOperationRecord',
+        //   component:'/system/operation-record',
+        //   meta: {title: 'operation-record', hide: false},
+        // },
         
         
       ]
   }
 ]
 // 首页名称, 为空则取第一个菜单的名称
-export const HOME_TITLE = '门店管理';
+export const HOME_TITLE = '组织管理';
 
 // 首页路径, 为空则取第一个菜单的地址
-export const HOME_PATH = '/shop';
+export const HOME_PATH = '/system/organization';
 
 // 外层布局的路由地址
 export const LAYOUT_PATH = '/';
@@ -271,4 +277,4 @@ export const MAP_KEY = '006d995d433058322319fa797f2876f5';
 
 // EleAdminPro 授权码, 自带的只能用于演示, 正式项目请更换为自己的授权码
 export const LICENSE_CODE =
-  'dk9mcwJyetRWQlxWRiojIzJCLi8mcQ5WaxojI0NWZqJWdiQWaiwCNyUTM2UEMG9UYZJiOpNnclZnIsIyRwEjLxIiOi42b0nI0NW=';
+  'dk9mcwJyetRWQlxWRiojIzJCLi8mcQ5WaxojI0NWZqJWdiQWaiwCNyUTM212MtplczJiOpNnclZnIsIiZxEjLxIiOi42b0nI0NW=';

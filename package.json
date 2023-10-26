@@ -23,7 +23,7 @@
     "dayjs": "^1.11.5",
     "echarts": "^5.3.3",
     "echarts-wordcloud": "^2.0.0",
-    "ele-admin-pro": "^1.10.1",
+    "ele-admin-pro": "^1.11.1",
     "element-china-area-data": "^5.0.2",
     "element-plus": "^2.3.1",
     "fetch-jsonp": "^1.2.3",
