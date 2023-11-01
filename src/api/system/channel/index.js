@@ -176,3 +176,10 @@ export async function updateNewStore(data) {
   const res = await request.put(`/mam/store/${data.org_business_id}`, data);
   return res.data
 }
+/**
+ * 查询单个门店
+ */
+export async function getStoreInfo(org_business_id) {
+  const res = await request.get(`/mam/store/${org_business_id}`);
+  return res.data
+}

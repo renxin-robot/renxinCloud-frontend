@@ -17,7 +17,7 @@
           allow-clear
           size="large"
           v-model:value="form.name"
-          :placeholder="t('login.name')"
+          placeholder="请输入登录账号"
         >
           <template #prefix>
             <user-outlined />
@@ -120,7 +120,7 @@
       name: [
         {
           required: true,
-          message: t('login.name'),
+          message: t('请输入登录账号'),
           type: 'string',
           trigger: 'blur'
         }
@@ -128,7 +128,7 @@
       password: [
         {
           required: true,
-          message: t('login.password'),
+          message: t('请输入登录密码'),
           type: 'string',
           trigger: 'blur'
         }
@@ -152,6 +152,7 @@
       login(form)
         .then((msg) => {
           console.log(msg)
+          localStorage.setItem('type', msg.data.type_cn);
           message.success('登录成功！');
           cleanPageTabs();
           push({

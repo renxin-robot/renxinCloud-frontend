@@ -2,15 +2,13 @@
   <div class="ele-body">
     <ele-split-layout
       width="228px"
-      height="100vh"
       allow-collapse
       :right-style="{ overflow: 'hidden' }"
-      :style="{ minHeight: 'calc(100vh - 152px)' }"
+      :style="{ minHeight: 'calc(100vh - 100px)' }"
     >
       <a-card
         :bordered="false"
         :body-style="{ padding: '16px' }"
-        style="height: 100vh"
       >
         <div>
           <el-tree
@@ -28,16 +26,17 @@
                     {{ data.org_name }}
                   </a-tooltip>
                 </span>
-                <!-- <span v-if="data.children_count">
-                  {{ data.children_count }}
-                </span> -->
               </span>
             </template>
           </el-tree>
         </div>
       </a-card>
       <template #content>
-        <a-card id="queryBox" :bordered="false" :body-style="{ padding: '10px 10px 4px 10px',position:'relative' ,}">
+        <a-card
+          id="queryBox"
+          :bordered="false"
+          :body-style="{ padding: '10px 10px 4px 10px', position: 'relative' }"
+        >
           <a-form
             v-if="chooseType == '总部'"
             :label-col="{ xl: 8, lg: 8, md: 9, sm: 8 }"
@@ -89,8 +88,19 @@
               <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
                 <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
                   <a-space>
-                    <a-button size="small" style="font-size:12px;font-weight:normal" @click="reset">重置</a-button>
-                    <a-button size="small" style="font-size:12px;font-weight:normal"  type="primary" @click="search">查询</a-button>
+                    <a-button
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      @click="reset"
+                      >重置</a-button
+                    >
+                    <a-button
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      type="primary"
+                      @click="search"
+                      >查询</a-button
+                    >
                   </a-space>
                 </a-form-item>
               </a-col>
@@ -166,8 +176,19 @@
                   :wrapper-col="{ span: 24 }"
                 >
                   <a-space>
-                    <a-button @click="reset" size="small" style="font-size:12px;font-weight:normal" >重置</a-button>
-                    <a-button type="primary" @click="search" size="small" style="font-size:12px;font-weight:normal">查询</a-button>
+                    <a-button
+                      @click="reset"
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      >重置</a-button
+                    >
+                    <a-button
+                      type="primary"
+                      @click="search"
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      >查询</a-button
+                    >
                   </a-space>
                 </a-form-item>
               </a-col>
@@ -237,8 +258,19 @@
               <a-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
                 <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
                   <a-space>
-                    <a-button  size="small" style="font-size:12px;font-weight:normal"  @click="reset">重置</a-button>
-                    <a-button type="primary" @click="search" size="small" style="font-size:12px;font-weight:normal">查询</a-button>
+                    <a-button
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      @click="reset"
+                      >重置</a-button
+                    >
+                    <a-button
+                      type="primary"
+                      @click="search"
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      >查询</a-button
+                    >
                   </a-space>
                 </a-form-item>
               </a-col>
@@ -261,9 +293,7 @@
           >
             <div style="display: flex; align-items: center">
               <el-tag style="margin-right: 10px">{{ chooseType }}</el-tag>
-              <div style="font-size: 14px;">{{
-                showName
-              }}</div>
+              <div style="font-size: 14px">{{ showName }}</div>
               <div
                 style="
                   margin-left: 8px;
@@ -274,7 +304,11 @@
               >
             </div>
             <div>
-              <Button type="primary"  size="small" style="font-size:12px;font-weight:normal"  @click="showChannelModal"
+              <Button
+                type="primary"
+                size="small"
+                style="font-size: 12px; font-weight: normal"
+                @click="showChannelModal"
                 ><PlusOutlined />添加渠道</Button
               >
             </div>
@@ -384,9 +418,7 @@
           >
             <div style="display: flex; align-items: center">
               <el-tag style="margin-right: 10px">{{ chooseType }}</el-tag>
-              <div style="font-size: 14px;">{{
-                showName
-              }}</div>
+              <div style="font-size: 14px">{{ showName }}</div>
               <div
                 style="
                   margin-left: 8px;
@@ -397,7 +429,11 @@
               >
             </div>
             <div>
-              <Button  size="small" style="font-size:12px;font-weight:normal"  type="primary" @click="showChannelModal"
+              <Button
+                size="small"
+                style="font-size: 12px; font-weight: normal"
+                type="primary"
+                @click="showChannelModal"
                 ><PlusOutlined />添加商户</Button
               >
             </div>
@@ -523,7 +559,11 @@
               >
             </div>
             <div>
-              <Button  size="small" style="font-size:12px;font-weight:normal"  type="primary" @click="showChannelModal"
+              <Button
+                size="small"
+                style="font-size: 12px; font-weight: normal"
+                type="primary"
+                @click="showChannelModal"
                 ><PlusOutlined />添加门店</Button
               >
             </div>
@@ -601,6 +641,104 @@
             </a-form>
           </a-modal>
         </a-card>
+        <a-card v-else>
+          <div style="display: flex">
+            <el-tag style="margin-right: 10px">门店</el-tag>
+            <div style="font-size: 16px; font-weight: 700">{{ showName }}</div>
+          </div>
+          <div style="margin-top: 10px; text-align: right">
+            <Button
+              size="small"
+              style="font-size: 12px; font-weight: normal"
+              type="primary"
+              @click="editStoreModal"
+              >编辑</Button
+            >
+          </div>
+          <div>
+            <div style="color: gray; font-size: 12px; margin-bottom: 4px"
+              >门店名称</div
+            >
+            <p style="font-weight: 500">{{ storeInfo.name }}</p>
+            <a-divider style="margin-bottom: 10px" />
+          </div>
+          <div>
+            <div style="color: gray; font-size: 12px; margin-bottom: 4px"
+              >门店业态</div
+            >
+            <p style="font-weight: 500">{{ storeInfo.status }}</p>
+            <a-divider style="margin-bottom: 10px" />
+          </div>
+          <div>
+            <div style="color: gray; font-size: 12px; margin-bottom: 4px"
+              >经营模式</div
+            >
+            <p style="font-weight: 500">{{ storeInfo.type }}</p>
+            <a-divider style="margin-bottom: 10px" />
+          </div>
+          <div>
+            <div style="color: gray; font-size: 12px; margin-bottom: 4px"
+              >运营城市</div
+            >
+            <p style="font-weight: 500">{{ storeInfo.city }}</p>
+            <a-divider style="margin-bottom: 10px" />
+          </div>
+          <div>
+            <div style="color: gray; font-size: 12px; margin-bottom: 4px"
+              >门店地址</div
+            >
+            <p style="font-weight: 500">{{ storeInfo.address }}</p>
+            <a-divider style="margin-bottom: 10px" />
+          </div>
+          <a-modal
+            v-model:visible="addStoreVisible"
+            :title="`${editId ? '编辑' : '新增'}门店`"
+            @cancel="closeModal"
+            @ok="handleOk"
+          >
+            <a-form
+              ref="formRef"
+              :rules="storeRules"
+              :model="addStoreForm"
+              name="basic"
+              :label-col="{ span: 5 }"
+              :wrapper-col="{ span: 16 }"
+              autocomplete="off"
+            >
+              <a-form-item label="门店名称" name="name">
+                <a-input v-model:value="addStoreForm.name" />
+              </a-form-item>
+              <a-form-item label="门店业态" name="status">
+                <a-select ref="select" v-model:value="addStoreForm.status">
+                  <a-select-option value="中餐">中餐</a-select-option>
+                  <a-select-option value="快餐">快餐</a-select-option>
+                  <a-select-option value="食堂">食堂</a-select-option>
+                  <a-select-option value="粉面">粉面</a-select-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item label="经营模式" name="type">
+                <a-select ref="select" v-model:value="addStoreForm.type">
+                  <a-select-option value="直营">直营</a-select-option>
+                  <a-select-option value="加盟">加盟</a-select-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item label="所在地区" name="city">
+                <a-cascader
+                  :options="options"
+                  v-model:value="areaList"
+                  @change="handleChange"
+                >
+                </a-cascader>
+              </a-form-item>
+              <a-form-item label="详细地址" name="address">
+                <a-input v-model:value="addStoreForm.address" />
+              </a-form-item>
+              <a-form-item label="备注" name="remark">
+                <a-textarea :rows="4" v-model:value="addStoreForm.remark" />
+              </a-form-item>
+            </a-form>
+          </a-modal>
+        </a-card>
       </template>
     </ele-split-layout>
     <!-- </a-card> -->
@@ -613,6 +751,7 @@ import { notification, Button } from 'ant-design-vue/es';
 import { PlusOutlined, CaretUpOutlined } from '@ant-design/icons-vue';
 import { toDateString } from 'ele-admin-pro';
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data';
+import { logout } from '@/utils/page-tab-util';
 import {
   getSystemChannel,
   addNewChannel,
@@ -623,7 +762,8 @@ import {
   updateNewUser,
   getSystemStore,
   addNewStore,
-  updateNewStore
+  updateNewStore,
+  getStoreInfo
 } from '@/api/system/channel';
 // 加载状态
 const loading = ref(true);
@@ -876,6 +1016,8 @@ const channelData = ref([]);
 const userData = ref([]);
 // 门店列表数据
 const storeData = ref([]);
+// 门店详情
+const storeInfo = reactive({});
 // 渠道数量
 const channelTotal = ref(0);
 // 商户数量
@@ -1183,7 +1325,15 @@ const getTreeData = () => {
         return item.org_business_id;
       });
     }
-  });
+  })
+  // .catch((err) => {
+  //     if (err.response.status == 0) {
+  //         notification.success({
+  //             message: '请先登录！'
+  //         });
+  //         logout();
+  //     }
+  // });
 };
 getTreeData();
 // 获取渠道列表数据
@@ -1195,7 +1345,7 @@ const getChannelData = () => {
         channelTotal.value = res.paging.total_records;
         queryAreaList.value = channelData.value.map((item) => item.area);
       }
-    });
+    }) 
   } else if (chooseType.value == '渠道') {
     getSystemUser({
       ...userForm,
@@ -1215,7 +1365,6 @@ const getChannelData = () => {
       deleted_tag: 0
     }).then((res) => {
       if (res.code == 0) {
-        console.log(res);
         storeData.value = res.data;
         storeTotal.value = res.paging.total_records;
         storeCustomes.value = storeData.value.map((item) => {
@@ -1242,16 +1391,27 @@ const clearQueryForm = () => {
   storeForm.type = '';
   storeForm.status = '';
 };
+const getSingleStoreInfo = (id) => {
+  getStoreInfo(id).then((res) => {
+    if (res.code == 0) {
+      Object.assign(storeInfo, res.data);
+    }
+  });
+};
 // 点击树回调
 const getCurrent = (node) => {
   chooseType.value = node.label;
+  showName.value = node.org_name;
   org_business_id.value = node.org_business_id;
   addUserForm.parent_id = node.org_id;
-  showName.value = node.org_name;
   addStoreForm.parent_id = node.org_id;
   queryAreaList.value = [];
   clearQueryForm();
   getChannelData();
+  if (node.label == '门店') {
+    editId.value=org_business_id.value
+    getSingleStoreInfo(org_business_id.value);
+  }
 };
 // 条件查询
 const changeType = () => {
@@ -1381,7 +1541,7 @@ const handleOk = () => {
             getChannelData();
           }
         });
-      } else {
+      } else if (chooseType.value == '客户'){
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
             notification.success({
@@ -1392,6 +1552,18 @@ const handleOk = () => {
             getChannelData();
           }
         });
+      }else{
+        updateNewStore(addStoreForm).then((res) => {
+          if (res.code == 0) {
+            notification.success({
+              message: '编辑门店成功！'
+            });
+            addStoreVisible.value = !addStoreVisible;
+            clearForm();
+            getChannelData();
+          }
+        });
+        getSingleStoreInfo(editId.value)
       }
     } else {
       if (chooseType.value == '总部') {
@@ -1437,6 +1609,18 @@ const handleOk = () => {
 const closeModal = () => {
   clearForm();
 };
+const editStoreModal=()=>{
+    addStoreVisible.value = true;
+    Object.assign(addStoreForm, storeInfo);
+    addStoreForm.city = addStoreForm.city.split(' ');
+    areaList.value = [
+      TextToCode[addStoreForm.city[0]].code,
+      TextToCode[addStoreForm.city[0]][addStoreForm?.city[1]].code,
+      TextToCode[addStoreForm.city[0]][addStoreForm?.city[1]][
+        addStoreForm.city[2]
+      ].code
+    ];
+}
 </script>
 
 <script>
@@ -1453,30 +1637,30 @@ export default {
   border-style: solid;
   overflow: auto;
 }
-#queryBox{
+#queryBox {
   position: relative;
-  .upBtn{
+  .upBtn {
     position: absolute;
-    left:50%;
-    bottom:-14px;
+    left: 50%;
+    bottom: -14px;
     width: 40px;
     height: 12px;
     line-height: 10px;
     text-align: center;
-    border-radius: 0 0 4px 4px ;
+    border-radius: 0 0 4px 4px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     z-index: 3;
     background-color: #f0f0f0;
   }
-  .upBtn:hover{
+  .upBtn:hover {
     background-color: #d9d9d9;
   }
 }
 /deep/.ele-split-panel.is-vertical > .ele-split-collapse-button {
   top: auto;
 }
-/deep/.ant-form-item-label > label{
+/deep/.ant-form-item-label > label {
   font-size: 12px !important;
   color: gray;
 }
@@ -1485,14 +1669,15 @@ export default {
 //   height: 26px !important;
 //   line-height: 10px !important;
 // }
-/deep/.ant-select-selector{
+/deep/.ant-select-selector {
   height: 26px !important;
+  font-size: 12px !important;
 }
-/deep/.ant-input-affix-wrapper{
+/deep/.ant-input-affix-wrapper {
   height: 26px !important;
-
+  font-size: 12px !important;
 }
-/deep/.ant-card-body{
+/deep/.ant-card-body {
   border-radius: 8px;
 }
 /deep/.ele-split-panel.is-vertical
@@ -1500,7 +1685,7 @@ export default {
   > .ele-split-panel-side {
   height: auto;
 }
-/deep/.ant-col{
+/deep/.ant-col {
   height: 34px;
 }
 /deep/.ele-split-panel.is-vertical > .ele-split-panel-wrap {

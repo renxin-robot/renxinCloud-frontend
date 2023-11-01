@@ -1,8 +1,8 @@
 <!-- 搜索表单 -->
 <template>
   <a-form
-    :label-col="{ xl: 7, lg: 5, md: 7, sm: 4 }"
-    :wrapper-col="{ xl: 17, lg: 19, md: 17, sm: 20 }"
+    :label-col="{ xl: 8, lg: 8, md: 8, sm: 8 }"
+    :wrapper-col="{ xl: 16, lg: 16, md: 16, sm: 16 }"
   >
     <a-row :gutter="8">
       <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">

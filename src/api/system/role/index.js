@@ -1,10 +1,10 @@
 import request from '@/utils/request';
 
 /**
- * 分页查询角色
+ * 查询角色
  */
-export async function pageRoles(params) {
-  const res = await request.get('/admin/role', { params });
+export async function pageRoles() {
+  const res = await request.get('/mam/role/list');
     return res.data
 }
 

@@ -20,7 +20,6 @@ export async function addCommissionPlan(data) {
  * 修改佣金方案
  */
 export async function updateCommissionPlan(data) {
-  console.log(data)
   let newInfo={
     name: data.name,
     agent_amount: data.agent_amount,

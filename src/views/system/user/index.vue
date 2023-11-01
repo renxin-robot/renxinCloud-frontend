@@ -1,298 +1,325 @@
 <template>
   <div class="ele-body">
-    <a-card :bordered="false">
+    <a-card
+      :bordered="false"
+      class="queryBody"
+      :body-style="{ padding: '10px 10px 4px 10px', position: 'relative' }"
+    >
       <!-- 搜索表单 -->
-      <user-search :where="defaultWhere" @search="reload" />
-      <!-- 表格 -->
-      <ele-pro-table
-        ref="tableRef"
-        row-key="userId"
-        :columns="columns"
-        :datasource="datasource"
-        v-model:selection="selection"
-        :scroll="{ x: 1000 }"
-        :where="defaultWhere"
-        cache-key="proSystemUserTable"
+      <a-form
+        :label-col="{ xl: 8, lg: 8, md: 9, sm: 8 }"
+        :wrapper-col="{ xl: 16, lg: 16, md: 15, sm: 16 }"
       >
-        <template #toolbar>
-          <a-space>
-            <a-button type="primary" class="ele-btn-icon" @click="openEdit()">
-              <template #icon>
-                <plus-outlined />
-              </template>
-              <span>新建</span>
-            </a-button>
-            <a-button
-              danger
-              type="primary"
-              class="ele-btn-icon"
-              @click="removeBatch"
-            >
-              <template #icon>
-                <delete-outlined />
-              </template>
-              <span>删除</span>
-            </a-button>
-            <a-button type="dashed" class="ele-btn-icon" @click="openImport">
-              <template #icon>
-                <upload-outlined />
-              </template>
-              <span>导入</span>
-            </a-button>
-          </a-space>
+        <a-row :gutter="8">
+          <a-col :xl="5" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="账号">
+              <a-input
+                @change="changeType"
+                v-model:value.trim="form.account"
+                placeholder="请输入账号"
+                allow-clear
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :xl="5" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="用户名称">
+              <a-input
+                @change="changeType"
+                v-model:value.trim="form.name_like"
+                placeholder="请输入名称"
+                allow-clear
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :xl="5" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="账号状态">
+              <a-select
+                v-model:value="form.deleted_tag"
+                placeholder="请选择"
+                @change="changeType"
+                allow-clear
+              >
+                <a-select-option value="0">启用</a-select-option>
+                <a-select-option value="1">禁用</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="5" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="账号类型">
+              <a-select
+                v-model:value="form.type_cn"
+                placeholder="请选择"
+                @change="changeType"
+                allow-clear
+              >
+                <a-select-option value="总部">总部</a-select-option>
+                <a-select-option value="渠道">渠道</a-select-option>
+                <a-select-option value="商户">商户</a-select-option>
+                <a-select-option value="门店">门店</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="4" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
+              <a-space>
+                <a-button
+                  size="small"
+                  style="font-size: 12px; font-weight: normal"
+                  @click="reset"
+                  >重置</a-button
+                >
+                <a-button
+                  size="small"
+                  style="font-size: 12px; font-weight: normal"
+                  type="primary"
+                  @click="search"
+                  >查询</a-button
+                >
+              </a-space>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+      <!-- 表格 -->
+    </a-card>
+    <a-card
+      :bordered="false"
+      :body-style="{ padding: '16px' }"
+      style="margin-top: 20px; min-height: 500px"
+    >
+      <div style="text-align: right; margin-bottom: 10px">
+        <a-button
+          type="primary"
+          size="small"
+          style="font-size: 12px; font-weight: normal"
+          @click="toAdd"
+          ><PlusOutlined />添加账号</a-button
+        >
+      </div>
+      <a-table :columns="columns" :data-source="userData" :scroll="{ x: true }">
+        <template #headerCell="{ column }">
+          <template v-if="column.key === 'name'"> </template>
         </template>
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'nickname'">
-            <router-link :to="'/system/user/details?id=' + record.userId">
-              {{ record.nickname }}
-            </router-link>
-          </template>
-          <template v-else-if="column.key === 'roles'">
-            <a-tag v-for="item in record.roles" :key="item.roleId" color="blue">
-              {{ item.roleName }}
-            </a-tag>
-          </template>
-          <template v-else-if="column.key === 'status'">
-            <a-switch
-              :checked="record.status === 0"
-              @change="(checked) => editStatus(checked, record)"
-            />
+          <!-- <template v-if="column.key === 'name'">
+                  <span v-if="record.name.length < 9">{{ record.name }}</span>
+                  <a-tooltip :title="record.name" color="#1890FF" v-else>
+                    {{ record.name.slice(0, 8) }}...
+                  </a-tooltip>
+                </template> -->
+          <template v-if="column.dataIndex === 'deleted_tag'">
+            <a-tag color="green" v-if="record.deleted_tag == '0'">启用</a-tag>
+            <a-tag color="red" v-else>禁用</a-tag>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a @click="openEdit(record)">修改</a>
-              <a-divider type="vertical" />
-              <a @click="resetPsw(record)">重置密码</a>
-              <a-divider type="vertical" />
+            <span>
+              <a @click="editChannel(record)">编辑</a>
+              <el-divider direction="vertical"></el-divider>
+              <a @click="editChannel(record)">重置密码</a>
+              <el-divider direction="vertical"></el-divider>
               <a-popconfirm
-                placement="topRight"
-                title="确定要删除此用户吗？"
-                @confirm="remove(record)"
+                v-if="record.deleted_tag == '0'"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="disabledConfirm(record)"
               >
-                <a class="ele-text-danger">删除</a>
+              <template #title>
+                <div style="font-size: 12px;white-space: nowrap;">是否停用该账号?</div>
+              </template>
+                <a>停用</a>
               </a-popconfirm>
-            </a-space>
+              <a-popconfirm
+                v-else
+                title="是否启用该账号?"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="enable(record)"
+              >
+                <a>启用</a>
+              </a-popconfirm>
+            </span>
           </template>
         </template>
-      </ele-pro-table>
+      </a-table>
     </a-card>
-    <!-- 编辑弹窗 -->
-    <user-edit v-model:visible="showEdit" :data="current" @done="reload" />
-    <!-- 导入弹窗 -->
-    <user-import v-model:visible="showImport" @done="reload" />
   </div>
 </template>
 
 <script setup>
-  import { createVNode, ref, reactive } from 'vue';
-  import { message, Modal } from 'ant-design-vue/es';
-  import {
-    PlusOutlined,
-    DeleteOutlined,
-    UploadOutlined,
-    ExclamationCircleOutlined
-  } from '@ant-design/icons-vue';
-  import { toDateString, messageLoading } from 'ele-admin-pro/es';
-  import UserSearch from './components/user-search.vue';
-  import UserEdit from './components/user-edit.vue';
-  import UserImport from './components/user-import.vue';
-  import {
-    pageUsers,
-    removeUser,
-    removeUsers,
-    updateUserStatus,
-    updateUserPassword
-  } from '@/api/system/user';
+import { onBeforeUpdate, ref, reactive } from 'vue';
+import { notification } from 'ant-design-vue/es';
+import { pageUsers ,pageOtherUsers,disableUser,enableUser} from '@/api/system/user';
+import { toDateString } from 'ele-admin-pro';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import { useRouter } from 'vue-router';
+// 表格实例
+const tableRef = ref(null);
+const { push } = useRouter();
+// 表格列配置
+const columns = ref([
+  {
+    title: '用户名称',
+    key: 'name',
+    dataIndex: 'name',
+    sorter: true,
+    showSorterTooltip: true
+  },
+  {
+    title: '账号（手机号）',
+    dataIndex: 'account',
+    sorter: true,
+    showSorterTooltip: false
+  },
 
-  // 表格实例
-  const tableRef = ref(null);
+  {
+    title: '账号状态',
+    dataIndex: 'deleted_tag',
+    sorter: true,
+    showSorterTooltip: false
+  },
+  {
+    title: '账号类型',
+    dataIndex: 'type_cn',
+    sorter: true,
+    showSorterTooltip: false
+  },
+  {
+    title: '系统角色',
+    key: 'roles',
+    dataIndex: 'roles'
+  },
+  {
+    title: '创建人',
+    key: 'account_created',
+    dataIndex: 'account_created'
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'created_at',
+    sorter: true,
+    showSorterTooltip: false,
+    ellipsis: true,
+    customRender: ({ text }) => toDateString(text)
+  },
+  {
+    title: '修改人',
+    key: 'account_updated'
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'updated_at',
+    sorter: true,
+    showSorterTooltip: false,
+    ellipsis: true,
+    customRender: ({ text }) => toDateString(text)
+  },
+  {
+    title: '操作',
+    key: 'action',
+    // width: 200,
+    fixed: 'right',
+    align: 'center'
+  }
+]);
+// 用户列表
+const userData = ref([]);
+// 账号查询
+const form = reactive({
+  type_cn: '',
+  name_like: '',
+  account: '',
+  deleted_tag:''
+});
 
-  // 表格列配置
-  const columns = ref([
-    {
-      key: 'index',
-      width: 48,
-      align: 'center',
-      fixed: 'left',
-      hideInSetting: true,
-      customRender: ({ index }) => index + (tableRef.value?.tableIndex ?? 0)
-    },
-    {
-      title: '用户账号',
-      dataIndex: 'username',
-      sorter: true,
-      showSorterTooltip: false
-    },
-    {
-      title: '用户名',
-      key: 'nickname',
-      dataIndex: 'nickname',
-      sorter: true,
-      showSorterTooltip: false
-    },
-    {
-      title: '性别',
-      dataIndex: 'sexName',
-      width: 80,
-      align: 'center',
-      sorter: true,
-      showSorterTooltip: false
-    },
-    {
-      title: '手机号',
-      dataIndex: 'phone',
-      sorter: true,
-      showSorterTooltip: false
-    },
-    {
-      title: '角色',
-      key: 'roles'
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      sorter: true,
-      showSorterTooltip: false,
-      ellipsis: true,
-      customRender: ({ text }) => toDateString(text)
-    },
-    {
-      title: '状态',
-      key: 'status',
-      dataIndex: 'status',
-      sorter: true,
-      showSorterTooltip: false,
-      width: 90,
-      align: 'center'
-    },
-    {
-      title: '操作',
-      key: 'action',
-      width: 200,
-      align: 'center'
-    }
-  ]);
-
-  // 表格选中数据
-  const selection = ref([]);
-
-  // 当前编辑数据
-  const current = ref(null);
-
-  // 是否显示编辑弹窗
-  const showEdit = ref(false);
-
-  // 是否显示用户导入弹窗
-  const showImport = ref(false);
-
-  // 默认搜索条件
-  const defaultWhere = reactive({
-    username: '',
-    nickname: ''
+const getUsers = () => {
+  if(localStorage.getItem('type')=='总部'){
+    pageUsers(form).then((res) => {
+      if (res.code == 0) {
+        userData.value = res.data;
+      }
+    })
+  }else{
+    pageOtherUsers(form).then((res) => {
+      if (res.code == 0) {
+        userData.value = res.data;
+      }
+    });
+  }
+ 
+};
+getUsers()
+// 查询条件
+const changeType=()=>{
+  getUsers()
+}
+// 页面更新
+onBeforeUpdate(() => {
+  getUsers();
+});
+const toAdd = () => {
+  push({
+    path: '/system/user/addUser'
   });
+};
+const search=()=>{
+  getUsers()
+}
+const reset=()=>{
+  form.account=''
+  form.deleted_tag=''
+  form.name_like=''
+  form.type_cn=''
+  getUsers()
+}
 
-  // 表格数据源
-  const datasource = ({ page, limit, where, orders }) => {
-    return pageUsers({ ...where, ...orders, page, limit });
-  };
-
-  /* 搜索 */
-  const reload = (where) => {
-    selection.value = [];
-    tableRef?.value?.reload({ page: 1, where });
-  };
-
-  /* 打开编辑弹窗 */
-  const openEdit = (row) => {
-    current.value = row ?? null;
-    showEdit.value = true;
-  };
-
-  /* 打开编辑弹窗 */
-  const openImport = () => {
-    showImport.value = true;
-  };
-
-  /* 删除单个 */
-  const remove = (row) => {
-    const hide = messageLoading('请求中..', 0);
-    removeUser(row.userId)
-      .then((msg) => {
-        hide();
-        message.success(msg);
-        reload();
+// 停用账号
+const disabledConfirm=(row)=>{
+  disableUser(row.account_id).then((res)=>{
+    if(res.code==0){
+      notification.success({
+          message: res.data
       })
-      .catch((e) => {
-        hide();
-        message.error(e.message);
-      });
-  };
-
-  /* 批量删除 */
-  const removeBatch = () => {
-    if (!selection.value.length) {
-      message.error('请至少选择一条数据');
-      return;
+      getUsers()
     }
-    Modal.confirm({
-      title: '提示',
-      content: '确定要删除选中的用户吗?',
-      icon: createVNode(ExclamationCircleOutlined),
-      maskClosable: true,
-      onOk: () => {
-        const hide = messageLoading('请求中..', 0);
-        removeUsers(selection.value.map((d) => d.userId))
-          .then((msg) => {
-            hide();
-            message.success(msg);
-            reload();
-          })
-          .catch((e) => {
-            hide();
-            message.error(e.message);
-          });
-      }
-    });
-  };
-
-  /* 重置用户密码 */
-  const resetPsw = (row) => {
-    Modal.confirm({
-      title: '提示',
-      content: '确定要重置此用户的密码为"123456"吗?',
-      icon: createVNode(ExclamationCircleOutlined),
-      maskClosable: true,
-      onOk: () => {
-        const hide = messageLoading('请求中..', 0);
-        updateUserPassword(row.userId)
-          .then((msg) => {
-            hide();
-            message.success(msg);
-          })
-          .catch((e) => {
-            hide();
-            message.error(e.message);
-          });
-      }
-    });
-  };
-
-  /* 修改用户状态 */
-  const editStatus = (checked, row) => {
-    const status = checked ? 0 : 1;
-    updateUserStatus(row.userId, status)
-      .then((msg) => {
-        row.status = status;
-        message.success(msg);
+  })
+}
+// 启用账号
+const enable=(row)=>{
+  enableUser(row.account_id).then((res)=>{
+    if(res.code==0){
+      notification.success({
+          message: res.data
       })
-      .catch((e) => {
-        message.error(e.message);
-      });
-  };
+      getUsers()
+    }
+  })
+}
 </script>
 
 <script>
-  export default {
-    name: 'SystemUser'
-  };
+export default {
+  name: 'SystemUser'
+};
 </script>
+<style lang="less" scoped>
+.queryBody {
+  /deep/.ant-select-selector {
+    height: 26px !important;
+    font-size: 12px !important;
+  }
+  /deep/.ant-input-affix-wrapper {
+    height: 26px !important;
+    font-size: 12px !important;
+  }
+  /deep/.ant-card-body {
+    border-radius: 8px;
+  }
+  /deep/.ant-col {
+    height: 34px;
+  }
+  /deep/.ant-form-item-label > label {
+    font-size: 12px !important;
+    color: gray;
+  }
+}
+</style>

@@ -55,15 +55,12 @@ export default {
   },
   system: {
     _name: '系统管理',
-    user: { _name: '账号管理' },
+    user: { _name: '账号管理' ,addUser:{_name:'添加账号'}},
     role: { _name: '角色管理' },
-    // resource: { _name: '资源管理' },
     menu: { _name: '菜单管理' },
-    // dictionary: { _name: '字典管理' },
     organization: { _name: '组织管理' },
     loginRecord: { _name: '登录日志' },
     operationRecord: { _name: '系统日志' },
-    // file: { _name: '文件管理' }
   },
   form: {
     _name: '表单页面',

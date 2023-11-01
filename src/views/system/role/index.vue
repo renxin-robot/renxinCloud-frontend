@@ -1,284 +1,214 @@
 <template>
     <div class="ele-body">
-        <a-card style="border-radius: 4px;">
-            <div id="proTable">
-                <ele-pro-table ref="tableRef" title="角色列表" :resizable="true" :bordered="true" :columnsFixed="true"
-                    :columns="columns" :datasource="datasource" :scroll="{ x: 1000 }">
-                    <!-- 表头工具按钮 -->
-                    <template #toolkit>
-                        <a-button type="primary" @click="toAddCommission">新增角色</a-button>
-                    </template>
-                    <!-- 自定义列 -->
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.key === 'address'">
-                            {{ }}
-                        </template>
-                        <!-- 操作列 -->
-                        <template v-else-if="column.key === 'action'">
-                            <a-space>
-                                <a-tooltip placement="bottom">
-                                    <template #title>
-                                        <span>编辑角色</span>
-                                    </template>
-                                    <a @click="editChannel(record)"><form-outlined /></a>
-                                </a-tooltip>
-                                <a-divider type="vertical" />
-                                <a-tooltip placement="bottom">
-                                    <template #title>
-                                        <span>删除角色</span>
-                                    </template>
-                                    <a-popconfirm title="是否确认删除?" ok-text="确认" cancel-text="取消"
-                                        @confirm="confirm(record.id)">
-                                        <a class="ele-text-danger"><delete-outlined /></a>
-                                    </a-popconfirm>
-                                </a-tooltip>
-                            </a-space>
-                        </template>
-                    </template>
-                </ele-pro-table>
-            </div>
-            <div style="text-align:right;margin-top: 10px;">
-                <a-pagination size="small" :total="total" @change="changePage" :show-total="total => `共 ${ total } 条`" />
-            </div>
-        </a-card>
-        <a-modal v-model:visible="addVisible" :title="`${ editId ? '编辑' : '新增' }角色`" @ok="handleOk">
-            <a-form :model="roleData" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
-                autocomplete="off">
-                <a-form-item label="角色名称" name="name" :rules="[{ required: true, message: '请输入角色名称！' }]">
-                    <a-input v-model:value="roleData.name" />
-                </a-form-item>
-                <a-form-item label="角色描述" name="role">
-                    <a-textarea v-model:value="roleData.remark" placeholder="角色描述..." :rows="5" />
-                </a-form-item>
-                <a-form-item label="资源分配" name="resources">
-                    <a-tree-select
-                        v-model:value="roleData.resources"
-                        style="width: 100%"
-                        tree-checkable
-                        :show-checked-strategy="SHOW_PARENT"
-                        :height="233"
-                        :tree-data="menuList"
-                        :max-tag-count="10"
-                    >
-                    </a-tree-select>
-                </a-form-item>
-            </a-form>
-        </a-modal>
+      <a-card :bordered="false" class="queryBody" :body-style="{ padding: '10px 10px 4px 10px', position: 'relative' }">
+        <!-- 搜索表单 -->
+        <a-form
+          :label-col="{ xl: 8, lg: 8, md: 9, sm: 8 }"
+          :wrapper-col="{ xl: 16, lg: 16, md: 15, sm: 16 }"
+        >
+          <a-row :gutter="8">
+            <a-col :xl="8" :lg="8" :md="12" :sm="24" :xs="24">
+              <a-form-item label="角色状态">
+                <a-select
+                  v-model:value="defaultWhere.status"
+                  placeholder="请选择"
+                  @change="changeType"
+                  allow-clear
+                >
+                  <a-select-option value="启用">启用</a-select-option>
+                  <a-select-option value="禁用">禁用</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="8" :lg="8" :md="12" :sm="24" :xs="24">
+              <a-form-item label="角色名称">
+                <a-input
+                  @change="changeType"
+                  v-model:value.trim="defaultWhere.name_like"
+                  :placeholder="placeholderText"
+                  allow-clear
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="8" :lg="8" :md="24" :sm="24" :xs="24">
+              <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
+                <a-space>
+                  <a-button
+                    size="small"
+                    style="font-size: 12px; font-weight: normal"
+                    @click="reset"
+                    >重置</a-button
+                  >
+                  <a-button
+                    size="small"
+                    style="font-size: 12px; font-weight: normal"
+                    type="primary"
+                    @click="search"
+                    >查询</a-button
+                  >
+                </a-space>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+        <!-- 表格 -->
+      </a-card>
+      <a-card
+            :bordered="false"
+            :body-style="{ padding: '16px' }"
+            style="margin-top: 20px; min-height: 500px"
+          >
+              <div style="text-align: right;margin-bottom: 10px;">
+                <Button
+                  type="primary"
+                  size="small"
+                  style="font-size: 12px; font-weight: normal"
+                  @click="showModal"
+                  ><PlusOutlined />添加账号</Button
+                >
+              </div>
+              <a-table
+                :columns="columns"
+                :data-source="roleData"
+                :scroll="{ x: true }"
+              >
+                <template #headerCell="{ column }">
+                  <template v-if="column.key === 'name'"> </template>
+                </template>
+                <template #bodyCell="{ column, record }">
+                  <!-- <template v-if="column.key === 'name'">
+                    <span v-if="record.name.length < 9">{{ record.name }}</span>
+                    <a-tooltip :title="record.name" color="#1890FF" v-else>
+                      {{ record.name.slice(0, 8) }}...
+                    </a-tooltip>
+                  </template> -->
+                  <template v-if="column.dataIndex === 'deleted_tag'">
+                    <a-tag color="green" v-if="record.deleted_tag=='0'">启用</a-tag>
+                    <a-tag color="red" v-else>禁用</a-tag>
+                  </template>
+                  <template v-else-if="column.key === 'action'">
+                    <span>
+                      <a @click="editChannel(record)">编辑</a>
+                    </span>
+                  </template>
+                </template>
+              </a-table>
+          </a-card>
     </div>
-</template>
-<script>
-import { defineComponent, reactive, ref, computed} from 'vue';
-import { notification } from 'ant-design-vue/es';
-import { pageRoles,addRole ,removeRole,listRoleMenus,updateRoleMenus} from '@/api/system/role'
-import { getResource } from '@/api/system/resource'
-import { TreeSelect } from 'ant-design-vue';
-import { ContactsOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue'
-import { toDateString } from 'ele-admin-pro';
-
-export default defineComponent({
-    name: 'Role',
-    components: { ContactsOutlined, FormOutlined, DeleteOutlined },
-    setup() {
-        const SHOW_PARENT = TreeSelect.SHOW_PARENT;
-        let pageData = reactive({
-            page: 1,
-            limit: 10
-        })
-        let formState = reactive({
-            name: '',
-            remark: ''
-        })
-        let editId = ref()
-        let total = ref(0)
-        let addVisible = ref(false)
-        let datasource = ref([])
-        let resourceList = ref([])
-        let menuList = ref([])
-        let roleData = reactive({
-            name: '',
-            remark: '',
-            resources: []
-        })
-        // 表格列配置
-        const columns = computed(() => {
-            return [
-                {
-                    key: 'index',
-                    width: 52,
-                    align: 'center',
-                    fixed: 'left',
-                    hideInSetting: true,
-                    customRender: ({ index }) => index + 1
-                },
-                {
-                    title: '角色名称',
-                    dataIndex: 'name',
-                    align: 'center'
-                },
-                {
-                    title: '角色描述',
-                    dataIndex: 'remark',
-                    align: 'remark'
-                },
-                {
-                    title: '创建时间',
-                    dataIndex: 'created_at',
-                    customRender: ({ text }) => toDateString(text),
-                    align: 'center'
-                },
-                {
-                    title: '操作',
-                    key: 'action',
-                    width: 110,
-                    align: 'center',
-                    hideInSetting: true,
-                    fixed: 'right'
-                }
-            ];
-        });
-
-        getResource().then((res) => {
-            if (res.code == 0) {
-                resourceList.value = res.data.filter((item) => {
-                    return item.parent_id == '0'
-                })
-                menuList.value = resourceList.value.map((item) => {
-                    return {
-                        ...item,
-                        children: res.data.filter((child) => {
-                            return child.parent_id == item.id
-                        })
-                    }
-                })
-                menuList.value = menuList.value.map((item) => {
-                    return {
-                        ...item,
-                        title:item.name,
-                        value:item.id,
-                        key: item.id,
-                        children: item.children.map((child) => {
-                            return {
-                                ...child,
-                                title:child.name,
-                                value:child.id,
-                                key: child.id
-                            }
-                        })
-                    }
-                })
-            }
-            // console.log(menuList.value)
-        })
-
-        const getRoles = () => {
-            pageRoles({ ...pageData }).then((res) => {
-                // console.log(res)
-                if (res.code == 0) {
-                    datasource.value = res.data
-                    // total.value = res.paging.total
-                }
-            })
-        }
-        getRoles()
-        const toAddCommission = () => {
-            addVisible.value = true
-        }
-
-        const editChannel = (row) => {
-            editId.value = row.id
-            Object.assign(roleData,row)
-            listRoleMenus(row.id).then((res)=>{
-                roleData.resources=res.data.map((item)=>{
-                    return item.resource_id
-                })
-            }).finally(()=>{
-                addVisible.value = true
-            })
-        }
-
-        const confirm = (id) => {
-            removeRole(id).then((res) => {
-                if (res.code == 3) {
-                    notification.success({
-                        message: '删除成功',
-                    });
-                    getRoles()
-                }
-            })
-        }
-        const clearData=()=>{
-            roleData.name=''
-            roleData.remark=''
-            roleData.resources=[]
-        }
-        const handleOk = () => {
-            if (!editId.value) {
-                addRole(roleData).then((res) => {
-                    if (res.code == 0) {
-                        notification.success({
-                            message: '新增成功',
-                        });
-                        addVisible.value = false
-                        clearData()
-                        getRoles()
-                    }
-                })
-            } else {
-                updateRoleMenus(roleData).then((res) => {
-                    if (res.code == 1) {
-                        notification.success({
-                            message: '更新成功',
-                        });
-                        addVisible.value = false
-                        clearData()
-                        editId.value = ''
-                        getRoles()
-                    }
-                })
-            }
-        }
-        
-        const toSearch = () => {
-            getRoles()
-        }
-
-        const clearToSearch = () => {
-            formState.name = ''
-            formState.role = ''
-            getRoles()
-        }
-        const changePage = (page) => {
-            pageData.page = page
-            getRoles()
-        }
-        return {
-            pageData,
-            SHOW_PARENT,
-            resourceList,
-            menuList,
-            changePage,
-            clearToSearch,
-            toSearch,
-            handleOk,
-            editId,
-            total,
-            roleData,
-            columns,
-            formState,
-            datasource,
-            toAddCommission,
-            addVisible,
-            editChannel,
-            confirm,
-            getRoles,
-        };
+  </template>
+  
+  <script setup>
+  import { createVNode, ref, reactive } from 'vue';
+  import { Button, Modal } from 'ant-design-vue/es';
+  import {pageRoles} from '@/api/system/role'
+  import { toDateString } from 'ele-admin-pro';
+  import { PlusOutlined} from '@ant-design/icons-vue';
+  // 表格实例
+  const tableRef = ref(null);
+  
+  // 表格列配置
+  const columns = ref([
+    {
+      key: 'index',
+      width: 48,
+      align: 'center',
+      fixed: 'left',
+      hideInSetting: true,
+      customRender: ({ index }) => index + (1 ?? 0)
+    },
+    {
+      title: '角色名称',
+      dataIndex: 'name',
+      sorter: true,
+      showSorterTooltip: true
+    },
+    {
+      title: '角色描述',
+      dataIndex: 'remark',
+      sorter: true,
+      showSorterTooltip: false
+    },
+   
+    {
+      title: '状态',
+      dataIndex: 'deleted_tag',
+      sorter: true,
+      showSorterTooltip: false
+    },
+    {
+      title: '创建人',
+      key: 'account_created'
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'created_at',
+      sorter: true,
+      showSorterTooltip: false,
+      ellipsis: true,
+      customRender: ({ text }) => toDateString(text)
+    },
+    {
+      title: '操作',
+      key: 'action',
+      // width: 200,
+      align: 'center'
     }
-});
-</script>
-<style lang="less" scoped>
-#proTable {
-    /deep/.ele-pro-table .ant-table-pagination.ant-pagination {
-        display: none;
+  ]);
+  // 用户列表
+  const roleData=ref([])
+  // 当前编辑数据
+  const current = ref(null);
+  
+  // 是否显示编辑弹窗
+  const showEdit = ref(false);
+  
+  // 默认搜索条件
+  const defaultWhere = reactive({
+    name_like: '',
+    status: ''
+  });
+  
+  const getRoles=()=>{
+    pageRoles().then((res)=>{
+        console.log(res)
+      if(res.code==0){
+        roleData.value=res.data
+      }
+      console.log(roleData.value)
+    })
+  }
+  getRoles()
+  
+  const showModal=()=>{
+    console.log('hhh')
+  }
+  </script>
+  
+  <script>
+  export default {
+    name: 'SystemUser'
+  };
+  </script>
+  <style lang="less" scoped>
+  .queryBody{
+    /deep/.ant-select-selector {
+      height: 26px !important;
+      font-size: 12px !important;
     }
-}
-</style>
+    /deep/.ant-input-affix-wrapper {
+      height: 26px !important;
+      font-size: 12px !important;
+    }
+    /deep/.ant-card-body {
+      border-radius: 8px;
+    }
+    /deep/.ant-col {
+      height: 34px;
+    }
+    /deep/.ant-form-item-label > label {
+      font-size: 12px !important;
+      color: gray;
+    }
+  }
+  
+  </style>

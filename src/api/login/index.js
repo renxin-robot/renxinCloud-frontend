@@ -7,12 +7,8 @@ import { setToken } from '@/utils/token-util';
 export async function login(data) {
   
   const res = await request.post('/mam/auth/login_pc', data);
-  // console.log(res.data.data?.token)
-  // if (res.data) {
     setToken(res.data.data.token,true);
      return res.data;
-  // }
-  // return Promise.reject(new Error(res.data.message));
 }
 
 /**

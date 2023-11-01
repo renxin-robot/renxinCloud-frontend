@@ -1,7 +1,62 @@
 <template>
     <div class="ele-body">
-        <a-card style="border-radius: 4px;position: relative;" :class="{unflod:isUnfold,packUp:!isUnfold}">
-            <div>
+        <a-card style="border-radius: 4px;position: relative;" :body-style="{ padding: '10px 10px 4px 10px' }">
+            <a-form
+            :label-col="{ xl: 8, lg: 8, md: 9, sm: 8 }"
+            :wrapper-col="{ xl: 16, lg: 16, md: 15, sm: 16 }"
+          >
+            <a-row :gutter="8">
+              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+                <a-form-item label="菜谱编号">
+                    <a-input v-model:value="formState.code" placeholder="请输入菜谱编号" />
+                </a-form-item>
+              </a-col>
+              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+                <a-form-item label="菜谱名称">
+                    <a-input v-model:value="formState.code" placeholder="请输入菜谱名称" />
+                </a-form-item>
+              </a-col>
+              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+                <a-form-item label="菜谱状态">
+                    <a-input v-model:value="formState.code" placeholder="请输入菜谱状态" />
+                </a-form-item>
+              </a-col>
+              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+                <a-form-item label="研发客户">
+                    <a-input v-model:value="formState.code" placeholder="请输入研发客户" />
+                </a-form-item>
+              </a-col>
+              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+                <a-form-item label="兼容型号">
+                    <a-input v-model:value="formState.code" placeholder="请输入兼容型号" />
+                </a-form-item>
+              </a-col>
+              <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
+                <a-form-item
+                  class="ele-text-right"
+                  style="text-align: right"
+                  :wrapper-col="{ span: 24 }"
+                >
+                  <a-space>
+                    <a-button
+                      @click="reset"
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      >重置</a-button
+                    >
+                    <a-button
+                      type="primary"
+                      @click="search"
+                      size="small"
+                      style="font-size: 12px; font-weight: normal"
+                      >查询</a-button
+                    >
+                  </a-space>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+            <!-- <div>
                 <el-form :inline="true" :model="formState" class="demo-form-inline">
                     <el-form-item label="研发客户">
                         <a-input v-model:value="formState.code" placeholder="请输入菜谱编号" />
@@ -25,7 +80,7 @@
                     <a style="margin-left: 8px;" v-if="isUnfold" @click="changeIsUnfold">收起 <UpOutlined /></a>
                     <a style="margin-left: 8px;" v-if="!isUnfold" @click="changeIsUnfold">展开 <DownOutlined /></a>
                 </div>
-            </div>
+            </div> -->
         </a-card> 
         <a-card style="margin-top: 10px;border-radius: 4px;">
             <ele-pro-table ref="tableRef" :selection="selectMenu" title="菜谱管理列表"  :resizable="true" :bordered="true" :columnsFixed="true"
@@ -33,7 +88,7 @@
                 :scroll="{ x: 1000 }" @update:selection="updateSelectMenu">
                 <!-- 表头工具按钮 -->
                 <template #toolkit>
-                    <a-button type="primary" @click="toChooseMenu" v-if="!showChoose"><DownloadOutlined />菜谱下发</a-button>
+                    <a-button size="small" style="font-size:12px;" type="primary" @click="toChooseMenu" v-if="!showChoose"><DownloadOutlined />菜谱下发</a-button>
                     <div v-if="selectMenu">
                         <a-button type="info" @click="cancleDown" v-if="showChoose">取消下发</a-button>
                         <a-button  style="margin-left: 10px;" type="primary" @click="toChooseShop" :disabled="!selectMenu.length">已选好，去下发</a-button>
@@ -901,5 +956,17 @@ export default defineComponent({
     .packUp{
         height: 74px;
     }
+}
+/deep/.ant-select-selector {
+  height: 26px !important;
+}
+/deep/.ant-input-affix-wrapper {
+  height: 26px !important;
+}
+/deep/.ant-card-body {
+  border-radius: 8px;
+}
+/deep/.ant-col {
+  height: 34px;
 }
 </style>
