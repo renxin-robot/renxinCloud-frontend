@@ -38,14 +38,27 @@ export async function enableUser(id) {
   return res.data
 }
 /**
+ * 单个查询账号
+ */
+export async function getSimpleUser(account_id) {
+  const res = await request.get(`/mam/account/${account_id}`);
+    return res.data
+}
+/**
  * 添加用户
  */
 export async function addUser(data) {
-  // data.delete.roleList
   const res = await request.post('/mam/account/add', data);
   return res.data
 }
 
+/**
+ * 编辑用户
+ */
+export async function updateUser(data) {
+  const res = await request.put(`/mam/account/${data.account_id}`, data);
+  return res.data
+}
 
 /**
  * 查询用户列表
@@ -73,17 +86,6 @@ export async function getUser(id) {
 
 
 /**
- * 修改用户
- */
-export async function updateUser(data) {
-  const res = await request.put('/system/user', data);
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-  return Promise.reject(new Error(res.data.message));
-}
-
-/**
  * 删除用户
  */
 export async function removeUser(id) {
@@ -100,20 +102,6 @@ export async function removeUser(id) {
 export async function removeUsers(data) {
   const res = await request.delete('/system/user/batch', {
     data
-  });
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-  return Promise.reject(new Error(res.data.message));
-}
-
-/**
- * 修改用户状态
- */
-export async function updateUserStatus(userId, status) {
-  const res = await request.put('/system/user/status', {
-    userId,
-    status
   });
   if (res.data.code === 0) {
     return res.data.message;

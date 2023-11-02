@@ -10,13 +10,13 @@
             <a-col :xl="8" :lg="8" :md="12" :sm="24" :xs="24">
               <a-form-item label="角色状态">
                 <a-select
-                  v-model:value="defaultWhere.status"
-                  placeholder="请选择"
+                  v-model:value="defaultWhere.deleted_tag"
+                  placeholder="请选择角色状态"
                   @change="changeType"
                   allow-clear
                 >
-                  <a-select-option value="启用">启用</a-select-option>
-                  <a-select-option value="禁用">禁用</a-select-option>
+                  <a-select-option value="0">启用</a-select-option>
+                  <a-select-option value="1">禁用</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -25,7 +25,7 @@
                 <a-input
                   @change="changeType"
                   v-model:value.trim="defaultWhere.name_like"
-                  :placeholder="placeholderText"
+                  placeholder="输入角色名称"
                   allow-clear
                 />
               </a-form-item>
@@ -63,14 +63,15 @@
                   type="primary"
                   size="small"
                   style="font-size: 12px; font-weight: normal"
-                  @click="showModal"
-                  ><PlusOutlined />添加账号</Button
+                  @click="addRole"
+                  ><PlusOutlined />添加角色</Button
                 >
               </div>
               <a-table
                 :columns="columns"
                 :data-source="roleData"
                 :scroll="{ x: true }"
+                :pagination="pagination" @change="handleTableChange"
               >
                 <template #headerCell="{ column }">
                   <template v-if="column.key === 'name'"> </template>
@@ -88,7 +89,7 @@
                   </template>
                   <template v-else-if="column.key === 'action'">
                     <span>
-                      <a @click="editChannel(record)">编辑</a>
+                      <a @click="editRole(record)">编辑</a>
                     </span>
                   </template>
                 </template>
@@ -98,18 +99,20 @@
   </template>
   
   <script setup>
-  import { createVNode, ref, reactive } from 'vue';
+  import { computed, ref, reactive } from 'vue';
   import { Button, Modal } from 'ant-design-vue/es';
-  import {pageRoles} from '@/api/system/role'
+  import {pageRoles,getMenuTree} from '@/api/system/role'
   import { toDateString } from 'ele-admin-pro';
   import { PlusOutlined} from '@ant-design/icons-vue';
+  import { useRouter } from 'vue-router';
   // 表格实例
   const tableRef = ref(null);
-  
+  const {push}=useRouter()
   // 表格列配置
   const columns = ref([
     {
       key: 'index',
+      title: '序号',
       width: 48,
       align: 'center',
       fixed: 'left',
@@ -151,36 +154,78 @@
       title: '操作',
       key: 'action',
       // width: 200,
-      align: 'center'
+      align: 'center',
+      fixed:'right'
     }
   ]);
   // 用户列表
   const roleData=ref([])
   // 当前编辑数据
-  const current = ref(null);
-  
+  const current=ref(1)
+  const pageSize=ref(10)
+  const total=ref(0)
+  const pagination = computed(() => ({
+    total: total.value,
+    current: current.value,
+    pageSize: pageSize.value,
+  }));
   // 是否显示编辑弹窗
   const showEdit = ref(false);
   
   // 默认搜索条件
   const defaultWhere = reactive({
     name_like: '',
-    status: ''
+    deleted_tag: ''
   });
   
   const getRoles=()=>{
-    pageRoles().then((res)=>{
-        console.log(res)
+    pageRoles({...defaultWhere,page_index:current.value,page_size:pageSize.value}).then((res)=>{
       if(res.code==0){
         roleData.value=res.data
+        total.value=res.paging.total_records
       }
       console.log(roleData.value)
     })
   }
   getRoles()
-  
+  const handleTableChange=(pag)=>{
+    pageSize.value=pag.pageSize
+    current.value=pag.current
+    getRoles()
+  }
+  const getMenuData=()=>{
+    getMenuTree().then((res)=>{
+      console.log(res,'hhhmenu')
+    })
+  }
+  getMenuData()
   const showModal=()=>{
     console.log('hhh')
+  }
+
+  const addRole=()=>{
+    push({
+      path:'/system/role/addRole'
+    })
+  }
+  const editRole=(row)=>{
+    push({
+      path:'/system/role/addRole',
+      query:{id:row.id,name:row.name,remark:row.remark}
+    })
+  }
+
+  const changeType=()=>{
+    getRoles()
+  }
+  const search=()=>{
+    getRoles()
+  }
+
+  const reset=()=>{
+    defaultWhere.deleted_tag=''
+    defaultWhere.name_like=' '
+    getRoles()
   }
   </script>
   

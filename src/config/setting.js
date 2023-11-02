@@ -214,7 +214,7 @@ export const USER_MENUS = [
            {
             path:'/system/user/addUser',
             component:'/system/user/addUser',
-            meta: {title: '添加账号', hide: true},
+            meta: {title: '账号信息', hide: true},
            }
           ]
         },
@@ -228,7 +228,14 @@ export const USER_MENUS = [
           path:'/system/role',
           name:'systemRole',
           component:'/system/role',
-          meta: {title: 'role', hide: false},
+          meta: {title: '角色管理', hide: false},
+          children:[
+            {
+             path:'/system/role/addRole',
+             component:'/system/role/addRole',
+             meta: {title: '角色信息', hide: true},
+            }
+           ]
         },
         // {
         //   path:'/system/menu',
@@ -264,7 +271,7 @@ export const REDIRECT_PATH = '/redirect';
 export const TAB_KEEP_ALIVE = false;
 
 // token 传递的 header 名称
-export const TOKEN_HEADER_NAME = 'x-admin-token';
+export const TOKEN_HEADER_NAME = 'x-renxin-token';
 
 // token 存储的名称
 export const TOKEN_STORE_NAME = 'x-admin-token';

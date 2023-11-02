@@ -55,8 +55,8 @@ export default {
   },
   system: {
     _name: '系统管理',
-    user: { _name: '账号管理' ,addUser:{_name:'添加账号'}},
-    role: { _name: '角色管理' },
+    user: { _name: '账号管理' ,addUser:{_name:'账号信息'}},
+    role: { _name: '角色管理' ,addRole:{_name:'角色信息'}},
     menu: { _name: '菜单管理' },
     organization: { _name: '组织管理' },
     loginRecord: { _name: '登录日志' },

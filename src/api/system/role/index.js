@@ -1,13 +1,21 @@
 import request from '@/utils/request';
 
+
 /**
  * 查询角色
  */
-export async function pageRoles() {
-  const res = await request.get('/mam/role/list');
+export async function pageRoles(params) {
+  const res = await request.get('/mam/role/list',{params});
     return res.data
 }
 
+/**
+ * 查询菜单树
+ */
+export async function getMenuTree() {
+  const res = await request.get('/mam/menu/tree');
+    return res.data
+}
 /**
  * 添加角色
  */
