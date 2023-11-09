@@ -7,6 +7,15 @@ export async function getDeviceJournal(params) {
     const res = await request.get(`/app/admin/device/journal`,{params});
     return res.data
 }
+/**
+ * 根据分页查询新的设备列表
+ */
+export async function getNewDevice(params) {
+  if(!params.status) delete params.status
+  if(!params.device_code) delete params.device_code
+  const res = await request.get(`/mam/device/list`,{params});
+  return res.data
+}
 
 /**
  * 新增设备信息
@@ -57,5 +66,30 @@ export async function deleteDeviceInfo(id) {
 
 export async function getCooked(code) {
   const res = await request.get(`/app/admin/device/${code}/iot/cooked`);
+  return res.data
+}
+
+/**
+ * 撤机
+ */
+
+export async function undeploy(device_id) {
+  const res = await request.post(`/mam/device/undeploy/${device_id}`);
+  return res.data
+}
+/**
+ * 布机
+ */
+
+export async function deploy(device_id,store_id) {
+  const res = await request.post(`/mam/device/deploy/${device_id}/${store_id}`);
+  return res.data
+}
+/**
+ * 撤机
+ */
+
+export async function transfer(device_id,store_id) {
+  const res = await request.post(`/mam/device/transfer/${device_id}/${store_id}`);
   return res.data
 }

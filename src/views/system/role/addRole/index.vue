@@ -1,7 +1,9 @@
 <template>
   <div class="ele-body">
     <a-card>
-      <p style="text-align: center;font-weight: bold;">{{roleId?'编辑':'新增'}}角色</p>
+      <p style="text-align: center; font-weight: bold"
+        >{{ roleId ? '编辑' : '新增' }}角色</p
+      >
       <a-form
         ref="formRef"
         :rules="rules"
@@ -12,20 +14,44 @@
         autocomplete="off"
       >
         <a-form-item label="角色名称" name="name">
-          <a-input v-model:value="form.name" placeholder="请输入角色名称" style="height:26px;font-size: 12px;"/>
+          <a-input
+            v-model:value="form.name"
+            placeholder="请输入角色名称"
+            style="height: 26px; font-size: 12px"
+          />
         </a-form-item>
         <a-form-item label="角色描述" name="remark">
-          <a-textarea :rows="4" v-model:value="form.remark" placeholder="角色相关描述"/>
+          <a-textarea
+            :rows="4"
+            v-model:value="form.remark"
+            placeholder="角色相关描述"
+          />
         </a-form-item>
         <a-form-item label="权限设置" name="org_ids">
-          <div id="tabBox" style="display: flex;align-items: center;justify-content: space-between;margin-top: 5px;cursor: pointer;">
-            <div :class="{tab:type=='1'}" @click="changeType('1')">机器人端（设备端）</div>
-            <div :class="{tab:type=='2'}" @click="changeType('2')">饪芯管家（微信小程序）</div>
-            <div :class="{tab:type=='3'}" @click="changeType('3')">饪芯管家（PC端）</div>
+          <div
+            id="tabBox"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-top: 5px;
+              cursor: pointer;
+            "
+          >
+            <div :class="{ tab: type == '1' }" @click="changeType('1')"
+              >机器人端（设备端）</div
+            >
+            <div :class="{ tab: type == '2' }" @click="changeType('2')"
+              >饪芯管家（微信小程序）</div
+            >
+            <div :class="{ tab: type == '3' }" @click="changeType('3')"
+              >饪芯管家（PC端）</div
+            >
           </div>
           <el-tree
+            v-if="type == '1' || type == '3'"
             :data="data"
-            style="margin-top: 20px;"
+            style="margin-top: 20px"
             ref="tree"
             :props="defaultProps"
             show-checkbox
@@ -43,9 +69,22 @@
               </span>
             </template>
           </el-tree>
+          <el-tree
+            v-else
+            :data="miniProgremData"
+            style="margin-top: 20px"
+            ref="miniTree"
+            show-checkbox
+            @check-change="checkChange"
+            node-key="id"
+          >
+          </el-tree>
         </a-form-item>
         <!-- 哈哈哈 -->
-        <a-form-item style="text-align: center;" :wrapper-col="{ span: 14, offset: 4 }">
+        <a-form-item
+          style="text-align: center"
+          :wrapper-col="{ span: 14, offset: 4 }"
+        >
           <a-button type="primary" @click="onSubmit">提交</a-button>
           <a-button style="margin-left: 10px" @click="cancel">取消</a-button>
         </a-form-item>
@@ -56,29 +95,28 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import {pageRoles} from '@/api/system/role'
-import {getTree} from '@/api/system/channel'
-import {addUser,getSimpleUser,updateUser} from '@/api/system/user'
-import { notification} from 'ant-design-vue/es';
+import { addRole, getSimpleRole, updateRole } from '@/api/system/role';
+import { getTree } from '@/api/system/channel';
+import { notification } from 'ant-design-vue/es';
 import { useRouter } from 'vue-router';
 import { setPageTab } from '@/utils/page-tab-util';
 import { RFC_2822 } from 'moment';
-const {push,currentRoute}=useRouter()
-const tree=ref()
+const { push, currentRoute } = useRouter();
+const tree = ref();
+const miniTree = ref();
 // 新增账号表单
 let form = reactive({
   name: '',
   remark: '',
+  menu_ids: ''
 });
 // 权限类型
-const type=ref('1')
+const type = ref('2');
 // 角色列表
-let options=ref([])
-let roleId=currentRoute.value.query.id
-form.name=currentRoute.value.query.name
-form.remark=currentRoute.value.query.remark
+let options = ref([]);
+let roleId = currentRoute.value.query.id;
 // 账号绑定的角色
-let roleList=ref([])
+let roleList = ref([]);
 // 树展开的key
 const expandedRowKeys = ref([]);
 const defaultProps = {
@@ -87,6 +125,25 @@ const defaultProps = {
 };
 // 树形数据
 const data = ref([]);
+// 小程序的菜单数据
+const miniProgremData = [
+  {
+    id: '5',
+    label: '菜谱列表查看'
+  },
+  {
+    id: '6',
+    label: '菜谱下载'
+  },
+  {
+    id: '7',
+    label: '菜谱审核'
+  },
+  {
+    id: '8',
+    label: '菜谱配方详情'
+  }
+];
 
 // 表单校验
 const rules = {
@@ -106,107 +163,184 @@ const rules = {
   ]
 };
 
+// 编辑时获取角色信息
+const getRoleInfo = () => {
+  getSimpleRole(roleId).then((res) => {
+    if (res.code == 0) {
+      form.menu_ids = res.data.menu_ids;
+      form.name = res.data.name;
+      form.remark = res.data.remark;
+    }
+    if (form?.menu_ids && form?.menu_ids.length > 1) {
+      miniTree.value.setCheckedKeys(form?.menu_ids?.split(','), false);
+    } else {
+      miniTree.value.setChecked(form?.menu_ids, true, false);
+    }
+  });
+};
+if (roleId) {
+  getRoleInfo();
+}
 // 获取菜单数据
 const getTreeData = () => {
-  getTree().then((res) => {
-    if (res.code == 0) {
-      data.value = res?.data;
-      expandedRowKeys.value = res?.data?.map((item) => {
-        return item?.org_business_id;
-      });
-    }
-  })
+  getTree()
+    .then((res) => {
+      if (res.code == 0) {
+        data.value = res?.data;
+        expandedRowKeys.value = res?.data?.map((item) => {
+          return item?.org_business_id;
+        });
+      }
+    })
+    .catch((err) => {
+      if (err.response.status == 401) {
+        notification.success({
+          message: '请先登录！'
+        });
+        logout();
+      }
+    });
 };
-getTreeData();  
+getTreeData();
 // 切换权限选项
-const changeType=(val)=>{
-  type.value=val
-}
+const changeType = (val) => {
+  type.value = val;
+};
 
-const handleCheckChange=()=>{
+const handleCheckChange = () => {
   // form.org_ids=(tree.value.getCheckedKeys(false)).toString()
-}
-const handleChange=(val)=>{
-  form.role_ids=form.roleList?.toString()
-}
+};
 
-const clear=()=>{
-  form.name=''
-  form.remark=''
-}
+const checkChange = () => {
+  form.menu_ids = miniTree.value.getCheckedKeys(true).toString();
+};
+const handleChange = (val) => {
+  form.role_ids = form.roleList?.toString();
+};
 
-const onSubmit=()=>{
-  let checkArr=[]
-  tree.value?.store?.root?.childNodes.map((item)=>{
-    if(item?.checked){
-      checkArr.push(item?.data?.org_business_id)
-    }else{
-     if(item?.childNodes){
-      item?.childNodes?.map((child)=>{
-        if(child?.checked){
-          checkArr.push(child?.data?.org_business_id)
-        }else{
-          if(child?.childNodes){
-            child?.childNodes?.map((node)=>{
-              if(node?.checked){
-                 checkArr.push(node?.data?.org_business_id)
-              }else{
-                if(node?.childNodes){
-                  node?.childNodes?.map((lastNode)=>{
-                    if(lastNode?.checked) checkArr.push(lastNode?.data?.org_business_id)
-                  })
-                }
-              }
-            })
-          }
+const clear = () => {
+  form.name = '';
+  form.remark = '';
+  form.menu_ids = '';
+};
+const onSubmit = () => {
+  if (roleId) {
+    updateRole({ ...form, id: roleId })
+      .then((res) => {
+        if (res.code == 0) {
+          notification.success({
+            message: '编辑角色成功！'
+          });
+          clear();
+          roleId = '';
+          push({
+            path: '/system/role'
+          });
         }
       })
-     }
-    }
-  })
-  form.org_ids=checkArr.toString()
-  if(roleId){
-    updateUser(form).then((res)=>{
-      if(res.code==0){
-        notification.success({
-            message: '编辑账号成功！'
-        });
-      }
-      clear()
-      push({
-        path:'/system/user'
+      .catch((err) => {
+        if (err.response.status == 401) {
+          notification.success({
+            message: '请先登录！'
+          });
+          logout();
+        }
+      });
+  } else {
+    addRole(form)
+      .then((res) => {
+        if (res.code == 0) {
+          notification.success({
+            message: '增加角色成功！'
+          });
+          clear();
+          push({
+            path: '/system/role'
+          });
+        }
       })
-    })
-  }else{
-    addUser(form).then((res)=>{
-      if(res.code==0){
-        notification.success({
-            message: '增加账号成功！'
-        });
-      }
-      clear()
-      push({
-        path:'/system/user'
-      })
-    })
+      .catch((err) => {
+        if (err.response.status == 401) {
+          notification.success({
+            message: '请先登录！'
+          });
+          logout();
+        }
+      });
   }
-}
-const cancel=()=>{
-  clear()
+};
+// const onSubmit=()=>{
+//   let checkArr=[]
+//   tree.value?.store?.root?.childNodes.map((item)=>{
+//     if(item?.checked){
+//       checkArr.push(item?.data?.org_business_id)
+//     }else{
+//      if(item?.childNodes){
+//       item?.childNodes?.map((child)=>{
+//         if(child?.checked){
+//           checkArr.push(child?.data?.org_business_id)
+//         }else{
+//           if(child?.childNodes){
+//             child?.childNodes?.map((node)=>{
+//               if(node?.checked){
+//                  checkArr.push(node?.data?.org_business_id)
+//               }else{
+//                 if(node?.childNodes){
+//                   node?.childNodes?.map((lastNode)=>{
+//                     if(lastNode?.checked) checkArr.push(lastNode?.data?.org_business_id)
+//                   })
+//                 }
+//               }
+//             })
+//           }
+//         }
+//       })
+//      }
+//     }
+//   })
+//   form.org_ids=checkArr.toString()
+//   if(roleId){
+//     updateUser(form).then((res)=>{
+//       if(res.code==0){
+//         notification.success({
+//             message: '编辑账号成功！'
+//         });
+//       }
+//       clear()
+//       push({
+//         path:'/system/user'
+//       })
+//     })
+//   }else{
+//     addUser(form).then((res)=>{
+//       if(res.code==0){
+//         notification.success({
+//             message: '增加账号成功！'
+//         });
+//       }
+//       clear()
+//       push({
+//         path:'/system/user'
+//       })
+//     })
+//   }
+// }
+const cancel = () => {
+  clear();
   push({
-      path:'/system/user'
-  })
-}
+    path: '/system/role'
+  });
+};
 </script>
 
 <style lang="less" scoped>
-#tabBox{
-  .tab{
+#tabBox {
+  .tab {
     color: rgba(38, 79, 247, 1);
   }
 }
-/deep/.ant-select-multiple .ant-select-selection-item{
+/deep/.ant-select-multiple .ant-select-selection-item {
   height: 22px;
-  margin-top:-4px;
+  margin-top: -4px;
 }
 </style>

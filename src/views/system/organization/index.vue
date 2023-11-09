@@ -6,10 +6,7 @@
       :right-style="{ overflow: 'hidden' }"
       :style="{ minHeight: 'calc(100vh - 100px)' }"
     >
-      <a-card
-        :bordered="false"
-        :body-style="{ padding: '16px' }"
-      >
+      <a-card :bordered="false" :body-style="{ padding: '16px' }">
         <div>
           <el-tree
             :data="data"
@@ -195,7 +192,7 @@
             </a-row>
           </a-form>
           <a-form
-            v-else-if="chooseType == '客户'"
+            v-else-if="chooseType == '商户'"
             :label-col="{ xl: 8, lg: 6, md: 8, sm: 10 }"
             :wrapper-col="{ xl: 16, lg: 18, md: 16, sm: 14 }"
           >
@@ -318,6 +315,8 @@
               :columns="channelColumns"
               :data-source="channelData"
               :scroll="{ x: true }"
+              :pagination="pagination"
+              @change="handleTableChange"
             >
               <template #headerCell="{ column }">
                 <template v-if="column.key === 'name'"> </template>
@@ -443,6 +442,8 @@
               :columns="userColumns"
               :data-source="userData"
               :scroll="{ x: true }"
+              :pagination="pagination"
+              @change="handleTableChange"
             >
               <template #headerCell="{ column }">
                 <template v-if="column.key === 'name'"> </template>
@@ -483,7 +484,7 @@
               <a-form-item label="公司全称" name="company">
                 <a-input v-model:value="addUserForm.company" />
               </a-form-item>
-              <a-form-item label="客户类型" name="type">
+              <a-form-item label="商户类型" name="type">
                 <a-select ref="select" v-model:value="addUserForm.type">
                   <a-select-option value="团餐">团餐</a-select-option>
                   <a-select-option value="社餐">社餐</a-select-option>
@@ -491,7 +492,7 @@
                   <a-select-option value="食堂">食堂</a-select-option>
                 </a-select>
               </a-form-item>
-              <a-form-item label="客户类型" name="type">
+              <a-form-item label="商户类型" name="type">
                 <a-select ref="select" v-model:value="addUserForm.status">
                   <a-select-option value="试用">试用</a-select-option>
                   <a-select-option value="付费">付费</a-select-option>
@@ -532,7 +533,7 @@
           </a-modal>
         </a-card>
         <a-card
-          v-else-if="chooseType == '客户'"
+          v-else-if="chooseType == '商户'"
           :bordered="false"
           :body-style="{ padding: '16px' }"
           style="margin-top: 20px; min-height: 500px"
@@ -545,7 +546,7 @@
             "
           >
             <div style="display: flex; align-items: center">
-              <el-tag style="margin-right: 10px">门店</el-tag>
+              <el-tag style="margin-right: 10px">商户</el-tag>
               <div style="font-size: 16px; font-weight: 700">{{
                 showName
               }}</div>
@@ -573,6 +574,8 @@
               :columns="storeColumns"
               :data-source="storeData"
               :scroll="{ x: true }"
+              :pagination="pagination"
+              @change="handleTableChange"
             >
               <template #headerCell="{ column }">
                 <template v-if="column.key === 'name'"> </template>
@@ -767,6 +770,14 @@ import {
 } from '@/api/system/channel';
 // 加载状态
 const loading = ref(true);
+const current = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+const pagination = computed(() => ({
+  total: total.value,
+  current: current.value,
+  pageSize: pageSize.value
+}));
 let placeholderText = ref('');
 // 树形数据
 const data = ref([]);
@@ -776,7 +787,7 @@ const form = reactive({
   name_like: '',
   area_like: ''
 });
-// 客户查询
+// 商户查询
 const userForm = reactive({
   type: '',
   name_like: '',
@@ -790,14 +801,14 @@ const storeForm = reactive({
   area_like: '',
   status: ''
 });
-// 门店所属的客户列表
+// 门店所属的商户列表
 const storeCustomes = ref([]);
 // 树展开的key
 const expandedRowKeys = ref([]);
 // 树选中的key
 // const selectedRowKeys = ref([]);
 // 选中数据
-const current = ref(null);
+const currentInfo = ref(null);
 // 当前的选中类型
 let chooseType = ref('总部');
 let showName = ref('饪芯机器人');
@@ -950,7 +961,7 @@ const storeColumns = [
     key: 'type'
   },
   {
-    title: '所属客户',
+    title: '所属商户',
     dataIndex: 'parent_name',
     key: 'parent_name'
   },
@@ -1047,7 +1058,7 @@ let addUserForm = reactive({
   name: '',
   company: '',
   tax_number: '',
-  payment_account: '',
+  // payment_account: '',
   phone: '',
   contact: '',
   type: '',
@@ -1082,13 +1093,13 @@ const rules = {
       trigger: 'blur'
     }
   ],
-  tax_number: [
-    {
-      required: true,
-      message: '请输入公司税号！',
-      trigger: 'blur'
-    }
-  ],
+  // tax_number: [
+  //   {
+  //     required: true,
+  //     message: '请输入公司税号！',
+  //     trigger: 'blur'
+  //   }
+  // ],
   area: [
     {
       required: true,
@@ -1115,6 +1126,12 @@ const rules = {
       required: true,
       message: '请输入管理员号码！',
       trigger: 'blur'
+    },
+    {
+      min: 11,
+      max: 11,
+      trigger: 'blur',
+      message: '手机号码必须为11位有效数字！',
     }
   ],
   district: [
@@ -1161,13 +1178,13 @@ const userRules = {
       trigger: 'blur'
     }
   ],
-  tax_number: [
-    {
-      required: true,
-      message: '请输入公司税号！',
-      trigger: 'blur'
-    }
-  ],
+  // tax_number: [
+  //   {
+  //     required: true,
+  //     message: '请输入公司税号！',
+  //     trigger: 'blur'
+  //   }
+  // ],
   area: [
     {
       required: true,
@@ -1201,6 +1218,12 @@ const userRules = {
       required: true,
       message: '请输入管理员号码！',
       trigger: 'blur'
+    },
+    {
+      min: 11,
+      max: 11,
+      trigger: 'blur',
+      message: '手机号码必须为11位有效数字！',
     }
   ],
   district: [
@@ -1318,43 +1341,52 @@ const defaultProps = {
 // }
 // 获取组织架构数据
 const getTreeData = () => {
-  getTree().then((res) => {
-    if (res.code == 0) {
-      data.value = res.data;
-      expandedRowKeys.value = res.data.map((item) => {
-        return item.org_business_id;
-      });
-    }
-  })
-  // .catch((err) => {
-  //     if (err.response.status == 0) {
-  //         notification.success({
-  //             message: '请先登录！'
-  //         });
-  //         logout();
-  //     }
-  // });
+  getTree()
+    .then((res) => {
+      if (res.code == 0) {
+        data.value = res.data;
+        expandedRowKeys.value = res.data.map((item) => {
+          return item.org_business_id;
+        });
+      }
+    })
+    .catch((err) => {
+      if (err.response.status == 401) {
+        notification.success({
+          message: '请先登录！'
+        });
+        logout();
+      }
+    })
 };
 getTreeData();
 // 获取渠道列表数据
 const getChannelData = () => {
   if (chooseType.value == '总部') {
-    getSystemChannel({ ...form }).then((res) => {
+    getSystemChannel({
+      ...form,
+      page_index: current.value,
+      page_size: pageSize.value
+    }).then((res) => {
       if (res.code == 0) {
         channelData.value = res.data;
         channelTotal.value = res.paging.total_records;
+        total.value= res.paging.total_records;
         queryAreaList.value = channelData.value.map((item) => item.area);
       }
-    }) 
+    });
   } else if (chooseType.value == '渠道') {
     getSystemUser({
       ...userForm,
       channel_org_business_id: org_business_id.value,
-      deleted_tag: 0
+      deleted_tag: 0,
+      page_index: current.value,
+      page_size: pageSize.value
     }).then((res) => {
       if (res.code == 0) {
         userData.value = res.data;
         userTotal.value = res.paging.total_records;
+        total.value= res.paging.total_records;
         queryAreaList.value = userData.value.map((item) => item.area);
       }
     });
@@ -1362,11 +1394,14 @@ const getChannelData = () => {
     getSystemStore({
       ...storeForm,
       user_org_bussiness_id: org_business_id.value,
-      deleted_tag: 0
+      deleted_tag: 0,
+      page_index: current.value,
+      page_size: pageSize.value
     }).then((res) => {
       if (res.code == 0) {
         storeData.value = res.data;
         storeTotal.value = res.paging.total_records;
+        total.value= res.paging.total_records;
         storeCustomes.value = storeData.value.map((item) => {
           return {
             parent_name: item.parent_name
@@ -1378,6 +1413,11 @@ const getChannelData = () => {
   }
 };
 getChannelData();
+const handleTableChange = (pag) => {
+  pageSize.value = pag.pageSize;
+  current.value = pag.current;
+  getChannelData();
+};
 const clearQueryForm = () => {
   form.type = '';
   form.name_like = '';
@@ -1400,6 +1440,9 @@ const getSingleStoreInfo = (id) => {
 };
 // 点击树回调
 const getCurrent = (node) => {
+  current.value = 1;
+  pageSize.value = 10;
+  total.value = 0;
   chooseType.value = node.label;
   showName.value = node.org_name;
   org_business_id.value = node.org_business_id;
@@ -1409,7 +1452,7 @@ const getCurrent = (node) => {
   clearQueryForm();
   getChannelData();
   if (node.label == '门店') {
-    editId.value=org_business_id.value
+    editId.value = org_business_id.value;
     getSingleStoreInfo(org_business_id.value);
   }
 };
@@ -1528,6 +1571,10 @@ const handleOk = () => {
             addChannelVisible.value = !addChannelVisible;
             clearForm();
             getChannelData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
       } else if (chooseType.value == '渠道') {
@@ -1539,9 +1586,13 @@ const handleOk = () => {
             addUserVisible.value = !addUserVisible;
             clearForm();
             getChannelData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
-      } else if (chooseType.value == '客户'){
+      } else if (chooseType.value == '商户') {
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
             notification.success({
@@ -1550,9 +1601,13 @@ const handleOk = () => {
             addStoreVisible.value = !addStoreVisible;
             clearForm();
             getChannelData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
-      }else{
+      } else {
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
             notification.success({
@@ -1561,9 +1616,13 @@ const handleOk = () => {
             addStoreVisible.value = !addStoreVisible;
             clearForm();
             getChannelData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
-        getSingleStoreInfo(editId.value)
+        getSingleStoreInfo(editId.value);
       }
     } else {
       if (chooseType.value == '总部') {
@@ -1576,6 +1635,10 @@ const handleOk = () => {
             clearForm();
             getChannelData();
             getTreeData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
       } else if (chooseType.value == '渠道') {
@@ -1588,6 +1651,10 @@ const handleOk = () => {
             clearForm();
             getChannelData();
             getTreeData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
       } else {
@@ -1600,6 +1667,10 @@ const handleOk = () => {
             clearForm();
             getChannelData();
             getTreeData();
+          }else{
+            notification.error({
+              message: res.msg
+            });
           }
         });
       }
@@ -1609,18 +1680,18 @@ const handleOk = () => {
 const closeModal = () => {
   clearForm();
 };
-const editStoreModal=()=>{
-    addStoreVisible.value = true;
-    Object.assign(addStoreForm, storeInfo);
-    addStoreForm.city = addStoreForm.city.split(' ');
-    areaList.value = [
-      TextToCode[addStoreForm.city[0]].code,
-      TextToCode[addStoreForm.city[0]][addStoreForm?.city[1]].code,
-      TextToCode[addStoreForm.city[0]][addStoreForm?.city[1]][
-        addStoreForm.city[2]
-      ].code
-    ];
-}
+const editStoreModal = () => {
+  addStoreVisible.value = true;
+  Object.assign(addStoreForm, storeInfo);
+  addStoreForm.city = addStoreForm.city.split(' ');
+  areaList.value = [
+    TextToCode[addStoreForm.city[0]].code,
+    TextToCode[addStoreForm.city[0]][addStoreForm?.city[1]].code,
+    TextToCode[addStoreForm.city[0]][addStoreForm?.city[1]][
+      addStoreForm.city[2]
+    ].code
+  ];
+};
 </script>
 
 <script>
@@ -1639,6 +1710,9 @@ export default {
 }
 #queryBox {
   position: relative;
+  /deep/.ant-col {
+    height: 34px;
+  }
   .upBtn {
     position: absolute;
     left: 50%;
@@ -1685,9 +1759,7 @@ export default {
   > .ele-split-panel-side {
   height: auto;
 }
-/deep/.ant-col {
-  height: 34px;
-}
+
 /deep/.ele-split-panel.is-vertical > .ele-split-panel-wrap {
   height: auto;
 }

@@ -5,9 +5,9 @@ import axios from 'axios'
  */
 export async function pageOrganizations(params) {
   const res = await request.get('/system/organization/page', { params });
-  if (res.data.code === 0) {
+  // if (res.data.code === 0) {
     return res.data.data;
-  }
+  // }
   return Promise.reject(new Error(res.data.message));
 }
 

@@ -151,8 +151,8 @@
       loading.value = true;
       login(form)
         .then((msg) => {
-          console.log(msg)
           localStorage.setItem('type', msg.data.type_cn);
+          localStorage.setItem('account_id', msg.data.account_id);
           message.success('登录成功！');
           cleanPageTabs();
           push({

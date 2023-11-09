@@ -96,7 +96,13 @@
           ><PlusOutlined />添加账号</a-button
         >
       </div>
-      <a-table :columns="columns" :data-source="userData" :scroll="{ x: true }" :pagination="pagination" @change="handleTableChange">
+      <a-table
+        :columns="columns"
+        :data-source="userData"
+        :scroll="{ x: true }"
+        :pagination="pagination"
+        @change="handleTableChange"
+      >
         <template #headerCell="{ column }">
           <template v-if="column.key === 'name'"> </template>
         </template>
@@ -114,8 +120,23 @@
           <template v-else-if="column.key === 'action'">
             <span>
               <a @click="editAccount(record)">编辑</a>
-              <el-divider direction="vertical"></el-divider>
-              <a @click="editPassword(record)">重置密码</a>
+              <el-divider
+                direction="vertical"
+                v-if="record.deleted_tag == '0'"
+              ></el-divider>
+              <a-popconfirm
+                v-if="record.deleted_tag == '0'"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="editPassword(record)"
+              >
+                <template #title>
+                  <div style="font-size: 12px; white-space: nowrap"
+                    >是否重置该账号密码?</div
+                  >
+                </template>
+                <a>重置密码</a>
+              </a-popconfirm>
               <el-divider direction="vertical"></el-divider>
               <a-popconfirm
                 v-if="record.deleted_tag == '0'"
@@ -123,9 +144,11 @@
                 cancel-text="取消"
                 @confirm="disabledConfirm(record)"
               >
-              <template #title>
-                <div style="font-size: 12px;white-space: nowrap;">是否停用该账号?</div>
-              </template>
+                <template #title>
+                  <div style="font-size: 12px; white-space: nowrap"
+                    >是否停用该账号?</div
+                  >
+                </template>
                 <a>停用</a>
               </a-popconfirm>
               <a-popconfirm
@@ -134,83 +157,36 @@
                 cancel-text="取消"
                 @confirm="enable(record)"
               >
-              <template #title>
-                <div style="font-size: 12px;white-space: nowrap;">是否启用该账号?</div>
-              </template>
+                <template #title>
+                  <div style="font-size: 12px; white-space: nowrap"
+                    >是否启用该账号?</div
+                  >
+                </template>
                 <a>启用</a>
               </a-popconfirm>
             </span>
           </template>
         </template>
       </a-table>
-      <!-- <a-modal
-            v-model:visible="addChannelVisible"
-            :title="`${editId ? '编辑' : '新增'}渠道`"
-            @cancel="closeModal"
-            @ok="handleOk"
-          >
-            <a-form
-              ref="formRef"
-              :rules="rules"
-              :model="channelForm"
-              name="basic"
-              :label-col="{ span: 5 }"
-              :wrapper-col="{ span: 16 }"
-              autocomplete="off"
-            >
-              <a-form-item label="渠道名称" name="name">
-                <a-input v-model:value="channelForm.name" />
-              </a-form-item>
-              <a-form-item label="公司全称" name="company">
-                <a-input v-model:value="channelForm.company" />
-              </a-form-item>
-              <a-form-item label="渠道模式" name="type">
-                <a-select ref="select" v-model:value="channelForm.type">
-                  <a-select-option value="直营">直营</a-select-option>
-                  <a-select-option value="代理">代理</a-select-option>
-                  <a-select-option value="海外">海外</a-select-option>
-                  <a-select-option value="直销">直销</a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item label="管理员" name="contact">
-                <a-input v-model:value="channelForm.contact" />
-              </a-form-item>
-              <a-form-item label="管理员电话" name="phone">
-                <a-input v-model:value="channelForm.phone" />
-              </a-form-item>
-              <a-form-item label="所在地区" name="district">
-                <a-cascader
-                  :options="options"
-                  v-model:value="areaList"
-                  @change="handleChange"
-                >
-                </a-cascader>
-              </a-form-item>
-              <a-form-item label="详细地址" name="address">
-                <a-input v-model:value="channelForm.address" />
-              </a-form-item>
-              <a-form-item label="运营区域" name="area">
-                <a-input v-model:value="channelForm.area" disabled />
-              </a-form-item>
-              <a-form-item label="公司税号" name="tax_number">
-                <a-input v-model:value="channelForm.tax_number" />
-              </a-form-item>
-              <a-form-item label="打款账号" name="payment_account">
-                <a-input v-model:value="channelForm.payment_account" />
-              </a-form-item>
-              <a-form-item label="备注" name="remark">
-                <a-textarea :rows="4" v-model:value="channelForm.remark" />
-              </a-form-item>
-            </a-form>
-          </a-modal> -->
+      <a-modal v-model:open="open">
+        <p
+          >密码已重置为初始密码！（初始密码规则为：当天日期（1103）+手机号码后四位）</p
+        >
+      </a-modal>
     </a-card>
   </div>
 </template>
 
 <script setup>
-import { onBeforeUpdate, ref, reactive,computed } from 'vue';
+import { onBeforeUpdate, ref, reactive, computed } from 'vue';
 import { notification } from 'ant-design-vue/es';
-import { pageUsers ,pageOtherUsers,disableUser,enableUser} from '@/api/system/user';
+import {
+  pageUsers,
+  pageOtherUsers,
+  disableUser,
+  enableUser,
+  updateUser
+} from '@/api/system/user';
 import { toDateString } from 'ele-admin-pro';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
@@ -296,45 +272,67 @@ const form = reactive({
   type_cn: '',
   name_like: '',
   account: '',
-  deleted_tag:''
+  deleted_tag: ''
 });
-const current=ref(1)
-const pageSize=ref(10)
-const total=ref(0)
+const open = ref(false);
+const current = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
 const pagination = computed(() => ({
   total: total.value,
   current: current.value,
-  pageSize: pageSize.value,
+  pageSize: pageSize.value
 }));
 const getUsers = () => {
-  if(localStorage.getItem('type')=='总部'){
-    pageUsers({...form,page_index:current.value,page_size:pageSize.value}).then((res) => {
-      if (res.code == 0) {
-        userData.value = res.data;
-        total.value=res.paging.total_records
-      }
+  if (localStorage.getItem('type') == '总部') {
+    pageUsers({ ...form, page_index: current.value, page_size: pageSize.value })
+      .then((res) => {
+        if (res.code == 0) {
+          userData.value = res.data
+          total.value = res.paging.total_records
+        }
+      })
+      .catch((err) => {
+        if (err.response.status == 401) {
+          notification.success({
+            message: '请先登录！'
+          });
+          logout();
+        }
+      });
+  } else {
+    // ,account_id:localStorage.getItem('account_id')
+    pageOtherUsers({
+      ...form,
+      page_index: current.value,
+      page_size: pageSize.value
     })
-  }else{
-    pageOtherUsers({...form,page_index:current.value,page_size:pageSize.value}).then((res) => {
-      if (res.code == 0) {
-        userData.value = res.data;
-        total.value=res.paging.total_records
-
-      }
-    });
+      .then((res) => {
+        if (res.code == 0) {
+          userData.value = res.data;
+          total.value = res.paging.total_records;
+        }
+      })
+      .catch((err) => {
+        if (err.response.status == 401) {
+          notification.success({
+            message: '请先登录！'
+          });
+          logout();
+        }
+      });
   }
- 
 };
-getUsers()
-const handleTableChange=(pag)=>{
-  pageSize.value=pag.pageSize
-  current.value=pag.current
-  getUsers()
-}
+getUsers();
+const handleTableChange = (pag) => {
+  pageSize.value = pag.pageSize;
+  current.value = pag.current;
+  getUsers();
+};
 // 查询条件
-const changeType=()=>{
-  getUsers()
-}
+const changeType = () => {
+  getUsers();
+};
 // 页面更新
 onBeforeUpdate(() => {
   getUsers();
@@ -345,49 +343,57 @@ const toAdd = () => {
   });
 };
 // 去编辑
-const editAccount=(row)=>{
+const editAccount = (row) => {
   push({
     path: `/system/user/addUser`,
-    query:{id:row.account_id}
+    query: { id: row.account_id }
   });
-}
-const search=()=>{
-  getUsers()
-}
-const reset=()=>{
-  form.account=''
-  form.deleted_tag=''
-  form.name_like=''
-  form.type_cn=''
-  getUsers()
-}
+};
+const search = () => {
+  getUsers();
+};
+const reset = () => {
+  form.account = '';
+  form.deleted_tag = '';
+  form.name_like = '';
+  form.type_cn = '';
+  getUsers();
+};
 
 // 停用账号
-const disabledConfirm=(row)=>{
-  disableUser(row.account_id).then((res)=>{
-    if(res.code==0){
+const disabledConfirm = (row) => {
+  disableUser(row.account_id).then((res) => {
+    if (res.code == 0) {
       notification.success({
-          message: res.data
-      })
-      getUsers()
+        message: res.data
+      });
+      getUsers();
     }
-  })
-}
+  });
+};
 // 启用账号
-const enable=(row)=>{
-  enableUser(row.account_id).then((res)=>{
-    if(res.code==0){
+const enable = (row) => {
+  enableUser(row.account_id).then((res) => {
+    if (res.code == 0) {
       notification.success({
-          message: res.data
-      })
-      getUsers()
+        message: res.data
+      });
+      getUsers();
     }
-  })
-}
+  });
+};
 // 重置密码
-const editPassword=(row)=>{
-  console.log(row)
-}
+const editPassword = (row) => {
+  updateUser({ reset_psw: true, account_id: row.account_id }).then((res) => {
+    if (res.code == 0) {
+      notification.success({
+        message: '重置密码成功！'
+      });
+      open.value = true;
+    }
+    getUsers();
+  });
+};
 </script>
 
 <script>

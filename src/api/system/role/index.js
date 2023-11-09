@@ -20,19 +20,22 @@ export async function getMenuTree() {
  * 添加角色
  */
 export async function addRole(data) {
-  const res = await request.post('/admin/role', data);
+  const res = await request.post('/mam/role/add', data);
   return res.data
 }
-
+/**
+ * 查询单个角色
+ */
+export async function getSimpleRole(id) {
+  const res = await request.get(`/mam/role/${id}`);
+    return res.data
+}
 /**
  * 修改角色
  */
 export async function updateRole(data) {
-  const res = await request.put('/system/role', data);
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-  return Promise.reject(new Error(res.data.message));
+  const res = await request.put(`/mam/role/${data.id}`, data);
+  return res.data
 }
 
 /**
