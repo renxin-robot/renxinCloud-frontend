@@ -29,7 +29,14 @@ export async function addSN(data) {
 /**
  * 查询批次明细
  */
-export async function getBatchDetail(id) {
-    const res = await request.get(`/mam/deviceCode/batch_details/${id}`);
+export async function getBatchDetail(params) {
+    const res = await request.get(`/mam/deviceCode/batch_details/${params.id}`,{params});
+    return res.data
+}
+/**
+ * 查询所有批次明细
+ */
+export async function getAllBatchDetail(id) {
+    const res = await request.get(`/mam/deviceCode/batch_details/${id}&all=true`);
     return res.data
 }

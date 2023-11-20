@@ -79,7 +79,7 @@ import { ContactsOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icon
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
 import { logout } from '@/utils/page-tab-util';
-import {getCategory,addCategory,deleteCategory,updateCategory} from '@/api/equipment/basic/ category'
+import {getCategory,addCategory,deleteCategory,updateCategory} from '@/api/equipment/basic/category'
 export default defineComponent({
     name: 'Nameplate',
     components: { ContactsOutlined, FormOutlined, DeleteOutlined },

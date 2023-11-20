@@ -293,12 +293,10 @@ const getUsers = () => {
         }
       })
       .catch((err) => {
-        if (err.response.status == 401) {
           notification.success({
             message: '请先登录！'
           });
           logout();
-        }
       });
   } else {
     // ,account_id:localStorage.getItem('account_id')

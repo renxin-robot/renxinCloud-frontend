@@ -81,7 +81,7 @@ import { defineComponent, reactive, ref, computed } from 'vue'
 import { ContactsOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
-import {getFactory,addFactory,updateFactory,deleteFactory} from '@/api/equipment/basic/ plant'
+import {getFactory,addFactory,updateFactory,deleteFactory} from '@/api/equipment/basic/plant'
 import { logout } from '@/utils/page-tab-util';
 
 export default defineComponent({

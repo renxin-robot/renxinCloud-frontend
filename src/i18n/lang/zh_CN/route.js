@@ -49,9 +49,11 @@ export default {
   },
   menu:{
     _name:'菜谱管理',
-    detail:{_name:'菜谱详情'},
-    file:{_name:'查看菜谱文件列表'},
-    fileDetail:{_name:'查看菜谱文件详情'},
+    menuCategory:{_name:'菜品管理',detail:{_name:'菜品详情'}},
+    menuList:{_name:'菜谱管理'},
+    // detail:{_name:'菜谱详情'},
+    // file:{_name:'查看菜谱文件列表'},
+    // fileDetail:{_name:'查看菜谱文件详情'},
   },
   system: {
     _name: '系统管理',

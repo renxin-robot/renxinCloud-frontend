@@ -1,60 +1,69 @@
 <template>
   <div class="ele-body">
-    <a-card style="border-radius: 4px;" :body-style="{ padding: '10px 10px 4px 10px'}">
-        <a-form
-          :label-col="{ xl: 9, lg: 8, md: 9, sm: 8 }"
-          :wrapper-col="{ xl: 15, lg: 16, md: 15, sm: 16 }"
-        >
-          <a-row :gutter="8">
-            <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
-              <a-form-item label="设备品类">
-                <a-input
+    <a-card
+      style="border-radius: 4px"
+      :body-style="{ padding: '10px 10px 4px 10px' }"
+    >
+      <a-form
+        :label-col="{ xl: 9, lg: 8, md: 9, sm: 8 }"
+        :wrapper-col="{ xl: 15, lg: 16, md: 15, sm: 16 }"
+      >
+        <a-row :gutter="8">
+          <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="设备品类">
+              <a-input
                 v-model:value="formState.productionCatagory"
                 placeholder="请输入设备品类"
-                />
+              />
             </a-form-item>
-            </a-col>
-            <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
-              <a-form-item label="设备型号">
-                <a-input
-              v-model:value="formState.productionModel"
-              placeholder="请输入设备型号"
-            />
-              </a-form-item>
-            </a-col>
-            <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
-              <a-form-item label="生产商名称">
-                <a-input
-                    v-model:value="formState.producer"
-                    placeholder="请输入生产商"
-                />
-              </a-form-item>
-            </a-col>
-            <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
-              <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
-                <a-space>
-                  <a-button
-                    size="small"
-                    style="font-size: 12px; font-weight: normal"
-                    @click="toClear"
-                    >重置</a-button
-                  >
-                  <a-button
-                    size="small"
-                    style="font-size: 12px; font-weight: normal"
-                    type="primary"
-                    @click="toSearch"
-                    >查询</a-button
-                  >
-                </a-space>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
+          </a-col>
+          <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="设备型号">
+              <a-input
+                v-model:value="formState.productionModel"
+                placeholder="请输入设备型号"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item label="生产商名称">
+              <a-input
+                v-model:value="formState.producer"
+                placeholder="请输入生产商"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :xl="6" :lg="12" :md="12" :sm="24" :xs="24">
+            <a-form-item class="ele-text-right" :wrapper-col="{ span: 24 }">
+              <a-space>
+                <a-button
+                  size="small"
+                  style="font-size: 12px; font-weight: normal"
+                  @click="toClear"
+                  >重置</a-button
+                >
+                <a-button
+                  size="small"
+                  style="font-size: 12px; font-weight: normal"
+                  type="primary"
+                  @click="toSearch"
+                  >查询</a-button
+                >
+              </a-space>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
     </a-card>
     <a-card style="border-radius: 4px; margin-top: 10px">
       <div style="text-align: right; margin-bottom: 10px">
-        <a-button size="small" style="font-size:12px;" type="primary" @click="toAddSN">SN生成</a-button>
+        <a-button
+          size="small"
+          style="font-size: 12px"
+          type="primary"
+          @click="toAddSN"
+          >SN生成</a-button
+        >
       </div>
       <ele-pro-table
         ref="tableRef"
@@ -98,7 +107,7 @@
             <a-space>
               <a @click="SNDetail(record)">详情</a>
               <a-divider type="vertical" />
-              <a @click="toDown(record)">下载</a>
+              <a @click="exportBas(record)">下载</a>
             </a-space>
           </template>
         </template>
@@ -121,6 +130,8 @@ import { defineComponent, reactive, ref, computed } from 'vue';
 import { getBatchList } from '@/api/equipment/SN';
 import { useRouter } from 'vue-router';
 import { toDateString } from 'ele-admin-pro';
+import { utils,writeFile } from 'xlsx';
+import {getAllBatchDetail} from '@/api/equipment/SN'
 
 export default defineComponent({
   name: 'SN',
@@ -252,7 +263,6 @@ export default defineComponent({
       });
     };
     const SNDetail = (row) => {
-      console.log(row);
       push({
         path: `/equipment/SN/SNDetail`,
         query: {
@@ -260,20 +270,50 @@ export default defineComponent({
         }
       });
     };
-    const toDown = (row) => {
-      console.log(row);
-    };
-    // const onDone=({data})=>{
-    //     console.log(data)
-    // }
-
     const changePage = (page, size) => {
       pageData.page_index = page;
       pageData.page_size = size;
       getBatchDataSource();
     };
+    /* 导出excel */
+    const exportBas = (row) => {
+      getAllBatchDetail(row.id).then((res) => {
+        if (res.code == 0&&res.paging.total_records) {
+           const array = [['设备SN', '设备型号', 'BOM版本号', '生产批次号', '首台生产月份']];
+          res.data.forEach((d) => {
+            array.push([
+              d.code,
+              row.production_model_cn,
+              row.bom_edition,
+              row.apply_code,
+              row.gen_date
+            ]);
+          });
+          const sheetName = 'Sheet1'
+          const workbook = {
+            SheetNames: [sheetName],
+            Sheets: {}
+          };
+          const sheet = utils.aoa_to_sheet(array);
+          workbook.Sheets[sheetName] = sheet;
+          // 设置列宽
+          sheet['!cols'] = [
+            { wch: 20 },
+            { wch: 20 },
+            { wch: 20 },
+            { wch: 20 },
+            { wch: 20 },
+            { wch: 20 },
+          ];
+          writeFile(workbook, 'SN批次明细.xlsx');
+        }
+      });
+     
+    };
+
     return {
       // onDone,
+      exportBas,
       formState,
       pageData,
       toClear,
@@ -282,7 +322,6 @@ export default defineComponent({
       columns,
       toAddSN,
       SNDetail,
-      toDown,
       getBatchDataSource,
       tableHeight,
       fixedHeight,
@@ -293,15 +332,15 @@ export default defineComponent({
 });
 </script>
 <style lang="less" scoped>
-/deep/.ant-input{
+/deep/.ant-input {
   height: 26px !important;
   font-size: 12px !important;
 }
-/deep/.ant-form-item-label > label{
+/deep/.ant-form-item-label > label {
   font-size: 12px !important;
   color: gray;
 }
-/deep/.ant-col{
+/deep/.ant-col {
   height: 34px;
 }
 </style>

@@ -85,8 +85,8 @@
   import { message } from 'ant-design-vue/es';
   import { emailReg, phoneReg } from 'ele-admin-pro/es';
   import useFormData from '@/utils/use-form-data';
-  import RoleSelect from '@/views/system/user/components/role-select.vue';
-  import SexSelect from '@/views/system/user/components/sex-select.vue';
+  // import RoleSelect from '@/views/system/user/components/role-select.vue';
+  // import SexSelect from '@/views/system/user/components/sex-select.vue';
   import { addUser, updateUser, checkExistence } from '@/api/system/user';
   import { removePageTab, reloadPageTab } from '@/utils/page-tab-util';
 

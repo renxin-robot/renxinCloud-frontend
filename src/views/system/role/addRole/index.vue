@@ -49,28 +49,18 @@
             >
           </div>
           <el-tree
-            v-if="type == '1' || type == '3'"
-            :data="data"
+            v-show="type == '1'"
+            :data="androidData"
             style="margin-top: 20px"
             ref="tree"
-            :props="defaultProps"
             show-checkbox
             @check-change="handleCheckChange"
-            node-key="org_business_id"
+            node-key="id"
             :default-expanded-keys="expandedRowKeys"
           >
-            <template #default="{ node, data }">
-              <span class="custom-tree-node">
-                <span class="nodeName">
-                  <a-tooltip :title="data.org_name" color="#1890FF">
-                    {{ data.org_name }}
-                  </a-tooltip>
-                </span>
-              </span>
-            </template>
           </el-tree>
           <el-tree
-            v-else
+            v-show="type == '2'"
             :data="miniProgremData"
             style="margin-top: 20px"
             ref="miniTree"
@@ -111,7 +101,7 @@ let form = reactive({
   menu_ids: ''
 });
 // 权限类型
-const type = ref('2');
+const type = ref('1');
 // 角色列表
 let options = ref([]);
 let roleId = currentRoute.value.query.id;
@@ -144,7 +134,45 @@ const miniProgremData = [
     label: '菜谱配方详情'
   }
 ];
-
+// 小程序的菜单数据
+const androidData = [
+  {
+    id:11,
+    label:'智能炒菜',
+    children:[
+      {
+        id:14,
+        label:'菜谱详情'
+      },
+      {
+        id:15,
+        label:'本地微调'
+      }
+    ]
+  },
+  {
+    id:12,
+    label:'菜谱研发',
+  },
+  {
+    id:13,
+    label:'系统设置',
+    children:[
+      {
+        id:16,
+        label:'液体调料自定义'
+      },
+      {
+        id:17,
+        label:'出厂参数设置'
+      },
+      {
+        id:18,
+        label:'疲劳测试开关'
+      },
+    ]
+  },
+];
 // 表单校验
 const rules = {
   name: [
@@ -173,8 +201,10 @@ const getRoleInfo = () => {
     }
     if (form?.menu_ids && form?.menu_ids.length > 1) {
       miniTree.value.setCheckedKeys(form?.menu_ids?.split(','), false);
+      tree.value.setCheckedKeys(form?.menu_ids?.split(','), false)
     } else {
       miniTree.value.setChecked(form?.menu_ids, true, false);
+      tree.value.setChecked(form?.menu_ids, true, false);
     }
   });
 };
@@ -208,7 +238,7 @@ const changeType = (val) => {
 };
 
 const handleCheckChange = () => {
-  // form.org_ids=(tree.value.getCheckedKeys(false)).toString()
+
 };
 
 const checkChange = () => {
@@ -224,6 +254,19 @@ const clear = () => {
   form.menu_ids = '';
 };
 const onSubmit = () => {
+  let checkArr = [];
+  tree.value?.store?.root?.childNodes.map((item) => {
+    if (item?.checked) {
+      checkArr.push(item?.data?.id);
+    } else {
+      item?.childNodes?.map((child)=>{
+        if (child.checked) checkArr.push(child?.data?.id);
+      })
+    }
+  })
+  if(form.menu_ids){
+    form.menu_ids=([...form?.menu_ids?.split(','),...checkArr]).toString()
+  }else  form.menu_ids=([...checkArr]).toString()
   if (roleId) {
     updateRole({ ...form, id: roleId })
       .then((res) => {

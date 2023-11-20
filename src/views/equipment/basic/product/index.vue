@@ -83,7 +83,7 @@ import { defineComponent, reactive, ref, computed } from 'vue'
 import { ContactsOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
-import {updateFactory,deleteFactory} from '@/api/equipment/basic/ plant'
+import {updateFactory,deleteFactory} from '@/api/equipment/basic/plant'
 import {getDeviceInfo,addDeviceInfo} from '@/api/equipment/basic/product'
 import { logout } from '@/utils/page-tab-util';
 import { object } from 'vue-types';

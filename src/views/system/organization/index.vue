@@ -390,10 +390,10 @@
               <a-form-item label="运营区域" name="area">
                 <a-input v-model:value="channelForm.area" disabled />
               </a-form-item>
-              <a-form-item label="公司税号" name="tax_number">
+              <a-form-item label="公司税号">
                 <a-input v-model:value="channelForm.tax_number" />
               </a-form-item>
-              <a-form-item label="打款账号" name="payment_account">
+              <a-form-item label="打款账号">
                 <a-input v-model:value="channelForm.payment_account" />
               </a-form-item>
               <a-form-item label="备注" name="remark">
@@ -492,7 +492,7 @@
                   <a-select-option value="食堂">食堂</a-select-option>
                 </a-select>
               </a-form-item>
-              <a-form-item label="商户类型" name="type">
+              <a-form-item label="商户状态" name="status">
                 <a-select ref="select" v-model:value="addUserForm.status">
                   <a-select-option value="试用">试用</a-select-option>
                   <a-select-option value="付费">付费</a-select-option>
@@ -520,7 +520,7 @@
               <a-form-item label="运营区域" name="area">
                 <a-input v-model:value="addUserForm.area" disabled />
               </a-form-item>
-              <a-form-item label="公司税号" name="tax_number">
+              <a-form-item label="公司税号">
                 <a-input v-model:value="addUserForm.tax_number" />
               </a-form-item>
               <!-- <a-form-item label="打款账号" name="payment_account">
@@ -681,7 +681,7 @@
           </div>
           <div>
             <div style="color: gray; font-size: 12px; margin-bottom: 4px"
-              >运营城市</div
+              >运营区域</div
             >
             <p style="font-weight: 500">{{ storeInfo.city }}</p>
             <a-divider style="margin-bottom: 10px" />
@@ -976,7 +976,7 @@ const storeColumns = [
     key: 'pparent_name'
   },
   {
-    title: '所在地区',
+    title: '运营区域',
     key: 'city',
     dataIndex: 'city'
   },
@@ -1351,12 +1351,12 @@ const getTreeData = () => {
       }
     })
     .catch((err) => {
-      if (err.response.status == 401) {
+      // if (err.response.status == 401) {
         notification.success({
           message: '请先登录！'
         });
         logout();
-      }
+      // }
     })
 };
 getTreeData();
@@ -1374,7 +1374,7 @@ const getChannelData = () => {
         total.value= res.paging.total_records;
         queryAreaList.value = channelData.value.map((item) => item.area);
       }
-    });
+    })
   } else if (chooseType.value == '渠道') {
     getSystemUser({
       ...userForm,
@@ -1389,7 +1389,7 @@ const getChannelData = () => {
         total.value= res.paging.total_records;
         queryAreaList.value = userData.value.map((item) => item.area);
       }
-    });
+    })
   } else {
     getSystemStore({
       ...storeForm,
@@ -1409,7 +1409,7 @@ const getChannelData = () => {
         });
         queryAreaList.value = storeData.value.map((item) => item.area);
       }
-    });
+    })
   }
 };
 getChannelData();
@@ -1576,7 +1576,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
       } else if (chooseType.value == '渠道') {
         updateNewUser(addUserForm).then((res) => {
           if (res.code == 0) {
@@ -1591,7 +1595,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
       } else if (chooseType.value == '商户') {
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
@@ -1606,7 +1614,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
       } else {
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
@@ -1621,7 +1633,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
         getSingleStoreInfo(editId.value);
       }
     } else {
@@ -1640,7 +1656,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
       } else if (chooseType.value == '渠道') {
         addNewUser(addUserForm).then((res) => {
           if (res.code == 0) {
@@ -1656,7 +1676,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
       } else {
         addNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
@@ -1672,7 +1696,11 @@ const handleOk = () => {
               message: res.msg
             });
           }
-        });
+        }).catch((err)=>{
+          notification.error({
+              message: err.response.data.msg
+            });
+        })
       }
     }
   });

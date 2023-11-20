@@ -180,24 +180,41 @@ export const USER_MENUS = [
   },
   {
     path: '/menu',
-    component: '/menu',
+    redirect: '/menu/menuCategory',
     meta: {title: '菜谱管理', icon: 'book-outlined'},
     children: [
       {
-        path:'/menu/detail',
-        component:'/menu/detail',
-        meta: {title: '菜谱详情', hide: true},
+        path:'/menu/menuCategory',
+        component:'/menu/menuCategory',
+        meta: {title: '菜品管理', hide: false},
+        children:[
+           {
+              path:'/menu/menuCategory/detail',
+              component:'/menu/menuCategory/detail',
+              meta: {title: '菜品详情', hide: true},
+            },
+        ]
       },
       {
-        path:'/menu/file',
-        component:'/menu/file',
-        meta: {title: '查看菜谱文件列表', hide: true},
-      },
-      {
-        path:'/menu/fileDetail',
-        component:'/menu/fileDetail',
-        meta: {title: '查看菜谱文件详情', hide: true},
-      },
+        path:'/menu/menuList',
+        component:'/menu/menuList',
+        meta: {title: '菜谱管理', hide: false},
+      }
+      // {
+      //   path:'/menu/detail',
+      //   component:'/menu/detail',
+      //   meta: {title: '菜谱详情', hide: true},
+      // },
+      // {
+      //   path:'/menu/file',
+      //   component:'/menu/file',
+      //   meta: {title: '查看菜谱文件列表', hide: true},
+      // },
+      // {
+      //   path:'/menu/fileDetail',
+      //   component:'/menu/fileDetail',
+      //   meta: {title: '查看菜谱文件详情', hide: true},
+      // },
     ]
   },
     {

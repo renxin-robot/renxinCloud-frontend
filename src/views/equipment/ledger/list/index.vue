@@ -666,13 +666,11 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          if (err.response.status == 401) {
-            notification.success({
+          notification.success({
               message: '请先登录！'
             });
             logout();
-          }
-        });
+        })
     };
     getTreeData();
     const changePage = (page) => {
@@ -787,10 +785,14 @@ export default defineComponent({
                         message: res.data
                     });
                 }else{
-                    notification.success({
+                    notification.warn({
                         message: res.data
                     });
                 }
+            }).catch((err)=>{
+              notification.warn({
+                        message: err.response.data.msg
+                    });
             })
         }else{
             deploy(changeDevice.device_id,chooseStoreInfo.value).then((res)=>{
@@ -802,10 +804,14 @@ export default defineComponent({
                         message: res.data
                     });
                 }else{
-                    notification.success({
+                    notification.warn({
                         message: res.data
                     });
                 }
+            }).catch((err)=>{
+              notification.warn({
+                        message: err.response.data.msg
+                    });
             })
         }
     };

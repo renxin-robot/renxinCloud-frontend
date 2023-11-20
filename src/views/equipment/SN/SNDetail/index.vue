@@ -20,10 +20,10 @@
                     <div>研发类型：<span v-if="info?.production_type=='W'">外采</span>
                         <span v-else>自研</span></div>
                 </div>
-                <div style="display: flex;justify-content: space-between;line-height: 30px;">
-                    <div>创建人：888</div>
-                    <div>创建时间：0909</div>
-                </div>
+                <!-- <div style="display: flex;justify-content: space-between;line-height: 30px;">
+                    <div>创建人：{{ info?.operator_account }}</div>
+                    <div>创建时间：{{ info?.created_at }}</div>
+                </div> -->
             </div>
         </a-card>
         <a-card style="margin-top: 10px;">
@@ -134,8 +134,8 @@
                     },
                     {
                         title: '主板编号',
-                        key: 'production_category_cn',
-                        dataIndex: 'production_category_cn',
+                        key: 'screen_code',
+                        dataIndex: 'screen_code',
                         width: 80,
                         minWidth: 100,
                         align: 'center',
@@ -186,7 +186,7 @@
             })
 
             const getDetail=()=>{
-                getBatchDetail(id).then((res)=>{
+                getBatchDetail({id,...pageData}).then((res)=>{
                     if(res.code==0){
                         datasource.value=res.data
                         listTotal.value=res.paging.total_records

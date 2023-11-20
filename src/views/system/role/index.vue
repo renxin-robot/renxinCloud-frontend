@@ -196,12 +196,12 @@ const getRoles = () => {
       }
     })
     .catch((err) => {
-      if (err.response.status == 401) {
+      // if (err.response.status == 401) {
         notification.success({
           message: '请先登录！'
         });
         logout();
-      }
+      // }
     });
 };
 getRoles();
