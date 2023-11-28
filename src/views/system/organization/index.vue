@@ -1563,6 +1563,7 @@ const handleOk = () => {
   formRef.value.validate().then(() => {
     if (editId.value) {
       if (chooseType.value == '总部') {
+        channelForm.district = channelForm.district.toString().replace(/,/g, ' ');
         updateNewChannel(channelForm).then((res) => {
           if (res.code == 0) {
             notification.success({
@@ -1582,6 +1583,7 @@ const handleOk = () => {
             });
         })
       } else if (chooseType.value == '渠道') {
+        addUserForm.district = addUserForm.district.toString().replace(/,/g, ' ');
         updateNewUser(addUserForm).then((res) => {
           if (res.code == 0) {
             notification.success({
@@ -1601,6 +1603,7 @@ const handleOk = () => {
             });
         })
       } else if (chooseType.value == '商户') {
+        addStoreForm.city = addStoreForm.city.toString().replace(/,/g, ' ');
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
             notification.success({
@@ -1620,6 +1623,7 @@ const handleOk = () => {
             });
         })
       } else {
+        addStoreForm.city = addStoreForm.city.toString().replace(/,/g, ' ');
         updateNewStore(addStoreForm).then((res) => {
           if (res.code == 0) {
             notification.success({

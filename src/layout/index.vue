@@ -113,10 +113,16 @@
   const { t, locale } = useI18n();
   const userStore = useUserStore();
   const themeStore = useThemeStore();
-
+  const type=localStorage.getItem('type')
   // 项目名
-  const projectName = import.meta.env.VITE_APP_NAME;
-
+  const projectName = ref('')
+  if(type=='渠道'){
+    projectName.value=import.meta.env.VITE_APP_NAME2
+  }else if(type=='商户'){
+    projectName.value=import.meta.env.VITE_APP_NAME3
+  }else{
+    projectName.value=''
+  }
   // 是否全屏
   const fullscreen = ref(false);
 

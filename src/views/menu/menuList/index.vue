@@ -1,5 +1,5 @@
 <template>
-  <div class="ele-body">
+  <div class="ele-body" v-loading.fullscreen.lock="fullscreenLoading">
     <a-card
       style="border-radius: 4px; position: relative"
       :body-style="{ padding: '10px 10px 4px 10px' }"
@@ -78,22 +78,11 @@
         </a-row>
       </a-form>
     </a-card>
+  
     <a-card style="margin-top: 10px; border-radius: 4px">
-      <ele-pro-table
-        ref="tableRef"
-        :selection="selectMenu"
-        title="菜谱管理列表"
-        :resizable="true"
-        :bordered="true"
-        :needPage="false"
-        :columnsFixed="true"
-        :columns="columns"
-        :datasource="datasource"
-        :scroll="{ x: true }"
-        @update:selection="updateSelectMenu"
-      >
-        <!-- 表头工具按钮 -->
-        <template #toolkit>
+      <div style="margin-bottom: 10px;display: flex;justify-content: space-between;">
+        <div>菜谱列表</div>
+        <div>
           <a-button
             size="small"
             style="font-size: 12px"
@@ -102,19 +91,34 @@
             v-if="!showChoose"
             ><DownloadOutlined />菜谱下发</a-button
           >
-          <div v-if="selectMenu">
-            <a-button type="info" @click="cancleDown" v-if="showChoose"
+          <div v-if="showChoose">
+            <a-button type="info" size="small" @click="cancleDown"
               >取消下发</a-button
             >
             <a-button
               style="margin-left: 10px"
+              size="small"
               type="primary"
               @click="toChooseShop"
-              :disabled="!selectMenu.length"
+              :disabled="!RowKeys.length"
               >已选好，去下发</a-button
             >
           </div>
-        </template>
+        </div>
+      </div>
+      <a-table
+        ref="tableRef"
+        v-if="!showChoose"
+        row-key="recipe_id"
+        :bordered="true"
+        :pagination="false"
+        :columnsFixed="true"
+        :columns="columns"
+        :data-source="datasource"
+        :scroll="{ x: true }"
+      >
+        <!-- 表头工具按钮 -->
+        
         <!-- 自定义列 -->
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'num'">
@@ -126,14 +130,48 @@
               <a-tooltip placement="bottom">
                 <a @click="toDetail(record)">详情</a>
               </a-tooltip>
-              <a-divider type="vertical" />
+              <!-- <a-divider type="vertical" />
               <a-tooltip placement="bottom">
                 <a @click="toSeeFolder(record)">审核</a>
-              </a-tooltip>
+              </a-tooltip> -->
             </a-space>
           </template>
         </template>
-      </ele-pro-table>
+      </a-table>
+      <a-table
+        v-else
+        ref="tableRef"
+        :selection="selectMenu"
+        row-key="recipe_id"
+        :bordered="true"
+        :pagination="false"
+        :columnsFixed="true"
+        :columns="columns"
+        :data-source="datasource"
+        :scroll="{ x: true }"
+        :row-selection="rowSelection"
+      >
+        <!-- 表头工具按钮 -->
+        
+        <!-- 自定义列 -->
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'num'">
+            {{ record?.spec }}g/{{ record?.copies }}份
+          </template>
+          <!-- 操作列 -->
+          <template v-else-if="column.dataIndex === 'action'">
+            <a-space>
+              <a-tooltip placement="bottom">
+                <a @click="toDetail(record)">详情</a>
+              </a-tooltip>
+              <!-- <a-divider type="vertical" />
+              <a-tooltip placement="bottom">
+                <a @click="toSeeFolder(record)">审核</a>
+              </a-tooltip> -->
+            </a-space>
+          </template>
+        </template>
+      </a-table>
       <div style="text-align: right; margin-top: 10px">
         <a-pagination
           size="small"
@@ -144,6 +182,7 @@
       </div>
     </a-card>
     <a-drawer
+      @close="cancleChooseShop"
       placement="right"
       :closable="false"
       v-model:visible="visible"
@@ -151,18 +190,24 @@
     >
       <div>
         <div style="text-align: center; margin-bottom: 48px">选择下发设备</div>
-        <div>
-          <a-tree
-            :checkable="true"
-            :show-icon="true"
-            :tree-data="authData"
-            v-model:expandedKeys="expandKeys"
-            v-model:checkedKeys="checkedKeys"
+        <div id="treeBox">
+          <el-tree
+            ref="tree"
+            :data="deviceList"
+            show-checkbox
+            node-key="id"
+            :props="defaultProps"
           >
-            <template #icon="{ menuIcon }">
-              <component v-if="menuIcon" :is="menuIcon" />
+            <template #default="{ node, data }">
+              <span class="custom-tree-node">
+                <span>{{ node.label }}</span>
+                <span v-if="data?.total"> （{{ data?.total }}） </span>
+                <span v-else-if="data?.children?.length">
+                  （{{ data?.children?.length }}）
+                </span>
+              </span>
             </template>
-          </a-tree>
+          </el-tree>
         </div>
         <div
           style="
@@ -188,7 +233,11 @@
       @ok="handleOk"
       okText="下发"
     >
-      <p>请确认，本次共选择5道菜谱 ，下载到23台设备？</p>
+      <p
+        >请确认，本次共选择{{ RowKeys?.length }}道菜谱 ，下载到{{
+          snList?.length
+        }}台设备？</p
+      >
     </a-modal>
   </div>
 </template>
@@ -202,8 +251,9 @@ import {
   DownOutlined
 } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
-import { getMenu } from '@/api/menu';
-import { ElMessage } from 'element-plus';
+import { getMenu, getAllDevice, sendToDevice } from '@/api/menu';
+import { ElMessage,ElLoading  } from 'element-plus';
+import { menuStore } from '@/store/modules/menu';
 export default defineComponent({
   components: {
     InfoCircleOutlined,
@@ -213,7 +263,10 @@ export default defineComponent({
     DownOutlined
   },
   setup() {
+    const useMenuStore=menuStore()
+    const fullscreenLoading = ref(false)
     const { push } = useRouter();
+    const tree = ref();
     let selectMenu = ref();
     let visible = ref(false);
     let isUnfold = ref(false);
@@ -222,13 +275,32 @@ export default defineComponent({
     const checkedKeys = ref([]);
     const customerList = ref([]);
     const typeList = ref([]);
+    const deviceList = ref([]);
+    const RowKeys = ref([])
+    const rowSelection={
+      preserveSelectedRowKeys: true, // 2.加这一行
+        selectedRowKeys: RowKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+          RowKeys.value = selectedRowKeys
+        },
+        getCheckboxProps: (record) => ({
+          name: record.name,
+        }),
+    }
+    // 选择下发得设备
+    const snList = ref([]);
     const expandKeys = ref([1, 2, 3, 4, 5, 6]);
     let formState = reactive({
       name_like: '',
       user_name_like: '',
       code: '',
-      production_model: ''
+      production_model: '',
+      recipe_num: ''
     });
+    const defaultProps = {
+      children: 'children',
+      label: 'label'
+    };
     const pageData = reactive({
       page_index: 1,
       page_size: 10
@@ -384,10 +456,6 @@ export default defineComponent({
     const changeValue = () => {
       getMenuList();
     };
-    const changePage = (page) => {
-      pageData.page_index = page;
-      getMenuList();
-    };
     const toClear = () => {
       formState.code = '';
       formState.production_model = '';
@@ -398,8 +466,8 @@ export default defineComponent({
 
     const toDetail = (row) => {
       push({
-        path: `/menu/detail`,
-        query: { id: row?.id, name: row.name, code: row.code }
+        path: `/menu/menuList/menuDetail`,
+        query: { ...row }
       });
     };
 
@@ -409,47 +477,151 @@ export default defineComponent({
         query: { id: row?.id, name: row.name, code: row.code }
       });
     };
+    // 获取设备
+    const getAllDevices = () => {
+      getAllDevice({ all: true, status: '运营中' }).then((res) => {
+        deviceList.value = res.data.reduce((acc, cur) => {
+          const index = acc.findIndex(
+            (item) => item.children[0].user_id === cur.user_id
+          );
+          if (index === -1) {
+            acc.push({
+              label: cur.user_name,
+              id: cur.user_id,
+              children: [cur].map((child) => {
+                return {
+                  ...child,
+                  label: child.device_code,
+                  id: child.device_code
+                };
+              })
+            });
+          } else {
+            acc[index].children.push(cur);
+          }
+          return acc;
+        }, []);
+        deviceList.value = deviceList.value.map((item) => {
+          const res = item?.children?.reduce((acc, cur) => {
+            const index = acc.findIndex(
+              (ac) => ac.children[0].store_id === cur.store_id
+            );
+            if (index === -1) {
+              acc.push({
+                id: cur.store_id,
+                label: cur.store_name,
+                children: [cur].map((child) => {
+                  return {
+                    ...child,
+                    label: child.device_code,
+                    id: child.device_code
+                  };
+                })
+              });
+            } else {
+              acc[index].children.push({
+                ...cur,
+                label: cur.device_code,
+                id: cur.device_code
+              });
+            }
+            return acc;
+          }, []);
+          return {
+            ...item,
+            children: res
+          };
+        });
+        deviceList.value = deviceList.value.map((item) => {
+          let total = 0;
+          item.children.map((child) => {
+            total += child.children.length;
+            return {
+              ...child,
+              total: child.children.length
+            };
+          });
+          return {
+            ...item,
+            total: total
+          };
+        });
+      });
+    };
 
     const changeIsUnfold = () => {
       isUnfold.value = !isUnfold.value;
     };
 
     const updateSelectMenu = (selection) => {
-      selectMenu.value = selection;
+      // useMenuStore.saveMenu(selection)
+      // selectMenu.value = selection
+      // console.log(selectMenu.value)
     };
+
+   
 
     const toChooseMenu = () => {
       selectMenu.value = [];
+      formState.recipe_num = '1';
+      getMenuList();
       showChoose.value = !showChoose.value;
     };
 
+   
     const cancleDown = () => {
       selectMenu.value = undefined;
+      formState.recipe_num = '';
+      RowKeys.value=[]
+      getMenuList();
       showChoose.value = !showChoose.value;
     };
 
     const toChooseShop = () => {
       visible.value = true;
+      getAllDevices();
+
     };
 
     const confirmDown = () => {
+      snList.value = tree.value.getCheckedKeys(true);
       confirmDownVisible.value = true;
-      visible.value = false;
     };
 
     const handleOk = () => {
-      confirmDownVisible.value = false;
-      ElMessage({
-        showClose: true,
-        message: '您选择的菜谱已下发，请在设备上确认下发是否成功！',
-        type: 'success'
+      const promises = RowKeys.value.map((item) => {
+        return sendToDevice(item, snList.value?.toString);
       });
+      fullscreenLoading.value = true
+      Promise.all(promises)
+        .then((posts) => {
+          fullscreenLoading.value = false
+          confirmDownVisible.value = false;
+          visible.value = false;
+          RowKeys.value=[]
+          formState.recipe_num = '';
+          getMenuList();
+          ElMessage({
+            showClose: true,
+            message: posts[0].data,
+            type: 'success'
+          });
+        })
+        .catch((err) => {
+          fullscreenLoading.value = false
+          console.log(err);
+          ElMessage({
+            showClose: true,
+            message: err[0].data,
+            type: 'warn'
+          });
+        });
     };
     const cancleChooseShop = () => {
       visible.value = false;
       selectMenu.value = undefined;
-      showChoose.value = !showChoose.value;
-      checkedKeys.value = [];
+      RowKeys.value=[]
+      getAllDevices();
     };
 
     const afterVisibleChange = (bool) => {
@@ -459,7 +631,23 @@ export default defineComponent({
         showChoose.value = !showChoose.value;
       }
     };
+
+   
+    const changePage = (page) => {
+      pageData.page_index = page;
+      // selectMenu.value=[]
+      getMenuList();
+    };
     return {
+      getAllDevices,
+      RowKeys,
+      rowSelection,
+      useMenuStore,
+      fullscreenLoading,
+      snList,
+      tree,
+      defaultProps,
+      deviceList,
       typeList,
       changeValue,
       customerList,
@@ -495,6 +683,10 @@ export default defineComponent({
 });
 </script>
 <style lang="less" scoped>
+#treeBox {
+  height: 400px;
+  overflow: scroll;
+}
 .ele-body {
   .unflod {
     height: auto;

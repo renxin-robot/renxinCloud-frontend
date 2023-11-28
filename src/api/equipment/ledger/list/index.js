@@ -8,6 +8,13 @@ export async function getDeviceJournal(params) {
     return res.data
 }
 /**
+ * 根据分页查询商户下的门店
+ */
+export async function getStoreList(params) {
+  const res = await request.get(`/mam/store/list`,{params});
+  return res.data
+}
+/**
  * 根据分页查询新的设备列表
  */
 export async function getNewDevice(params) {

@@ -8,6 +8,8 @@ export const menuStore = defineStore({
   state: () => ({
     // 当前点击得菜品数据
     menuCategoryInfo: null,
+    // 选择下发得菜谱数据
+    selectMenus:[]
   }),
   getters: {},
   actions: {
@@ -17,5 +19,12 @@ export const menuStore = defineStore({
     async getMenu(info) {
         this.menuCategoryInfo=info
     },
+     /**
+     * 存储点击得菜品数据
+     */
+     async saveMenu(info) {
+     
+      console.log(info,'this.selectMenus')
+  },
   }
 });

@@ -20,6 +20,7 @@ export async function getMenu(params) {
     if(!params.user_name_like) delete params.user_name_like
     if(!params.production_model) delete params.production_model
     if(!params.code) delete params.code
+    if(!params.recipe_num) delete params.recipe_num
     const res = await request.get(`/mam/recipe/recipe_sc`,{params});
     return res.data
 }
@@ -35,6 +36,34 @@ export async function getAllMenu(params) {
  */
 export async function getAllMenuProfile(params) {
     const res = await request.get(`/mam/recipe/list`,{params});
+    return res.data
+}
+/**
+ * 查询单个菜谱文件
+ */
+export async function getProfile(code) {
+    const res = await request.get(`/mam/recipe/item/${code}`);
+    return res.data
+}
+/**
+ * 查询菜谱审核记录
+ */
+export async function getApprovalLog(id) {
+    const res = await request.get(`/mam/recipe/approval_log?recipe_sc_id=${id}`);
+    return res.data
+}
+/**
+ * 查询设备列表
+ */
+export async function getAllDevice(params) {
+    const res = await request.get(`/mam/device/list`,{params});
+    return res.data
+}
+/**
+ * 菜谱下发
+ */
+export async function sendToDevice(recipe_id,sn) {
+    const res = await request.post(`/mam/recipe/send_to_device/${recipe_id}/${sn}`);
     return res.data
 }
 /**

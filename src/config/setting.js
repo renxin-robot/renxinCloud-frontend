@@ -199,6 +199,18 @@ export const USER_MENUS = [
         path:'/menu/menuList',
         component:'/menu/menuList',
         meta: {title: '菜谱管理', hide: false},
+        children:[
+            {
+              path:'/menu/menuList/menuDetail',
+              component:'/menu/menuList/menuDetail',
+              meta: {title: '菜谱详情', hide: true},
+            },
+        ]
+      },
+      {
+        path:'/menu/menuFile',
+        component:'/menu/menuFile',
+        meta: {title: '菜谱配方工艺', hide: true},
       }
       // {
       //   path:'/menu/detail',

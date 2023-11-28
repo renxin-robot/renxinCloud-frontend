@@ -318,6 +318,7 @@
       <div style="font-size: 12px">
         <span style="color: gray; margin-right: 10px">选择{{ storeId ? '移机' : '布机' }}门店:</span>
         <el-tree-select
+          v-if="!storeId"
           placeholder="选择门店"
           ref="treeSelect"
           @node-click="handleCheckChange"
@@ -329,6 +330,14 @@
           :data="treeList"
           filterable
         />
+        <el-select v-model="value" filterable placeholder="移机门店" v-else>
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </div>
     </a-modal>
     <a-modal v-model:visible="closeVisible" @ok="confirmUndeploy" okText="撤机">
@@ -385,7 +394,7 @@ import {
 } from '@ant-design/icons-vue';
 import { toDateString } from 'ele-admin-pro';
 import { notification } from 'ant-design-vue/es';
-import { undeploy, getNewDevice ,deploy,transfer} from '@/api/equipment/ledger/list';
+import { undeploy, getNewDevice ,deploy,transfer,getStoreList} from '@/api/equipment/ledger/list';
 import { addDeviceInfo } from '@/api/equipment/basic/product';
 import { useRouter } from 'vue-router';
 import { logout } from '@/utils/page-tab-util';
@@ -437,6 +446,7 @@ export default defineComponent({
         pageSize: pageSize.value
     }));
     let storeId = ref();
+    // 要移机的商户id
     // 要操作的设备的信息
     let changeDevice = reactive({});
     // 操作的弹窗
@@ -452,18 +462,22 @@ export default defineComponent({
     let listCount = ref(0);
     let datasource = ref([]);
     let chooseStoreInfo = ref();
+    const value = ref('')
+    const options = ref([])
     // 表格列配置
     const columns = computed(() => {
       return [
         {
           title: '序号',
           key: 'index',
-
+          // fixed:'left',
+          align:'center',
           customRender: ({ index }) => index + 1
         },
         {
           title: '设备SN',
-          dataIndex: 'device_code'
+          dataIndex: 'device_code',
+          // fixed:'left'
         },
         {
           title: '状态',
@@ -479,6 +493,14 @@ export default defineComponent({
           dataIndex: 'channel_type'
         },
         {
+          title: '门店名称',
+          dataIndex: 'store_name'
+        },
+        {
+          title: '门店地址',
+          dataIndex: 'store_address'
+        },
+        {
           title: '渠道名称',
           dataIndex: 'channel_name'
         },
@@ -490,14 +512,7 @@ export default defineComponent({
           title: '客户状态',
           dataIndex: 'user_status'
         },
-        {
-          title: '门店名称',
-          dataIndex: 'store_name'
-        },
-        {
-          title: '门店地址',
-          dataIndex: 'store_address'
-        },
+        
         {
           title: '计费开始时间',
           dataIndex: 'service_begin',
@@ -581,34 +596,7 @@ export default defineComponent({
       getTree()
         .then((res) => {
           if (res?.code == 0) {
-            // const arrres=flatten(res.data[0].children)
-            // console.log(arrres)
-            // treeList.value = res?.data?.map((item)=>{
-            //     if(item.label!='门店'&&!item?.children_count){
-            //         return{
-            //             disabled: true,
-            //             ...item
-            //         }
-            //     }else{
-            //         return{
-            //             children:item.children.map((child)=>{
-            //                 if(child.label!='门店'&&!child?.children_count){
-            //                     return{
-            //                         disabled: true,
-            //                         ...child
-            //                     }
-            //                 }else{
-            //                     return{
-            //                         disabled: true,
-            //                         ...child
-            //                     }
-            //                 }
-            //             }),
-            //             ...item
-            //         }
-            //     }
-            // })
-            if (localStorage.getItem('type') == '总部') {
+            if (treeList.value[0]?.label == '总部') {
               treeList.value = res?.data[0]?.children?.map((item) => {
                 if (!item?.children_count) {
                   return {
@@ -674,7 +662,7 @@ export default defineComponent({
     };
     getTreeData();
     const changePage = (page) => {
-      current.value = page;
+      current.value = page.current
       getDeviceJournalList();
     };
     const toAdd = () => {
@@ -768,19 +756,32 @@ export default defineComponent({
       openVisible.value = true;
       if (value == '2') {
         storeId.value = row.store_id;
+        getStoreList({'user_org_bussiness_id':row.user_id}).then((res)=>{
+          if(res.code==0){
+            options.value=res.data?.map((item)=>{
+              return {
+                'label':item?.name,
+                'value':item?.org_business_id,
+              }
+            })
+          }
+        })
       }
     };
     const cancelChange=()=>{
         Object.assign(changeDevice, {})
         chooseStoreInfo.value=''
+        storeId.value=''
+        value.value=''
+        options.value=[]
     }
     const changeVisibleOk = () => {
         if(storeId.value){
-            transfer(changeDevice.device_id,chooseStoreInfo.value).then((res)=>{
+            transfer(changeDevice.device_id,value.value).then((res)=>{
                 if(res.code==200){
                     Object.assign(changeDevice, {});
                     openVisible.value = !openVisible.value;
-                    chooseStoreInfo.value=''
+                    value.value=''
                     notification.success({
                         message: res.data
                     });
@@ -900,6 +901,8 @@ export default defineComponent({
     // }
     return {
       changeType,
+      options,
+      value,
       current,
       pageSize,
       total,

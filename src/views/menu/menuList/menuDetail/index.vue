@@ -3,31 +3,25 @@
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span style="font-size: 14px;">菜谱文件管理</span>
+          <span style="font-size: 14px;">菜谱基本信息</span>
         </div>
       </template>
-      <div style="display: flex; justify-content: space-between;padding-right: 100px;">
-        <div>菜品名称：{{ categoryName }}</div>
-        <div>所属客户：{{user_name }}</div>
-        <div>菜谱数量：{{ recipe_num }}</div>
-        <div
-          >兼容设备型号：{{
-            production_model
-          }}</div
-        >
-      </div>
+      <p class="infoContainer">
+            <div><span style="color:gray;">菜谱编号：</span>{{code}}</div>
+            <div><span style="color:gray;">菜品名称：</span>{{categoryName }}</div>
+            <div><span style="color:gray;">规格：</span>{{ spec }}g/{{ copies }}份</div>
+        </p>
+        <p class="infoContainer">
+            <div><span style="color:gray;">所属客户：</span>{{user_name }}</div>
+            <div><span style="color:gray;">研发人：</span>{{develop_account}}</div>
+            <div><span style="color:gray;">兼容型号：</span>{{ production_model }}</div>
+        </p>
+        <p style="display: flex;font-size: 12px;">
+                <div style="width: 40%;"><span style="color:gray;">菜谱状态：</span>{{useProfile.length?'审核通过':'待审核' }}</div>
+                <div style="width: 60%;"><span style="color:gray;">菜谱简介：</span>{{  }}</div>
+        </p>
     </el-card>
     <el-card class="box-card" style="margin-top: 20px">
-      <template #header>
-        <div class="card-header" style="display: flex;align-items: center;">
-          <div>选择菜谱规格:</div>
-          <div v-if="tabCount" style="display: flex;">
-              <div v-for="item,index in tabList" :key="index">
-                <a-tag @click="clickTab(index)" :color="currentTab==index?'#108ee9':''" style="cursor: pointer;margin-left: 40px;">{{ item.spec }}g/{{ item.copies }}份</a-tag>
-              </div>
-          </div>
-        </div>
-      </template>
       <div>
         <span>菜谱列表</span> <span style="font-size: 12px;color:gray;margin-left: 20px;">审核后将配方烹饪工艺文件下发到设备，审核后该文件不支持修改。</span>
       </div>
@@ -91,54 +85,56 @@
 <script>
 import { defineComponent, computed, ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { menuStore } from '@/store/modules/menu';
-import {getAllMenu,getAllMenuProfile,getApprovalLog} from '@/api/menu'
+import { getAllMenu, getAllMenuProfile ,getApprovalLog} from '@/api/menu';
 import { toDateString } from 'ele-admin-pro';
 export default defineComponent({
   setup() {
-    const { currentRoute ,push} = useRouter();
-    const useMenuStore = menuStore();
-    const categoryName = currentRoute.value.query.name;
+    const { currentRoute, push } = useRouter();
+    const categoryName = currentRoute.value.query.recipe_category;
+    // const develop_account = currentRoute.value.query.develop_account;
+    const recipe_id = currentRoute.value.query.recipe_id;
+    const recipe_category_id = currentRoute.value.query.recipe_category_id;
+    const copies = currentRoute.value.query.copies;
+    const spec = currentRoute.value.query.spec;
     const user_name = currentRoute.value.query.user_name;
-    const recipe_num = currentRoute.value.query.recipe_num;
     const production_model = currentRoute.value.query.production_model;
+
     // 菜谱规格列表
-    const tabList=ref([])
-    const tabCount=ref(0)
-    const currentTab=ref(0)
-    const menuSpec=ref('')
-    const menuCopies=ref('')
-    const useProfile=ref([])
-    const otherFile=ref([])
+    const tabList = ref([]);
+    const tabCount = ref(0);
+    const currentTab = ref(0);
+    const useProfile = ref([]);
+    const code=ref('')
     const recipe_sc_id=ref('')
+    const develop_account=ref('')
+    const otherFile = ref([]);
     const logList=ref([])
-    const fileList=ref([])
-    const recipe_category_id=ref('')
-    const useColumns=[
+    const fileList = ref([]);
+    const useColumns = [
       {
         title: '菜谱文件编号',
         dataIndex: 'code',
-        key: 'code',
+        key: 'code'
       },
       {
         title: '菜谱文件名称',
         dataIndex: 'name',
-        key: 'name',
+        key: 'name'
       },
       {
         title: '规格',
         dataIndex: 'guige',
-        key: 'guige',
+        key: 'guige'
       },
       {
         title: '状态',
         dataIndex: 'status',
-        key: 'status',
+        key: 'status'
       },
       {
         title: '研发人',
         dataIndex: 'develop_account',
-        key: 'develop_account',
+        key: 'develop_account'
       },
       {
         title: '提交审核时间',
@@ -149,7 +145,7 @@ export default defineComponent({
       {
         title: '审核人',
         dataIndex: 'approval_account',
-        key: 'approval_account',
+        key: 'approval_account'
       },
       {
         title: '审核通过时间',
@@ -161,9 +157,9 @@ export default defineComponent({
         title: '操作',
         dataIndex: 'action',
         key: 'action',
-        fixed:'right'
-      },
-    ]
+        fixed: 'right'
+      }
+    ];
     const logColumns = [
       {
         title: '菜谱文件编号',
@@ -205,73 +201,91 @@ export default defineComponent({
      
     ];
     // 获取菜品下的菜谱上数据
-    const getAllMenuData=()=>{
-        getAllMenu({name_like:categoryName}).then((res)=>{
-            if(res.code==200){
-              tabList.value=res.data
-              tabCount.value=res.paging.total_records
-              if(tabCount.value){
-                menuSpec.value=res.data[0].spec
-                menuCopies.value=res.data[0].copiesc
-                recipe_category_id.value=res.data[0].recipe_category_id
-              }
-            }
-            getAllMenuProfile({recipe_category_id:recipe_category_id.value,spec:menuSpec.value,copies:menuCopies.value}).then((res)=>{
-              if(res.code==200){
-                if(res.paging.total_records){
-                  getApprovalLog(res.data[0].recipe_sc_id).then((res)=>{
-                    if(res.code==0){
-                      logList.value=res.data
-                    }
-                  })
+    const getAllMenuData = () => {
+        getAllMenuProfile({
+          recipe_category_id: recipe_category_id,
+          spec: spec,
+          copies:copies
+        }).then((res) => {
+          if (res.code == 200) {
+            if(res.paging.total_records){
+              getApprovalLog(res.data[0].recipe_sc_id).then((res)=>{
+                if(res.code==0){
+                  logList.value=res.data
                 }
-                useProfile.value=res.data.filter((item)=>{
-                  return item.status=='审核采用'
-                })
-                fileList.value=res.data
-              }
-            })
-        })
-    }
-    getAllMenuData()
+              })
+            }
+            useProfile.value = res.data.filter((item) => {
+              return item.status == '审核采用';
+            });
+            if(useProfile.value.length){
+              code.value=useProfile.value[0].code
+              develop_account.value=useProfile.value[0].develop_account
+            }
+            fileList.value = res.data;
+          }
+        });
+    };
+    getAllMenuData();
 
-    const clickTab=(val)=>{
-      this.currentTab=val
-    }
+    const clickTab = (val) => {
+      this.currentTab = val;
+    };
 
     // 跳转到菜谱文件详情
-    const toDetail=(row)=>{
+    const toDetail = (row) => {
       push({
-        path:'/menu/menuFile',
-        query:{id:row.id,store_name:row.store_name,device_code:row.device_code,develop_account:row.develop_account}
-      })
-    }
+        path: '/menu/menuFile',
+        query: {
+          id: row.id,
+          store_name: row.store_name,
+          device_code: row.device_code,
+          develop_account: row.develop_account
+        }
+      });
+    };
+
+   
     return {
-      recipe_sc_id,
       logColumns,
       logList,
-      toDetail,
+      code,
+      recipe_sc_id,
+      develop_account,
+      recipe_id,
       categoryName,
+      copies,
+      user_name,
+      production_model,
+      spec,
+      toDetail,
       otherFile,
       useColumns,
       recipe_category_id,
-      menuSpec,
-      menuCopies,
       clickTab,
       getAllMenuData,
-      useMenuStore,
-      user_name,
-      recipe_num,
-      production_model,
       tabList,
       tabCount,
       currentTab,
       useProfile,
-      fileList,
+      fileList
     };
   }
 });
 </script>
 
 <style lang="less" soped>
+.ele-body{
+  .infoContainer {
+      display: flex;
+      font-size: 12px;
+      color: #000;
+      div {
+        width: 30%;
+      }
+      div:first-child {
+        width: 40%;
+      }
+    }
+}
 </style>

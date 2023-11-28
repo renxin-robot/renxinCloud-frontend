@@ -50,7 +50,8 @@ export default {
   menu:{
     _name:'菜谱管理',
     menuCategory:{_name:'菜品管理',detail:{_name:'菜品详情'}},
-    menuList:{_name:'菜谱管理'},
+    menuList:{_name:'菜谱管理',menuDetail:{_name:'菜谱详情'}},
+    menuFile:{_name:'菜谱文件配方'},
     // detail:{_name:'菜谱详情'},
     // file:{_name:'查看菜谱文件列表'},
     // fileDetail:{_name:'查看菜谱文件详情'},
