@@ -168,9 +168,10 @@
           </template>
         </template>
       </a-table>
-      <a-modal v-model:open="open">
+      <a-modal v-model:visible="open" @ok="handleOk" :closable="false">
+        <h6 style="text-align: center;">重置密码成功！</h6>
         <p
-          >密码已重置为初始密码！（初始密码规则为：当天日期（1103）+手机号码后四位）</p
+          >密码已重置为初始密码！（初始密码规则为：当天日期（例如：1103）+手机号码后四位）</p
         >
       </a-modal>
     </a-card>
@@ -382,16 +383,21 @@ const enable = (row) => {
 };
 // 重置密码
 const editPassword = (row) => {
-  updateUser({ reset_psw: true, account_id: row.account_id }).then((res) => {
+  updateUser({ reset_psw: true, account_id: row.account_id,name:row.name,remark:row.remark,type_cn:row.type_cn,org_ids:row.org_ids,role_ids:row.role_ids}).then((res) => {
     if (res.code == 0) {
-      notification.success({
-        message: '重置密码成功！'
-      });
+      // notification.success({
+      //   message: '重置密码成功！'
+      // });
       open.value = true;
     }
     getUsers();
   });
 };
+
+// 确定
+const handleOk=()=>{
+  open.value = false
+}
 </script>
 
 <script>

@@ -38,18 +38,18 @@
               cursor: pointer;
             "
           >
-            <div :class="{ tab: type == '1' }" @click="changeType('1')"
+            <div :class="{ tab: type == '安卓' }" @click="changeType('安卓')"
               >机器人端（设备端）</div
             >
-            <div :class="{ tab: type == '2' }" @click="changeType('2')"
+            <div :class="{ tab: type == '小程序' }" @click="changeType('小程序')"
               >饪芯管家（微信小程序）</div
             >
-            <div :class="{ tab: type == '3' }" @click="changeType('3')"
+            <div :class="{ tab: type == 'PC' }" @click="changeType('PC')"
               >饪芯管家（PC端）</div
             >
           </div>
           <el-tree
-            v-show="type == '1'"
+            v-show="type == '安卓'"
             :data="androidData"
             style="margin-top: 20px"
             ref="tree"
@@ -60,11 +60,22 @@
           >
           </el-tree>
           <el-tree
-            v-show="type == '2'"
+            v-show="type == '小程序'"
             :data="miniProgremData"
             style="margin-top: 20px"
             ref="miniTree"
             show-checkbox
+            @check-change="checkChange"
+            node-key="id"
+          >
+          </el-tree>
+          <el-tree
+            v-show="type == 'PC'"
+            :data="menuList"
+            ref="PCTree"
+            style="margin-top: 20px"
+            show-checkbox
+            :props="defaultProps"
             @check-change="checkChange"
             node-key="id"
           >
@@ -86,14 +97,13 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { addRole, getSimpleRole, updateRole } from '@/api/system/role';
-import { getTree } from '@/api/system/channel';
+import {listMenus} from '@/api/system/menu'
 import { notification } from 'ant-design-vue/es';
 import { useRouter } from 'vue-router';
-import { setPageTab } from '@/utils/page-tab-util';
-import { RFC_2822 } from 'moment';
 const { push, currentRoute } = useRouter();
 const tree = ref();
 const miniTree = ref();
+const PCTree = ref();
 // 新增账号表单
 let form = reactive({
   name: '',
@@ -101,9 +111,9 @@ let form = reactive({
   menu_ids: ''
 });
 // 权限类型
-const type = ref('1');
+const type = ref('安卓');
 // 角色列表
-let options = ref([]);
+let menuList = ref([]);
 let roleId = currentRoute.value.query.id;
 // 账号绑定的角色
 let roleList = ref([]);
@@ -111,7 +121,7 @@ let roleList = ref([]);
 const expandedRowKeys = ref([]);
 const defaultProps = {
   children: 'children',
-  label: 'label'
+  label: 'name'
 };
 // 树形数据
 const data = ref([]);
@@ -134,7 +144,7 @@ const miniProgremData = [
     label: '菜谱配方详情'
   }
 ];
-// 小程序的菜单数据
+// 安卓菜单数据
 const androidData = [
   {
     id:11,
@@ -202,25 +212,33 @@ const getRoleInfo = () => {
     if (form?.menu_ids && form?.menu_ids.length > 1) {
       miniTree.value.setCheckedKeys(form?.menu_ids?.split(','), false);
       tree.value.setCheckedKeys(form?.menu_ids?.split(','), false)
+      PCTree.value.setCheckedKeys(form?.menu_ids?.split(','), false)
     } else {
       miniTree.value.setChecked(form?.menu_ids, true, false);
       tree.value.setChecked(form?.menu_ids, true, false);
+      PCTree.value.setChecked(form?.menu_ids, true, false);
     }
   });
 };
 if (roleId) {
   getRoleInfo();
 }
+// 处理菜单数据
+const arrToTree=(arr)=>{
+    let data = arr.filter(item => {
+        item.children = arr.filter(e => {
+            return item.id === e.parent_id
+        })
+        return !item.parent_id
+    })
+    return data;
+}
 // 获取菜单数据
-const getTreeData = () => {
-  getTree()
+const getMenuData = () => {
+  listMenus({platform:'PC',all:true,deleted_tag:0})
     .then((res) => {
-      if (res.code == 0) {
-        data.value = res?.data;
-        expandedRowKeys.value = res?.data?.map((item) => {
-          return item?.org_business_id;
-        });
-      }
+      menuList.value = arrToTree(res)
+
     })
     .catch((err) => {
       if (err.response.status == 401) {
@@ -231,10 +249,14 @@ const getTreeData = () => {
       }
     });
 };
-getTreeData();
+getMenuData();
+
 // 切换权限选项
 const changeType = (val) => {
   type.value = val;
+  if(type.value=='PC'){
+    getMenuData();
+  }
 };
 
 const handleCheckChange = () => {
@@ -242,10 +264,7 @@ const handleCheckChange = () => {
 };
 
 const checkChange = () => {
-  form.menu_ids = miniTree.value.getCheckedKeys(true).toString();
-};
-const handleChange = (val) => {
-  form.role_ids = form.roleList?.toString();
+  // form.menu_ids = miniTree.value.getCheckedKeys(true).toString();
 };
 
 const clear = () => {
@@ -254,19 +273,32 @@ const clear = () => {
   form.menu_ids = '';
 };
 const onSubmit = () => {
+  let newArr=[]
   let checkArr = [];
-  tree.value?.store?.root?.childNodes.map((item) => {
-    if (item?.checked) {
-      checkArr.push(item?.data?.id);
-    } else {
-      item?.childNodes?.map((child)=>{
-        if (child.checked) checkArr.push(child?.data?.id);
-      })
+  // 改变安卓权限
+  tree.value.getCheckedKeys().forEach((item)=>{
+    if(checkArr.indexOf(item===-1)){
+      checkArr.push(item)
     }
   })
-  if(form.menu_ids){
-    form.menu_ids=([...form?.menu_ids?.split(','),...checkArr]).toString()
-  }else  form.menu_ids=([...checkArr]).toString()
+  // 改变PC后台权限
+  PCTree.value.getCheckedKeys().forEach((item)=>{
+    if(checkArr.indexOf(item===-1)){
+      checkArr.push(item)
+    }
+  })
+   // 改变PC后台权限
+   miniTree.value.getCheckedKeys().forEach((item)=>{
+    if(checkArr.indexOf(item===-1)){
+      checkArr.push(item)
+    }
+  })
+  checkArr.forEach((item)=>{
+    if(newArr.indexOf(item===-1)){
+      newArr.push(item)
+    }
+  })
+  form.menu_ids=newArr.toString()
   if (roleId) {
     updateRole({ ...form, id: roleId })
       .then((res) => {
@@ -312,62 +344,7 @@ const onSubmit = () => {
       });
   }
 };
-// const onSubmit=()=>{
-//   let checkArr=[]
-//   tree.value?.store?.root?.childNodes.map((item)=>{
-//     if(item?.checked){
-//       checkArr.push(item?.data?.org_business_id)
-//     }else{
-//      if(item?.childNodes){
-//       item?.childNodes?.map((child)=>{
-//         if(child?.checked){
-//           checkArr.push(child?.data?.org_business_id)
-//         }else{
-//           if(child?.childNodes){
-//             child?.childNodes?.map((node)=>{
-//               if(node?.checked){
-//                  checkArr.push(node?.data?.org_business_id)
-//               }else{
-//                 if(node?.childNodes){
-//                   node?.childNodes?.map((lastNode)=>{
-//                     if(lastNode?.checked) checkArr.push(lastNode?.data?.org_business_id)
-//                   })
-//                 }
-//               }
-//             })
-//           }
-//         }
-//       })
-//      }
-//     }
-//   })
-//   form.org_ids=checkArr.toString()
-//   if(roleId){
-//     updateUser(form).then((res)=>{
-//       if(res.code==0){
-//         notification.success({
-//             message: '编辑账号成功！'
-//         });
-//       }
-//       clear()
-//       push({
-//         path:'/system/user'
-//       })
-//     })
-//   }else{
-//     addUser(form).then((res)=>{
-//       if(res.code==0){
-//         notification.success({
-//             message: '增加账号成功！'
-//         });
-//       }
-//       clear()
-//       push({
-//         path:'/system/user'
-//       })
-//     })
-//   }
-// }
+
 const cancel = () => {
   clear();
   push({

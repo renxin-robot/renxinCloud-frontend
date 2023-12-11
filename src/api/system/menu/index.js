@@ -4,7 +4,7 @@ import request from '@/utils/request';
  * 查询菜单列表
  */
 export async function listMenus(params) {
-  const res = await request.get('/system/menu', {
+  const res = await request.get('/mam/menu/list', {
     params
   });
   if (res.data.code === 0) {
@@ -17,22 +17,19 @@ export async function listMenus(params) {
  * 添加菜单
  */
 export async function addMenu(data) {
-  const res = await request.post('/system/menu', data);
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-  return Promise.reject(new Error(res.data.message));
+  const res = await request.post('/mam/menu/add', data);
+    return res.data
 }
 
 /**
  * 修改菜单
  */
-export async function updateMenu(data) {
-  const res = await request.put('/system/menu', data);
-  if (res.data.code === 0) {
-    return res.data.message;
+export async function updateMenu(data,id) {
+  if(!data.parent_id){
+    data.parent_id = 0
   }
-  return Promise.reject(new Error(res.data.message));
+  const res = await request.put(`/mam/menu/${id}`, data);
+    return res.data
 }
 
 /**

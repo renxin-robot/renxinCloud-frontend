@@ -23,7 +23,7 @@
           <div>选择菜谱规格:</div>
           <div v-if="tabCount" style="display: flex;">
               <div v-for="item,index in tabList" :key="index">
-                <a-tag @click="clickTab(index)" :color="currentTab==index?'#108ee9':''" style="cursor: pointer;margin-left: 40px;">{{ item.spec }}g/{{ item.copies }}份</a-tag>
+                <a-tag @click="clickTab(index,item)" :color="currentTab==index?'#108ee9':''" style="cursor: pointer;margin-left: 40px;">{{ item.spec }}g/{{ item.copies }}份</a-tag>
               </div>
           </div>
         </div>
@@ -212,7 +212,7 @@ export default defineComponent({
               tabCount.value=res.paging.total_records
               if(tabCount.value){
                 menuSpec.value=res.data[0].spec
-                menuCopies.value=res.data[0].copiesc
+                menuCopies.value=res.data[0].copies
                 recipe_category_id.value=res.data[0].recipe_category_id
               }
             }
@@ -235,8 +235,24 @@ export default defineComponent({
     }
     getAllMenuData()
 
-    const clickTab=(val)=>{
-      this.currentTab=val
+    const clickTab=(val,row)=>{
+      currentTab.value=val
+      console.log(row)
+      getAllMenuProfile({recipe_category_id:recipe_category_id.value,spec:row.spec,copies:row.copies}).then((res)=>{
+        if(res.code==200){
+          if(res.paging.total_records){
+            getApprovalLog(res.data[0].recipe_sc_id).then((res)=>{
+              if(res.code==0){
+                logList.value=res.data
+              }
+            })
+          }
+          useProfile.value=res.data.filter((item)=>{
+            return item.status=='审核采用'
+          })
+          fileList.value=res.data
+        }
+      })
     }
 
     // 跳转到菜谱文件详情

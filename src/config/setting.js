@@ -26,268 +26,267 @@ export const WHITE_LIST = ['/login', '/forget'];
 export const KEEP_ALIVE_EXCLUDES = [];
 
 // 直接指定菜单数据
-export const USER_MENUS = [
+// export const USER_MENUS = [
+// //   {
+// //     path: '/shop',
+// //     component: '/shop',
+// //     meta: {title: '门店管理', icon: 'shop-outlined'},
+// //     // children: [
+// //     //     {
+// //     //         path: '/shop/assistant',
+// //     //         component: '/shop/assistant',
+// //     //         meta: {title: '门店管理', icon: 'team-outlined', hide: false}
+// //     //     },
+// //     // ]
+// // },
 //   {
-//     path: '/shop',
-//     component: '/shop',
-//     meta: {title: '门店管理', icon: 'shop-outlined'},
-//     // children: [
-//     //     {
-//     //         path: '/shop/assistant',
-//     //         component: '/shop/assistant',
-//     //         meta: {title: '门店管理', icon: 'team-outlined', hide: false}
-//     //     },
-//     // ]
-// },
-  {
-        path: '/operation',
-        redirect: '/operation/customer',
-        meta: {title: '运营管理', icon: 'calculator-outlined'},
-        children: [
-            // {
-            //   path: '/operation/channel',
-            //   component: '/operation/channel',
-            //   meta: {title: '渠道管理', hide: false}
-            // },
-            // {
-            //     path: '/operation/customer',
-            //     component: '/operation/customer',
-            //     meta: {title: '客户管理', hide: false}
-            // },
-            //  icon: 'shoppingCart-outlined'
-             {
-              path: '/order',
-              component: '/order',
-              meta: {title: '订单管理',},
-            },
-            {
-              path: '/operation/commission',
-              component: '/operation/commission',
-              meta: {title: '佣金管理', hide: false}
-            }
-        ]
-    },
-  //   {
-  //     path: '/order',
-  //     component: '/order',
-  //     meta: {title: '订单管理', icon: 'shoppingCart-outlined'},
-  //     // children: [
-  //     //     {
-  //     //         path: '/operation/customer',
-  //     //         component: '/operation/customer',
-  //     //         meta: {title: '客户管理', hide: false}
-  //     //     }
-  //     // ]
-  // },
-    {
-      path: '/equipment',
-      redirect: '/equipment/basic',
-      meta: {title: '设备管理', icon: 'laptop-outlined'},
-      children: [
-        {
-          path: '/equipment/ledger/list',
-          name:'ledger',
-          component: '/equipment/ledger/list',
-          meta: {title: '设备台账', hide: false},
-          children:[
-            {
-              path:'/equipment/ledger/list/detail',
-              name:'listDetail',
-              component:'/equipment/ledger/list/detail',
-              meta: {title: '设备详情', hide: true},
-            },
-            {
-              path:'/equipment/ledger/list/deployment',
-              name:'deployment',
-              component:'/equipment/ledger/list/deployment',
-              meta: {title: '布机申请', hide: true},
-            },
-            {
-              path:'/equipment/ledger/list/weaning',
-              name:'weaning',
-              component:'/equipment/ledger/list/weaning',
-              meta: {title: '撤机申请', hide: true},
-            },
-          ]
-        },
-        {
-          path:'/equipment/SN',
-          name:'SN',
-          component:'/equipment/SN',
-          meta: {title: 'SN管理', hide: false},
-          children:[
-            {
-              path:'/equipment/SN/addSN',
-              name:'addSN',
-              component:'/equipment/SN/addSN',
-              meta: {title: 'SN生成', hide: true},
-            },
-            {
-              path:'/equipment/SN/SNDetail',
-              name:'SNDetail',
-              component:'/equipment/SN/SNDetail',
-              meta: {title: 'SN批次详情', hide: true},
-            },
-          ]
-        },
-          {
-            path: '/equipment/basic',
-            redirect: '/equipment/basic/nameplate',
-            meta: {title: '基础管理', hide: false},
-            children:[
-              {
-                path:'/equipment/basic/nameplate',
-                component:'/equipment/basic/nameplate',
-                meta: {title: '铭牌管理', hide: false},
-              },
-              {
-                path:'/equipment/basic/category',
-                component:'/equipment/basic/category',
-                meta: {title: '品类管理', hide: false},
-              },
-              {
-                path:'/equipment/basic/plant',
-                component:'/equipment/basic/plant',
-                meta: {title: '工厂管理', hide: false},
-              },
-              {
-                path:'/equipment/basic/product',
-                component:'/equipment/basic/product',
-                meta: {title: '产品信息管理', hide: false},
-              },
-            ]
-          }, 
-          {
-            path:'/equipment/workOrder',
-            name:'workOrder',
-            component:'/equipment/workOrder',
-            meta: {title: '设备工单', hide: false},
-            children:[
-              {
-                path:'/equipment/workOrder/orderDetail',
-                name:'orderDetail',
-                component:'/equipment/workOrder/orderDetail',
-                meta: {title: '工单详情', hide: true},
-              },
-            ]
-          },
-          {
-            path:'/equipment/statistics',
-            component:'/equipment/statistics',
-            meta: {title: '设备统计', hide: false},
-          },
-      ]
-  },
-  {
-    path: '/menu',
-    redirect: '/menu/menuCategory',
-    meta: {title: '菜谱管理', icon: 'book-outlined'},
-    children: [
-      {
-        path:'/menu/menuCategory',
-        component:'/menu/menuCategory',
-        meta: {title: '菜品管理', hide: false},
-        children:[
-           {
-              path:'/menu/menuCategory/detail',
-              component:'/menu/menuCategory/detail',
-              meta: {title: '菜品详情', hide: true},
-            },
-        ]
-      },
-      {
-        path:'/menu/menuList',
-        component:'/menu/menuList',
-        meta: {title: '菜谱管理', hide: false},
-        children:[
-            {
-              path:'/menu/menuList/menuDetail',
-              component:'/menu/menuList/menuDetail',
-              meta: {title: '菜谱详情', hide: true},
-            },
-        ]
-      },
-      {
-        path:'/menu/menuFile',
-        component:'/menu/menuFile',
-        meta: {title: '菜谱配方工艺', hide: true},
-      }
-      // {
-      //   path:'/menu/detail',
-      //   component:'/menu/detail',
-      //   meta: {title: '菜谱详情', hide: true},
-      // },
-      // {
-      //   path:'/menu/file',
-      //   component:'/menu/file',
-      //   meta: {title: '查看菜谱文件列表', hide: true},
-      // },
-      // {
-      //   path:'/menu/fileDetail',
-      //   component:'/menu/fileDetail',
-      //   meta: {title: '查看菜谱文件详情', hide: true},
-      // },
-    ]
-  },
-    {
-      path: '/system',
-      component: '/system/resource',
-      meta: {title: '系统管理', icon: 'setting-outlined'},
-      children:[
-        {
-          path:'/system/user',
-          name:'systemUser',
-          component:'/system/user',
-          meta: {title: '账号管理', hide: false},
-          children:[
-           {
-            path:'/system/user/addUser',
-            component:'/system/user/addUser',
-            meta: {title: '账号信息', hide: true},
-           }
-          ]
-        },
-        {
-          path:'/system/organization',
-          name:'systemOrganization',
-          component:'/system/organization',
-          meta: {title: 'organization', hide: false},
-        },
-        {
-          path:'/system/role',
-          name:'systemRole',
-          component:'/system/role',
-          meta: {title: '角色管理', hide: false},
-          children:[
-            {
-             path:'/system/role/addRole',
-             component:'/system/role/addRole',
-             meta: {title: '角色信息', hide: true},
-            }
-           ]
-        },
-        // {
-        //   path:'/system/menu',
-        //   name:'systemMenu',
-        //   component:'/system/menu',
-        //   meta: {title: 'menu', hide: false},
-        // },
-        // {
-        //   path:'/system/operation-record',
-        //   name:'systemOperationRecord',
-        //   component:'/system/operation-record',
-        //   meta: {title: 'operation-record', hide: false},
-        // },
-        
-        
-      ]
-  }
-]
+//         path: '/operation',
+//         redirect: '/operation/customer',
+//         meta: {title: '运营管理', icon: 'calculator-outlined'},
+//         children: [ 
+//             // {
+//             //   path: '/operation/channel',
+//             //   component: '/operation/channel',
+//             //   meta: {title: '渠道管理', hide: false}
+//             // },
+//             // {
+//             //     path: '/operation/customer',
+//             //     component: '/operation/customer',
+//             //     meta: {title: '客户管理', hide: false}
+//             // },
+//             //  icon: 'shoppingCart-outlined'
+//              {
+//               path: '/order',
+//               component: '/operation/order',
+//               meta: {title: '订单管理',},
+//             },
+//             {
+//               path: '/operation/commission',
+//               component: '/operation/commission',
+//               meta: {title: '佣金管理', hide: false}
+//             }
+//         ]
+//     },
+//   //   {
+//   //     path: '/order',
+//   //     component: '/order',
+//   //     meta: {title: '订单管理', icon: 'shoppingCart-outlined'},
+//   //     // children: [
+//   //     //     {
+//   //     //         path: '/operation/customer',
+//   //     //         component: '/operation/customer',
+//   //     //         meta: {title: '客户管理', hide: false}
+//   //     //     }
+//   //     // ]
+//   // },
+//     {
+//       path: '/equipment',
+//       redirect: '/equipment/basic',
+//       meta: {title: '设备管理', icon: 'laptop-outlined'},
+//       children: [
+//         {
+//           path: '/equipment/ledger/list',
+//           name:'ledger',
+//           component: '/equipment/ledger/list',
+//           meta: {title: '设备台账', hide: false},
+//           children:[
+//             {
+//               path:'/equipment/ledger/list/detail',
+//               name:'listDetail',
+//               component:'/equipment/ledger/list/detail',
+//               meta: {title: '设备详情', hide: true},
+//             },
+//             {
+//               path:'/equipment/ledger/list/deployment',
+//               name:'deployment',
+//               component:'/equipment/ledger/list/deployment',
+//               meta: {title: '布机申请', hide: true},
+//             },
+//             {
+//               path:'/equipment/ledger/list/weaning',
+//               name:'weaning',
+//               component:'/equipment/ledger/list/weaning',
+//               meta: {title: '撤机申请', hide: true},
+//             },
+//           ]
+//         },
+//         {
+//           path:'/equipment/SN',
+//           name:'SN',
+//           component:'/equipment/SN',
+//           meta: {title: 'SN管理', hide: false},
+//           children:[
+//             {
+//               path:'/equipment/SN/addSN',
+//               name:'addSN',
+//               component:'/equipment/SN/addSN',
+//               meta: {title: 'SN生成', hide: true},
+//             },
+//             {
+//               path:'/equipment/SN/SNDetail',
+//               name:'SNDetail',
+//               component:'/equipment/SN/SNDetail',
+//               meta: {title: 'SN批次详情', hide: true},
+//             },
+//           ]
+//         },
+//           {
+//             path: '/equipment/basic',
+//             redirect: '/equipment/basic/nameplate',
+//             meta: {title: '基础管理', hide: false},
+//             children:[
+//               {
+//                 path:'/equipment/basic/nameplate',
+//                 component:'/equipment/basic/nameplate',
+//                 meta: {title: '铭牌管理', hide: false},
+//               },
+//               {
+//                 path:'/equipment/basic/category',
+//                 component:'/equipment/basic/category',
+//                 meta: {title: '品类管理', hide: false},
+//               },
+//               {
+//                 path:'/equipment/basic/plant',
+//                 component:'/equipment/basic/plant',
+//                 meta: {title: '工厂管理', hide: false},
+//               },
+//               {
+//                 path:'/equipment/basic/product',
+//                 component:'/equipment/basic/product',
+//                 meta: {title: '产品信息管理', hide: false},
+//               },
+//             ]
+//           }, 
+//           {
+//             path:'/equipment/workOrder',
+//             name:'workOrder',
+//             component:'/equipment/workOrder',
+//             meta: {title: '设备工单', hide: false},
+//             children:[
+//               {
+//                 path:'/equipment/workOrder/orderDetail',
+//                 name:'orderDetail',
+//                 component:'/equipment/workOrder/orderDetail',
+//                 meta: {title: '工单详情', hide: true},
+//               },
+//             ]
+//           },
+//           {
+//             path:'/equipment/statistics',
+//             component:'/equipment/statistics',
+//             meta: {title: '设备统计', hide: false},
+//           },
+//       ]
+//   },
+//   {
+//     path: '/menu',
+//     redirect: '/menu/menuCategory',
+//     meta: {title: '菜谱管理', icon: 'book-outlined'},
+//     children: [
+//       {
+//         path:'/menu/menuCategory',
+//         component:'/menu/menuCategory',
+//         meta: {title: '菜品管理', hide: false},
+//         children:[
+//            {
+//               path:'/menu/menuCategory/detail',
+//               component:'/menu/menuCategory/detail',
+//               meta: {title: '菜品详情', hide: true},
+//             },
+//         ]
+//       },
+//       {
+//         path:'/menu/menuList',
+//         component:'/menu/menuList',
+//         meta: {title: '菜谱管理', hide: false},
+//         children:[
+//             {
+//               path:'/menu/menuList/menuDetail',
+//               component:'/menu/menuList/menuDetail',
+//               meta: {title: '菜谱详情', hide: true},
+//             },
+//         ]
+//       },
+//       {
+//         path:'/menu/menuFile',
+//         component:'/menu/menuFile',
+//         meta: {title: '菜谱配方工艺', hide: true},
+//       }
+//       // {
+//       //   path:'/menu/detail',
+//       //   component:'/menu/detail',
+//       //   meta: {title: '菜谱详情', hide: true},
+//       // },
+//       // {
+//       //   path:'/menu/file',
+//       //   component:'/menu/file',
+//       //   meta: {title: '查看菜谱文件列表', hide: true},
+//       // },
+//       // {
+//       //   path:'/menu/fileDetail',
+//       //   component:'/menu/fileDetail',
+//       //   meta: {title: '查看菜谱文件详情', hide: true},
+//       // },
+//     ]
+//   },
+//     {
+//       path: '/system',
+//       component: '/system/resource',
+//       meta: {title: '系统管理', icon: 'setting-outlined'},
+//       children:[
+//         {
+//           path:'/system/user',
+//           name:'systemUser',
+//           component:'/system/user',
+//           meta: {title: '账号管理', hide: false},
+//           children:[
+//            {
+//             path:'/system/user/addUser',
+//             component:'/system/user/addUser',
+//             meta: {title: '账号信息', hide: true},
+//            }
+//           ]
+//         },
+//         {
+//           path:'/system/organization',
+//           name:'systemOrganization',
+//           component:'/system/organization',
+//           meta: {title: 'organization', hide: false},
+//         },
+//         {
+//           path:'/system/role',
+//           name:'systemRole',
+//           component:'/system/role',
+//           meta: {title: '角色管理', hide: false},
+//           children:[
+//             {
+//              path:'/system/role/addRole',
+//              component:'/system/role/addRole',
+//              meta: {title: '角色信息', hide: true},
+//             }
+//            ]
+//         },
+//         {
+//           path:'/system/menu',
+//           name:'systemMenu',
+//           component:'/system/menu',
+//           meta: {title: 'menu', hide: false},
+//         },
+//         // {
+//         //   path:'/system/operation-record',
+//         //   name:'systemOperationRecord',
+//         //   component:'/system/operation-record',
+//         //   meta: {title: 'operation-record', hide: false},
+//         // },
+//       ]
+//   }
+// ]
+export const USER_MENUS = []
 // 首页名称, 为空则取第一个菜单的名称
-export const HOME_TITLE = '组织管理';
+export const HOME_TITLE = '';
 
 // 首页路径, 为空则取第一个菜单的地址
-export const HOME_PATH = '/system/organization';
+export const HOME_PATH = '/system/user';
 
 // 外层布局的路由地址
 export const LAYOUT_PATH = '/';

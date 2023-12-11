@@ -1,5 +1,5 @@
 <template>
-  <div class="ele-body">
+  <div class="ele-body" v-loading.fullscreen.lock="fullscreenLoading">
     <a-card :body-style="{ padding: '10px 10px 4px 10px' }">
       <a-form
         :label-col="{ xl: 6, lg: 6, md: 6, sm: 8 }"
@@ -464,6 +464,7 @@ export default defineComponent({
     let chooseStoreInfo = ref();
     const value = ref('')
     const options = ref([])
+    const fullscreenLoading = ref(false);
     // 表格列配置
     const columns = computed(() => {
       return [
@@ -775,10 +776,13 @@ export default defineComponent({
         value.value=''
         options.value=[]
     }
+    // 确定移机或者布机
     const changeVisibleOk = () => {
+      fullscreenLoading.value=true
         if(storeId.value){
             transfer(changeDevice.device_id,value.value).then((res)=>{
                 if(res.code==200){
+                    fullscreenLoading.value=false
                     Object.assign(changeDevice, {});
                     openVisible.value = !openVisible.value;
                     value.value=''
@@ -786,11 +790,13 @@ export default defineComponent({
                         message: res.data
                     });
                 }else{
+                  fullscreenLoading.value=false
                     notification.warn({
                         message: res.data
                     });
                 }
             }).catch((err)=>{
+              fullscreenLoading.value=false
               notification.warn({
                         message: err.response.data.msg
                     });
@@ -799,17 +805,20 @@ export default defineComponent({
             deploy(changeDevice.device_id,chooseStoreInfo.value).then((res)=>{
                 if(res.code==200){
                     Object.assign(changeDevice, {});
+                    fullscreenLoading.value=false
                     openVisible.value = !openVisible.value;
                     chooseStoreInfo.value=''
                     notification.success({
                         message: res.data
                     });
                 }else{
+                  fullscreenLoading.value=false
                     notification.warn({
                         message: res.data
                     });
                 }
             }).catch((err)=>{
+              fullscreenLoading.value=false
               notification.warn({
                         message: err.response.data.msg
                     });
@@ -830,7 +839,9 @@ export default defineComponent({
     };
     // 确认撤机
     const confirmUndeploy = () => {
+      fullscreenLoading.value=true
       undeploy(changeDevice.device_id).then((res) => {
+        fullscreenLoading.value=false
         Object.assign(changeDevice, {});
         closeVisible.value = !closeVisible.value;
         notification.success({
@@ -902,6 +913,7 @@ export default defineComponent({
     return {
       changeType,
       options,
+      fullscreenLoading,
       value,
       current,
       pageSize,

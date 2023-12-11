@@ -41,6 +41,7 @@ service.interceptors.response.use(
   (res) => {
     // res.headers('Access-Control-Allow-Credentials', true);
     // 登录过期处理
+    console.log(res)
     if (res.data?.code === 401) {
       const currentPath = unref(router.currentRoute).path;
       if (currentPath == LAYOUT_PATH) {
@@ -57,6 +58,8 @@ service.interceptors.response.use(
         });
       }
       return Promise.reject(new Error(res.data.message));
+    }else if(res.data?.code === 500){
+      console.log('hhh')
     }
     // token 自动续期
     const token = res.headers[TOKEN_HEADER_NAME.toLowerCase()];

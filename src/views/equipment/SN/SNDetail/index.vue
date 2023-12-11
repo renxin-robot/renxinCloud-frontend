@@ -46,7 +46,7 @@
             </div> -->
             <ele-pro-table ref="tableRef" title="SN批次列表" :resizable="true" :bordered="true" :height="tableHeight" :columnsFixed="true"
                 :full-height="fixedHeight ? 'calc(100vh - 168px)' : void 0" :columns="columns" :datasource="datasource" :needPage="null" :toolbar="false"
-                :scroll="{ x: 1000 }">
+                :scroll="{ x: true }">
                 <!-- 表头工具按钮 -->
                 <template #toolkit>
                     <!-- <a-button type="primary" @click="toAddSN">SN生成</a-button> -->
@@ -128,53 +128,34 @@
                         title: 'SN编号',
                         key: 'code',
                         dataIndex: 'code',
-                        align: 'center',
-                        width: 120,
-                        minWidth: 100,
                     },
                     {
                         title: '主板编号',
                         key: 'screen_code',
                         dataIndex: 'screen_code',
-                        width: 80,
-                        minWidth: 100,
-                        align: 'center',
+                    },
+                    {
+                        title: 'PLC编号',
+                        key: 'plc_code',
+                        dataIndex: 'plc_code',
                     },
                     {
                         title: '启用状态',
                         key: 'is_used',
                         dataIndex: 'is_used',
-                        width: 60,
-                        minWidth: 100,
-                        align: 'center',
                     },
                     {
                         title: '启用时间',
                         dataIndex: 'created_at',
-                        key: 'created_at',
-                        width: 90,
-                        minWidth: 100,
-                        align: 'center',
+                        key: 'created_at', 
                         customRender: ({ text }) => toDateString(text)
                     },
                     {
                         title: '创建时间',
                         dataIndex: 'number',
-                        key: 'number',
-                        width: 100,
-                        minWidth: 100,
-                        align: 'center',
+                        key: 'number',   
                         customRender: ({ text }) => toDateString(text)
-
                     },
-                    // {
-                    //     title: '操作',
-                    //     key: 'action',
-                    //     width: 80,
-                    //     align: 'center',
-                    //     hideInSetting: true,
-                    //     fixed: 'right'
-                    // }
                 ];
             });
             let datasource=ref([])

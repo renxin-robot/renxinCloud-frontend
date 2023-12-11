@@ -105,6 +105,14 @@
                         <span v-if="scope?.row?.power_rate==1000">1档（1000w）</span>
                         <span v-if="scope?.row?.power_rate==2000">2档（2000w）</span>
                         <span v-if="scope?.row?.power_rate==3000">3档（3000w）</span>
+                        <span v-if="scope?.row?.power_rate==4000">4档（4000w）</span>
+						<span v-if="scope?.row?.power_rate==4500">5档（4500w）</span>
+						<span v-if="scope?.row?.power_rate==5000">6档（5000w）</span>
+						<span v-if="scope?.row?.power_rate==5500">7档（5500w）</span>
+						<span v-if="scope?.row?.power_rate==6000">8档（6000w）</span>
+						<span v-if="scope?.row?.power_rate==6500">9档（6500w）</span>
+						<span v-if="scope?.row?.power_rate==7000">10档（7000w）</span>
+						<span v-if="scope?.row?.power_rate==8000">11档（8000w）</span>
                         <span v-if="scope?.row?.power_rate==0">-</span>
                     </template>
                 </el-table-column>

@@ -1155,13 +1155,7 @@ const rules = {
       trigger: 'blur'
     }
   ],
-  remark: [
-    {
-      required: true,
-      message: '请输入...！',
-      trigger: 'blur'
-    }
-  ]
+ 
 };
 const userRules = {
   name: [
@@ -1247,13 +1241,7 @@ const userRules = {
       trigger: 'blur'
     }
   ],
-  remark: [
-    {
-      required: true,
-      message: '请输入...！',
-      trigger: 'blur'
-    }
-  ]
+  
 };
 const storeRules = {
   name: [
@@ -1298,13 +1286,7 @@ const storeRules = {
       trigger: 'blur'
     }
   ],
-  remark: [
-    {
-      required: true,
-      message: '请输入...！',
-      trigger: 'blur'
-    }
-  ]
+ 
 };
 let editId = ref('');
 let options = regionData;
@@ -1352,10 +1334,10 @@ const getTreeData = () => {
     })
     .catch((err) => {
       // if (err.response.status == 401) {
-        notification.success({
-          message: '请先登录！'
-        });
-        logout();
+        // notification.success({
+        //   message: '请先登录！'
+        // });
+        // logout();
       // }
     })
 };
@@ -1549,15 +1531,16 @@ const clearForm = () => {
     addUserForm.remark = '';
     addUserForm.status = '';
   } else {
-    addUserForm.name = '';
-    addUserForm.address = '';
-    addUserForm.remark = '';
-    addUserForm.status = '';
-    addUserForm.parent_id = '';
-    addUserForm.type = '';
-    addUserForm.city = '';
+    addStoreForm.name = '';
+    addStoreForm.address = '';
+    addStoreForm.remark = '';
+    addStoreForm.status = '';
+    addStoreForm.parent_id = '';
+    addStoreForm.type = '';
+    addStoreForm.city = '';
   }
 };
+
 // 确认新增渠道或者编辑渠道addNewUser
 const handleOk = () => {
   formRef.value.validate().then(() => {

@@ -27,6 +27,7 @@
         >
           <a-input
             v-model:value="form.account"
+            :disabled="accountId ? true : false"
             placeholder="请输入11位手机号码"
             style="height: 26px; font-size: 12px"
           />
@@ -78,13 +79,12 @@
             show-checkbox
             @check-change="handleCheckChange"
             node-key="org_business_id"
-            :default-expanded-keys="expandedRowKeys"
           >
             <template #default="{ node, data }">
               <span class="custom-tree-node">
                 <span class="nodeName">
                   <a-tooltip :title="data.org_name" color="#1890FF">
-                    {{ data.org_name }}
+                    {{ data.org_name?data.org_name:data.name }}
                   </a-tooltip>
                 </span>
               </span>
@@ -101,15 +101,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive , onMounted} from 'vue';
 import { pageRoles } from '@/api/system/role';
-import { getTree } from '@/api/system/channel';
+import { getAllTree } from '@/api/system/channel';
 import { addUser, getSimpleUser, updateUser } from '@/api/system/user';
 import { notification } from 'ant-design-vue/es';
 import { useRouter } from 'vue-router';
 import { setPageTab } from '@/utils/page-tab-util';
 const { push, currentRoute } = useRouter();
 const tree = ref();
+let checkedArray=ref([])
 // 新增账号表单
 let form = reactive({
   account: '',
@@ -200,14 +201,31 @@ const getRoles = () => {
 };
 getRoles();
 // 获取组织架构数据
+
+
+
+// 点击树
+const handleCheckChange = () => {
+  // form.org_ids=(tree.value.getCheckedKeys(false)).toString()
+};
+const handleChange = (val) => {
+  form.role_ids = form.roleList?.toString();
+};
+// 获取所有的树
 const getTreeData = () => {
-  getTree()
+  getAllTree()
     .then((res) => {
       if (res.code == 0) {
-        data.value = res?.data;
-        expandedRowKeys.value = res?.data?.map((item) => {
-          return item?.org_business_id;
-        });
+        // data.value.push(res?.data)
+        data.value.push({
+          ...res?.data,
+          'org_name':res?.data?.name,
+          'org_business_id':res?.data?.business_id
+        })
+        console.log(checkedArray.value)
+        // expandedRowKeys.value = data.value.map((item) => {
+        //   return item?.org_business_id;
+        // });
       }
     })
     .catch((err) => {
@@ -219,32 +237,23 @@ const getTreeData = () => {
       }
     });
 };
-getTreeData();
-// 点击树
-
-const handleCheckChange = () => {
-  // form.org_ids=(tree.value.getCheckedKeys(false)).toString()
-};
-const handleChange = (val) => {
-  form.role_ids = form.roleList?.toString();
-};
-
-const clear = () => {
-  form.account = '';
-  form.name = '';
-  form.org_ids = '';
-  form.role_ids = '';
-  form.remark = '';
-  form.type_cn = '';
-  form.roleList = [];
-};
-if (accountId) {
+// getTreeData() 
+onMounted(() => {
+  getTreeData()
+  if (accountId) {
   getSimpleUser(accountId)
     .then((res) => {
       if (res.code == 0) {
         Object.assign(form, res.data);
         form.roleList = form?.role_ids?.split(',');
-        tree.value.setCheckedKeys(form?.org_ids?.split(','), false);
+        checkedArray.value=form?.org_ids?.split(',')
+        // console.log(checkedArray.value)
+        setTimeout(() => {
+          tree.value.setCheckedKeys(checkedArray.value);
+        }, 200);
+        // tree.value.setCheckedNodes(arr);
+        
+        // console.log(tree.value)
       }
     })
     .catch((err) => {
@@ -256,8 +265,20 @@ if (accountId) {
       }
     });
 }
+});
+const clear = () => {
+  form.account = '';
+  form.name = '';
+  form.org_ids = '';
+  form.role_ids = '';
+  form.remark = '';
+  form.type_cn = '';
+  form.roleList = [];
+};
+
 const onSubmit = () => {
   let checkArr = [];
+  console.log(form,'form')
   tree.value?.store?.root?.childNodes.map((item) => {
     if (item?.checked) {
       checkArr.push(item?.data?.org_business_id);

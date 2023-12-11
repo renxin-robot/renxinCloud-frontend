@@ -127,6 +127,14 @@ export async function getTree() {
 }
 
 /**
+ * 查询全部组织架构
+ */
+export async function getAllTree() {
+  const res = await request.get(`/mam/org/tree_all`);
+  return res.data
+}
+
+/**
  * 新增商户
  */
 export async function addNewUser(data) {

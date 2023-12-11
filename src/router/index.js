@@ -42,6 +42,7 @@ router.beforeEach(async (to, from) => {
   }
   // 注册动态路由
   const userStore = useUserStore();
+  // console.log(JSON.parse(localStorage.getItem('menuList')),'menus')  
   if (!userStore.menus) {
     const { menus, homePath } = await userStore.fetchUserInfo();
     if (menus) {
