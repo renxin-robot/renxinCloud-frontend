@@ -1333,6 +1333,7 @@ const getTreeData = () => {
       }
     })
     .catch((err) => {
+      console.log(err,'组织管理')
       // if (err.response.status == 401) {
         // notification.success({
         //   message: '请先登录！'

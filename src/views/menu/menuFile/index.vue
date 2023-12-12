@@ -126,10 +126,10 @@
                 <el-table-column label="转速">
                     <template #default="scope">
                         <div style="white-space: nowrap;">
-                            <span v-if="scope?.row?.rotate_speed==7000">1档（7000转/分）</span>
-                        <span v-else-if="scope?.row?.rotate_speed==12000">2档（12000转/分）</span>
-                        <span v-else-if="scope?.row?.rotate_speed==18000">3档（18000转/分）</span>
-                        <span v-else-if="scope?.row?.rotate_speed==23000">4档（23000转/分）</span>
+                            <span v-if="scope?.row?.rotate_speed==8667">1档（13r/min）</span>
+                        <span v-else-if="scope?.row?.rotate_speed==14667">2档（22r/min）</span>
+                        <span v-else-if="scope?.row?.rotate_speed==22000">3档（33r/min）</span>
+                        <span v-else-if="scope?.row?.rotate_speed==28000">4档（42r/min）</span>
                         <span v-else>-</span>
                         </div>
                     </template>

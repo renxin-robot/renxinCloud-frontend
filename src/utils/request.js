@@ -41,7 +41,7 @@ service.interceptors.response.use(
   (res) => {
     // res.headers('Access-Control-Allow-Credentials', true);
     // 登录过期处理
-    console.log(res)
+    console.log(res,'ppp')
     if (res.data?.code === 401) {
       const currentPath = unref(router.currentRoute).path;
       if (currentPath == LAYOUT_PATH) {
@@ -69,7 +69,8 @@ service.interceptors.response.use(
     return res;
   },
   (error) => {
-    return Promise.reject(error);
+    console.log('封装axios',error)
+    // return Promise.reject(error);
   }
 );
 
